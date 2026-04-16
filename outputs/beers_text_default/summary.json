@@ -1,6 +1,0 @@
-{
-  "final_equation": "absorbance = concentration * path_length / 200",
-  "finish_reached": true,
-  "finish_step_id": 2,
-  "num_steps": 3
-}
