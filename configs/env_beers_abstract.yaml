@@ -1,0 +1,65 @@
+environment:
+  target_variable: absorbance
+
+  variables:
+    concentration:
+      manipulable: true
+      initial_value: 100
+      step_size: 100
+      min_value: null
+      max_value: null
+      description: amount of solute per volume
+
+    path_length:
+      manipulable: true
+      initial_value: 2
+      step_size: 1
+      min_value: null
+      max_value: null
+      description: distance the light travels through the solution
+
+    wavelength:
+      manipulable: true
+      initial_value: 500
+      step_size: 50
+      min_value: null
+      max_value: null
+      description: wavelength of incident light
+
+    transmittance:
+      manipulable: false
+      description: fraction of light transmitted through the solution
+
+    absorbance:
+      manipulable: false
+      description: amount of light absorbed by the solution
+
+  equations:
+    absorbance: "(concentration * path_length) / 200"
+    transmittance: "100 - absorbance"
+
+representation:
+  naming_mode: abstract
+  metadata_level: none
+  name_mapping:
+    concentration: A
+    path_length: B
+    wavelength: C
+    transmittance: Y1
+    absorbance: Y2
+
+actions:
+  action_mode: increase_decrease
+
+evaluation:
+  variable_mapping:
+    A: concentration
+    B: path_length
+    C: wavelength
+    Y1: transmittance
+    Y2: absorbance
+
+noise:
+  enabled: false
+  type: null
+  params: {}
