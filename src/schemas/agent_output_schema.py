@@ -5,10 +5,10 @@ from typing import Any, Dict, Literal, Optional
 
 from src.schemas.action_schema import ActionSpec
 
-# "thought" has been removed as a standalone step type.
-# Reasoning is now a required field present on every step, so a dedicated
-# thought step is redundant and wastes the exploration budget.
-StepType = Literal["hypothesis", "action", "finish"]
+# Two step types only.
+# "hypothesis" has been removed as a standalone step type.
+# Hypotheses are expressed via the optional `hypothesis` field on action steps.
+StepType = Literal["action", "finish"]
 
 
 @dataclass
@@ -16,9 +16,9 @@ class AgentStep:
     """
     Structured single-step output parsed from the model.
 
-    Every step should carry a reasoning field explaining current thinking.
-    hypothesis is optional but can appear on any step, including action steps —
-    the model does not need a separate step just to state a hypothesis.
+    Every step must carry a reasoning field.
+    hypothesis is optional and may appear on any action step — the model does
+    not need to spend a separate step just to state a hypothesis.
     """
 
     step_type: StepType
@@ -31,12 +31,6 @@ class AgentStep:
         if self.reasoning is not None and not self.reasoning.strip():
             raise ValueError("reasoning must be a non-empty string if provided")
 
-        if self.step_type == "hypothesis":
-            if self.hypothesis is None or not self.hypothesis.strip():
-                raise ValueError(
-                    "hypothesis must be provided when step_type='hypothesis'"
-                )
-
         if self.step_type == "action" and self.action is None:
             raise ValueError("action must be provided when step_type='action'")
 
@@ -45,6 +39,8 @@ class AgentStep:
                 raise ValueError(
                     "final_equation must be provided when step_type='finish'"
                 )
+            if self.action is not None:
+                raise ValueError("action must be null when step_type='finish'")
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)

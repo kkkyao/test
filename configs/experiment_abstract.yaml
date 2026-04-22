@@ -1,6 +1,6 @@
 experiment:
   name: beers_text_abstract
-  max_steps: 10
+  max_steps: 100
   history_window: null
   auto_evaluate: false
 
