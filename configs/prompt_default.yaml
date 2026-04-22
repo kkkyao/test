@@ -1,61 +1,53 @@
 prompt:
 
-  # ── System intro ─────────────────────────────────────────────────────────────
+  # ── System intro ──────────────────────────────────────────────────────────
   system_intro: "You are interacting with a scientific environment."
 
-  # ── Task description ──────────────────────────────────────────────────────────
-  # {target_variable} is substituted at build time.
+  # ── Task description ──────────────────────────────────────────────────────
   task_template: "Your goal is to discover the relationship governing {target_variable}."
 
-  # ── Exploration instructions ──────────────────────────────────────────────────
-  # {max_steps} is substituted at build time.
+  # ── Exploration instructions ──────────────────────────────────────────────
   exploration_lines:
     - "Explore the environment step by step."
     - "At each step, briefly reason about what you have observed so far and what you want to test next."
     - "Stop only when you are confident enough to output the final equation."
     - "You may take up to {max_steps} steps in total."
 
-  # ── Step type descriptions ────────────────────────────────────────────────────
-  # "thought" has been removed. reasoning is always expected as a field,
-  # so a dedicated thought step is not needed.
-  # hypothesis can appear alongside action in the same step.
+  # ── Step type descriptions ────────────────────────────────────────────────
+  # Only two step types: action and finish.
+  # Hypothesis is NOT a step type — it is an optional field on action steps.
   step_type_descriptions:
-    hypothesis: "state your current hypothesis about how the variables are related; can be combined with an action in the same step"
-    action: "choose exactly one valid action to change the environment; always include reasoning, and optionally include a hypothesis"
-    finish: "stop exploring and provide your final equation or relationship"
+    action: "choose exactly one valid action to change the environment; always include reasoning; optionally include a hypothesis string"
+    finish: "stop exploring and submit your final equation; action must be null"
 
-  # ── Protocol rules ────────────────────────────────────────────────────────────
+  # ── Protocol rules ────────────────────────────────────────────────────────
   rules:
-    - "At each step, return exactly one step_type."
-    - "Always include a reasoning field explaining your current thinking, regardless of step_type."
-    - "If step_type is 'action', you must include a valid action; you may also include a hypothesis in the same step."
-    - "If step_type is 'hypothesis', you must include a non-empty hypothesis; no action is taken this step."
-    - "If step_type is 'finish', you must provide a non-empty final_equation; no action is taken."
-    - "'finish' is a step_type value, not an action_type value."
-    - "Return only a valid JSON object — no prose, no markdown fences."
-    - "Do not include any text outside the JSON object."
+    - "At each step, return exactly one step_type: 'action' or 'finish'."
+    - "Always include a non-empty reasoning field, regardless of step_type."
+    - "When step_type is 'action', include a valid action object and set final_equation to null."
+    - "Valid action_type values in this environment are 'increase' or 'decrease' only."
+    - "For action_type 'increase' or 'decrease', value must always be null — the step size is fixed by the environment and shown in the observation."
+    - "You may optionally include a hypothesis string alongside an action to record your current belief."
+    - "When step_type is 'finish', action must be null and final_equation must be a non-empty string."
+    - "Return only a valid JSON object — no prose, no markdown fences, no text outside the JSON."
 
-  # ── Output format ─────────────────────────────────────────────────────────────
+  # ── Output format ─────────────────────────────────────────────────────────
   output_format_header: "Return a JSON object with exactly this structure:"
 
-  # reasoning is always expected.
-  # hypothesis is optional on any step; required only when step_type='hypothesis'.
-  # action is required when step_type='action', null otherwise.
-  # final_equation is required when step_type='finish', null otherwise.
   output_format_schema: |
     {
-      "step_type": "hypothesis | action | finish",
+      "step_type": "action | finish",
       "reasoning": "string — always provide this",
-      "hypothesis": "string or null",
+      "hypothesis": "string or null — optional belief, can accompany any action",
       "action": {
-        "action_type": "increase | decrease | set",
+        "action_type": "increase | decrease",
         "variable": "string",
-        "value": "number or null"
+        "value": null
       } or null,
       "final_equation": "string or null"
     }
 
-  # ── Section headers ───────────────────────────────────────────────────────────
+  # ── Section headers ───────────────────────────────────────────────────────
   section_headers:
     step_types: "Allowed step types:"
     rules: "Rules:"
@@ -63,11 +55,7 @@ prompt:
     history: "History:"
     output_format: "Output format:"
 
-  # ── History entry labels ──────────────────────────────────────────────────────
-  # Notes:
-  #   - final_equation is intentionally omitted: finish ends the episode
-  #     immediately so no subsequent step ever reads it from history.
-  #   - visible_state_before / visible_state_after are only shown for action steps.
+  # ── History entry labels ──────────────────────────────────────────────────
   history_labels:
     empty: "None"
     step_prefix: "Step {step_id}:"

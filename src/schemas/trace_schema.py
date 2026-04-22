@@ -11,14 +11,12 @@ class TraceStep:
     """
     Full trajectory record for a single step in an episode.
 
-    step_type mirrors AgentStep.step_type and is one of:
-        "hypothesis" — model stated a hypothesis (no environment change)
-        "action"     — model took an action (environment updated)
-        "finish"     — model submitted final equation (episode ends)
+    step_type is one of:
+        "action"  — model took an action (environment updated)
+        "finish"  — model submitted final equation (episode ends)
 
-    "thought" has been removed: reasoning is always captured in the
-    reasoning field regardless of step type, so a dedicated thought step
-    type is no longer needed.
+    hypothesis_text may be present on any action step as an optional
+    accompanying belief; it is no longer a step type of its own.
     """
 
     step_id: int
@@ -30,7 +28,7 @@ class TraceStep:
     observation_after: Optional[Dict[str, Any]] = None
     state_before: Optional[Dict[str, Any]] = None
     state_after: Optional[Dict[str, Any]] = None
-    hypothesis_text: Optional[str] = None
+    hypothesis_text: Optional[str] = None   # optional on action steps
     final_equation: Optional[str] = None
     prompt: Optional[str] = None
     done: bool = False
@@ -42,18 +40,13 @@ class TraceStep:
         if not isinstance(self.raw_model_output, str) or not self.raw_model_output.strip():
             raise ValueError("raw_model_output must be a non-empty string")
 
-        if self.step_type == "hypothesis" and not self.hypothesis_text:
-            raise ValueError(
-                "hypothesis_text must be provided when step_type='hypothesis'"
-            )
-
-        if self.step_type == "finish" and not self.final_equation:
-            raise ValueError(
-                "final_equation must be provided when step_type='finish'"
-            )
-
-        if self.step_type == "finish" and not self.done:
-            raise ValueError("done must be True when step_type='finish'")
+        if self.step_type == "finish":
+            if not self.final_equation:
+                raise ValueError(
+                    "final_equation must be provided when step_type='finish'"
+                )
+            if not self.done:
+                raise ValueError("done must be True when step_type='finish'")
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)

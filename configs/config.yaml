@@ -1,4 +1,11 @@
+# Main config — points to sub-config files.
+# Override env_config or model_config at the command line:
+#
+#   python run_episode.py --env_config configs/env_beers_abstract.yaml
+#   python run_episode.py --model_config configs/model_qwen3_4b.yaml
+#   python run_episode.py --env_config configs/env_beers_abstract.yaml --model_config configs/model_qwen3_4b.yaml
+
 experiment_config: experiment_default.yaml
-env_config: env_beers_concrete.yaml
-model_config: Qwen2.5 3b.yaml
-prompt_config: prompt_default.yaml
+env_config:        env_beers_concrete.yaml
+model_config:      model_mock.yaml
+prompt_config:     prompt_default.yaml

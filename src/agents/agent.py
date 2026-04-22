@@ -7,7 +7,7 @@ from typing import Callable
 from src.schemas.action_schema import ActionSpec
 from src.schemas.agent_output_schema import AgentStep
 
-_VALID_STEP_TYPES = {"hypothesis", "action", "finish"}
+_VALID_STEP_TYPES = {"action", "finish"}
 
 
 class TextLLMAgent:
@@ -44,10 +44,8 @@ class TextLLMAgent:
 
     def _generate(self, prompt: str) -> str:
         raw_output = self.model_callable(prompt)
-
         if not isinstance(raw_output, str):
             raise ValueError("model_callable must return a string")
-
         return raw_output
 
     def _parse_output(self, raw_text: str) -> AgentStep:
@@ -64,10 +62,9 @@ class TextLLMAgent:
         if "step_type" not in data:
             raise ValueError("model output JSON must contain 'step_type'")
 
-        if not isinstance(data["step_type"], str):
-            raise ValueError("'step_type' must be a string")
-
         step_type = data["step_type"]
+        if not isinstance(step_type, str):
+            raise ValueError("'step_type' must be a string")
 
         if step_type not in _VALID_STEP_TYPES:
             raise ValueError(
@@ -80,15 +77,18 @@ class TextLLMAgent:
         if not isinstance(reasoning, str) or not reasoning.strip():
             raise ValueError("'reasoning' must be a non-empty string on every step")
 
-        # step_type-specific constraints
+        # finish: must have final_equation, must not have action
+        if step_type == "finish":
+            if not data.get("final_equation"):
+                raise ValueError("'final_equation' must be non-empty when step_type='finish'")
+            if data.get("action") is not None:
+                raise ValueError("'action' must be null when step_type='finish'")
+
+        # action: must have action object
         if step_type == "action" and data.get("action") is None:
             raise ValueError("'action' must be provided when step_type='action'")
 
-        if step_type in {"hypothesis", "finish"} and data.get("action") is not None:
-            raise ValueError(
-                f"'action' must be null when step_type='{step_type}'"
-            )
-
+        # parse action
         action = None
         if data.get("action") is not None:
             if not isinstance(data["action"], dict):
@@ -98,20 +98,24 @@ class TextLLMAgent:
 
             if "action_type" not in action_data:
                 raise ValueError("'action.action_type' is required when action is provided")
-
             if "variable" not in action_data:
                 raise ValueError("'action.variable' is required when action is provided")
 
             action = ActionSpec(
-                action_type=action_data.get("action_type"),
-                variable=action_data.get("variable"),
+                action_type=action_data["action_type"],
+                variable=action_data["variable"],
                 value=action_data.get("value"),
             )
+
+        # hypothesis is optional on any step — light validation only
+        hypothesis = data.get("hypothesis")
+        if hypothesis is not None and not isinstance(hypothesis, str):
+            raise ValueError("'hypothesis' must be a string or null")
 
         return AgentStep(
             step_type=step_type,
             reasoning=reasoning,
-            hypothesis=data.get("hypothesis"),
+            hypothesis=hypothesis if hypothesis else None,
             action=action,
             final_equation=data.get("final_equation"),
         )
@@ -120,22 +124,17 @@ class TextLLMAgent:
         """
         Extract a JSON object from model output.
 
-        Handles common real-model output patterns:
+        Handles:
         - Pure JSON
         - JSON wrapped in ```json ... ``` fences
-        - Prose before/after a fenced JSON block
-        - Prose before/after a bare JSON object
-
-        Strategy: find the first '{' and the matching closing '}', then
-        verify the extracted substring parses as valid JSON. Falls back
-        to returning the stripped text if no braces are found.
+        - Prose before/after a fenced or bare JSON block
         """
         text = raw_text.strip()
 
         if not self.strip_markdown_fences:
             return text
 
-        # 1. Try to extract from a fenced block first (```json ... ```)
+        # 1. Try fenced block first
         fence_match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
         if fence_match:
             candidate = fence_match.group(1).strip()
@@ -145,10 +144,10 @@ class TextLLMAgent:
             except json.JSONDecodeError:
                 pass
 
-        # 2. Find the first '{' and walk to the matching '}'
+        # 2. Find first '{' and walk to matching '}'
         start = text.find("{")
         if start == -1:
-            return text  # no JSON object found; let caller handle the error
+            return text
 
         depth = 0
         in_string = False
@@ -171,11 +170,11 @@ class TextLLMAgent:
             elif ch == "}":
                 depth -= 1
                 if depth == 0:
-                    candidate = text[start : i + 1]
+                    candidate = text[start: i + 1]
                     try:
                         json.loads(candidate)
                         return candidate
                     except json.JSONDecodeError:
-                        break  # malformed; fall through to returning stripped text
+                        break
 
         return text

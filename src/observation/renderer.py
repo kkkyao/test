@@ -53,9 +53,7 @@ class TextRenderer:
         self._reverse_name_mapping = {v: k for k, v in self.name_mapping.items()}
 
     def render(self, state: Dict[str, Any]) -> Observation:
-        """
-        Render the current state into a text Observation.
-        """
+        """Render the current state into a text Observation."""
         if not isinstance(state, dict):
             raise ValueError("state must be a dictionary")
 
@@ -83,25 +81,17 @@ class TextRenderer:
         )
 
     def to_internal_variable(self, display_name: str) -> str:
-        """
-        Translate a display variable name back to the internal (env) name.
-
-        In concrete mode this is an identity operation.
-        In abstract mode it maps e.g. "A" -> "concentration".
-        Returns the input unchanged if no mapping is found.
-        """
+        """Translate display name back to internal env name."""
         return self._reverse_name_mapping.get(display_name, display_name)
 
     def _build_visible_state(self, state: Dict[str, Any]) -> Dict[str, Any]:
-        visible_state: Dict[str, Any] = {}
-
-        for variable, value in state.items():
-            display_name = self._display_name(variable)
-            visible_state[display_name] = value
-
-        return visible_state
+        return {self._display_name(var): val for var, val in state.items()}
 
     def _build_available_actions(self) -> List[Dict[str, Any]]:
+        """
+        Build the action list. For increase_decrease mode, include step_size
+        so the model knows the exact magnitude of each action.
+        """
         actions: List[Dict[str, Any]] = []
 
         for variable, cfg in self.variables.items():
@@ -111,9 +101,18 @@ class TextRenderer:
             display_name = self._display_name(variable)
 
             if self.action_mode == "increase_decrease":
-                actions.append({"action_type": "increase", "variable": display_name})
-                actions.append({"action_type": "decrease", "variable": display_name})
-            else:
+                step_size = cfg.get("step_size")
+                actions.append({
+                    "action_type": "increase",
+                    "variable": display_name,
+                    "step_size": step_size,
+                })
+                actions.append({
+                    "action_type": "decrease",
+                    "variable": display_name,
+                    "step_size": step_size,
+                })
+            else:  # set_value
                 actions.append({"action_type": "set", "variable": display_name})
 
         return actions
@@ -135,7 +134,15 @@ class TextRenderer:
                 internal_name = self._internal_name(display_name)
                 cfg = self.variables.get(internal_name, {})
                 description = cfg.get("description", "No description available.")
-                lines.append(f"{display_name}: {description}")
+                # Show step_size for manipulable variables in increase_decrease mode
+                if cfg.get("manipulable") and self.action_mode == "increase_decrease":
+                    step_size = cfg.get("step_size")
+                    if step_size is not None:
+                        lines.append(f"{display_name}: {description} (step size: {step_size})")
+                    else:
+                        lines.append(f"{display_name}: {description}")
+                else:
+                    lines.append(f"{display_name}: {description}")
 
         elif self.metadata_level == "minimal":
             lines.append("")
@@ -146,10 +153,17 @@ class TextRenderer:
         lines.append("Available actions:")
 
         for action in available_actions:
-            if action["action_type"] == "set":
-                lines.append(f"- set {action['variable']} to <value>")
+            action_type = action["action_type"]
+            variable = action["variable"]
+
+            if action_type == "set":
+                lines.append(f"- set {variable} to <value>")
             else:
-                lines.append(f"- {action['action_type']} {action['variable']}")
+                step_size = action.get("step_size")
+                if step_size is not None:
+                    lines.append(f"- {action_type} {variable}  [±{step_size}]")
+                else:
+                    lines.append(f"- {action_type} {variable}")
 
         return "\n".join(lines)
 
