@@ -6,6 +6,7 @@ from typing import Any, Callable, Dict
 
 from src.agents.agent import TextLLMAgent
 from src.envs.env import EquationEnv
+from src.evaluation.evaluator import EpisodeEvaluator
 from src.observation.renderer import TextRenderer
 from src.prompts.prompt_builder import PromptBuilder
 from src.runners.runner import EpisodeRunner
@@ -18,12 +19,15 @@ def build_model_callable(agent_config: Dict[str, Any]) -> Callable[[str], str]:
     Build a model callable from agent config.
 
     Supported backends:
-    - mock: multi-step placeholder for pipeline testing
-    - others: raise NotImplementedError
+    - mock: multi-step placeholder for pipeline testing (single-run only)
+    - hf_qwen: local Hugging Face Qwen inference
     """
     backend = agent_config.get("backend", "mock")
 
     if backend == "mock":
+        # NOTE: mock uses a call counter that persists across episodes.
+        # It is intended for single-run pipeline testing only.
+        # Use hf_qwen backend for multi-run experiments.
         call_count = 0
 
         def mock_model(prompt: str) -> str:
@@ -68,54 +72,136 @@ def build_model_callable(agent_config: Dict[str, Any]) -> Callable[[str], str]:
 
         return mock_model
 
+    if backend == "hf_qwen":
+        # Lazy import: only needed for hf_qwen backend.
+        import torch
+        from transformers import AutoModelForCausalLM, AutoTokenizer
+
+        model_name = agent_config.get("model_name")
+        if not isinstance(model_name, str) or not model_name.strip():
+            raise ValueError(
+                "agent.model_name must be provided as a non-empty string "
+                "when backend='hf_qwen'"
+            )
+
+        generation_cfg = agent_config.get("generation", {})
+        if not isinstance(generation_cfg, dict):
+            raise ValueError("agent.generation must be a dictionary if provided")
+
+        max_new_tokens = int(generation_cfg.get("max_new_tokens", 512))
+        temperature    = float(generation_cfg.get("temperature", 0.7))
+        top_p          = float(generation_cfg.get("top_p", 0.8))
+        top_k          = int(generation_cfg.get("top_k", 20))       # ← added
+        do_sample      = bool(generation_cfg.get("do_sample", temperature > 0.0))
+
+        device_map         = agent_config.get("device_map", "auto")
+        torch_dtype_cfg    = str(agent_config.get("torch_dtype", "auto")).lower()
+        trust_remote_code  = bool(agent_config.get("trust_remote_code", True))
+
+        if torch_dtype_cfg == "auto":
+            torch_dtype: Any = "auto"
+        elif torch_dtype_cfg == "float16":
+            torch_dtype = torch.float16
+        elif torch_dtype_cfg == "bfloat16":
+            torch_dtype = torch.bfloat16
+        elif torch_dtype_cfg == "float32":
+            torch_dtype = torch.float32
+        else:
+            raise ValueError(
+                "agent.torch_dtype must be one of: "
+                "'auto', 'float16', 'bfloat16', 'float32'"
+            )
+
+        tokenizer = AutoTokenizer.from_pretrained(
+            model_name,
+            trust_remote_code=trust_remote_code,
+        )
+
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            torch_dtype=torch_dtype,
+            device_map=device_map,
+            trust_remote_code=trust_remote_code,
+        )
+        model.eval()
+
+        def hf_qwen_model(prompt: str) -> str:
+            if not isinstance(prompt, str) or not prompt.strip():
+                raise ValueError("prompt must be a non-empty string")
+
+            messages = [{"role": "user", "content": prompt}]
+
+            rendered_text = tokenizer.apply_chat_template(
+                messages,
+                tokenize=False,
+                add_generation_prompt=True,
+            )
+
+            inputs = tokenizer(rendered_text, return_tensors="pt")
+
+            if hasattr(model, "device"):
+                inputs = {k: v.to(model.device) for k, v in inputs.items()}
+
+            with torch.no_grad():
+                outputs = model.generate(
+                    **inputs,
+                    max_new_tokens=max_new_tokens,
+                    temperature=temperature,
+                    top_p=top_p,
+                    top_k=top_k,                     # ← added
+                    do_sample=do_sample,
+                    pad_token_id=tokenizer.eos_token_id,
+                )
+
+            prompt_length = inputs["input_ids"].shape[1]
+            generated_ids = outputs[0][prompt_length:]
+            generated_text = tokenizer.decode(
+                generated_ids,
+                skip_special_tokens=True,
+            ).strip()
+
+            return generated_text
+
+        return hf_qwen_model
+
     raise NotImplementedError(
         f"Unsupported backend '{backend}'. "
-        "Replace build_model_callable() with a real model backend."
+        "Supported backends are: 'mock', 'hf_qwen'."
     )
 
 
 def main(config_path: str) -> None:
     config = load_config(config_path)
 
-    experiment_cfg = config["experiment"]
-    environment_cfg = config["environment"]
-    actions_cfg = config["actions"]
-    agent_cfg = config["agent"]
+    experiment_cfg     = config["experiment"]
+    environment_cfg    = config["environment"]
+    actions_cfg        = config["actions"]
+    agent_cfg          = config["agent"]
     representation_cfg = config.get("representation", {})
-    logging_cfg = config.get("logging", {})
+    logging_cfg        = config.get("logging", {})
+    evaluation_cfg     = config.get("evaluation", {})
 
-    target_variable = environment_cfg["target_variable"]
-    variables = environment_cfg["variables"]
-    equations = environment_cfg["equations"]
-    action_mode = actions_cfg["action_mode"]
-    max_steps = experiment_cfg["max_steps"]
+    target_variable  = environment_cfg["target_variable"]
+    variables        = environment_cfg["variables"]
+    equations        = environment_cfg["equations"]
+    action_mode      = actions_cfg["action_mode"]
+    max_steps        = experiment_cfg["max_steps"]
+    auto_evaluate    = experiment_cfg.get("auto_evaluate", False)
+    naming_mode      = representation_cfg.get("naming_mode", "concrete")
+    metadata_level   = representation_cfg.get("metadata_level", "minimal")
+    name_mapping     = representation_cfg.get("name_mapping", {})
+
+    output_dir           = logging_cfg.get("output_dir", "outputs/default_run")
+    save_steps           = logging_cfg.get("save_steps", True)
+    save_trajectory      = logging_cfg.get("save_trajectory", True)
+    save_interaction_log = logging_cfg.get("save_interaction_log", True)
 
     if target_variable not in equations:
         raise ValueError(
             f"target_variable '{target_variable}' must exist in environment.equations"
         )
 
-    naming_mode = representation_cfg.get("naming_mode", "concrete")
-    metadata_level = representation_cfg.get("metadata_level", "minimal")
-    name_mapping = representation_cfg.get("name_mapping", {})
-
-    display_target_variable = (
-        name_mapping.get(target_variable, target_variable)
-        if naming_mode == "abstract"
-        else target_variable
-    )
-
-    output_dir = logging_cfg.get("output_dir", "outputs/default_run")
-    save_steps = logging_cfg.get("save_steps", True)
-    save_trajectory = logging_cfg.get("save_trajectory", True)
-    save_interaction_log = logging_cfg.get("save_interaction_log", True)
-
-    env = EquationEnv(
-        variables=variables,
-        equations=equations,
-        action_mode=action_mode,
-    )
-
+    env = EquationEnv(variables=variables, equations=equations, action_mode=action_mode)
     renderer = TextRenderer(
         variables=variables,
         action_mode=action_mode,
@@ -124,17 +210,15 @@ def main(config_path: str) -> None:
         metadata_level=metadata_level,
         name_mapping=name_mapping,
     )
-
     prompt_builder = PromptBuilder(
-        target_variable=display_target_variable,
+        prompt_config=config["prompt"],
+        target_variable=target_variable,
         max_steps=max_steps,
         include_history=True,
         history_window=experiment_cfg.get("history_window"),
     )
-
     model_callable = build_model_callable(agent_cfg)
     agent = TextLLMAgent(model_callable=model_callable)
-
     runner = EpisodeRunner(
         env=env,
         renderer=renderer,
@@ -142,7 +226,6 @@ def main(config_path: str) -> None:
         agent=agent,
         max_steps=max_steps,
     )
-
     logger = EpisodeLogger(
         output_dir=output_dir,
         save_steps=save_steps,
@@ -151,14 +234,31 @@ def main(config_path: str) -> None:
     )
 
     result = runner.run_episode()
-    saved_paths = logger.save_episode(result)
+
+    evaluation = None
+    if auto_evaluate:
+        ground_truth     = equations[target_variable]
+        variable_mapping = evaluation_cfg.get("variable_mapping")
+        evaluator = EpisodeEvaluator(
+            ground_truth_equation=ground_truth,
+            variable_mapping=variable_mapping,
+        )
+        evaluation = evaluator.evaluate(result)
+
+    saved_paths = logger.save_episode(result, evaluation=evaluation)
 
     print("\n=== Episode finished ===")
-    print(f"Config: {config_path}")
+    print(f"Config:          {config_path}")
     print(f"Target variable: {target_variable}")
-    print(f"Finish reached: {result.get('finish_reached')}")
-    print(f"Total steps: {result.get('num_steps')}")
-    print(f"Final equation: {result.get('final_equation')}")
+    print(f"Finish reached:  {result.get('finish_reached')}")
+    print(f"Total steps:     {result.get('num_steps')}")
+    print(f"Final equation:  {result.get('final_equation')}")
+
+    if evaluation is not None:
+        print("\n=== Evaluation ===")
+        print(f"Success:            {evaluation.get('success')}")
+        print(f"Equation correct:   {evaluation.get('equation_correct')}")
+        print(f"Termination reason: {evaluation.get('termination_reason')}")
 
     print("\nSaved files:")
     for name, path in saved_paths.items():
@@ -176,5 +276,4 @@ if __name__ == "__main__":
         help="Path to the main config YAML file.",
     )
     args = parser.parse_args()
-
     main(args.config)

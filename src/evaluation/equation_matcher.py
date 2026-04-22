@@ -4,6 +4,14 @@ import re
 from typing import Dict, Optional, Tuple
 
 import sympy as sp
+from sympy.parsing.sympy_parser import (
+    parse_expr,
+    standard_transformations,
+    implicit_multiplication_application,
+)
+
+# Allows "2x" to be parsed as "2*x", which models sometimes write.
+_TRANSFORMATIONS = standard_transformations + (implicit_multiplication_application,)
 
 
 class EquationMatcher:
@@ -11,8 +19,8 @@ class EquationMatcher:
     Compare predicted equations against ground-truth equations.
 
     Supports:
-    - algebraic equivalence
-    - optional variable-name mapping
+    - algebraic equivalence via SymPy
+    - optional variable-name mapping (abstract -> concrete)
     """
 
     def __init__(self, variable_mapping: Optional[Dict[str, str]] = None) -> None:
@@ -23,7 +31,12 @@ class EquationMatcher:
 
     def match(self, predicted: str, ground_truth: str) -> bool:
         """
-        Return True if the predicted equation is equivalent to the ground-truth equation.
+        Return True if the predicted equation is algebraically equivalent
+        to the ground-truth equation.
+
+        Both sides of "lhs = rhs" are converted to a single expression
+        (lhs - rhs) before comparison, so equations written with lhs and
+        rhs swapped are still recognised as equivalent.
         """
         if not isinstance(predicted, str) or not predicted.strip():
             return False
@@ -32,65 +45,82 @@ class EquationMatcher:
             return False
 
         try:
-            pred_lhs, pred_rhs = self._normalize_equation(predicted, apply_mapping=True)
-            gt_lhs, gt_rhs = self._normalize_equation(ground_truth, apply_mapping=False)
+            predicted_mapped = self._apply_variable_mapping(predicted)
 
-            if pred_lhs is not None and gt_lhs is not None:
-                if pred_lhs != gt_lhs:
-                    return False
+            pred_expr = self._equation_to_expr(predicted_mapped)
+            gt_expr   = self._equation_to_expr(ground_truth)
 
-            return self._expressions_equivalent(pred_rhs, gt_rhs)
+            if pred_expr is None or gt_expr is None:
+                return False
+
+            return self._expressions_equivalent(pred_expr, gt_expr)
 
         except Exception:
             return False
 
-    def _normalize_equation(
-        self,
-        equation: str,
-        apply_mapping: bool,
-    ) -> Tuple[Optional[str], str]:
-        """
-        Normalize an equation into (lhs, rhs).
-
-        If no '=' is present, lhs is None and the whole string is treated as rhs.
-        """
-        text = equation.strip()
-
-        if apply_mapping:
-            text = self._apply_variable_mapping(text)
-
-        if "=" in text:
-            lhs, rhs = text.split("=", 1)
-            lhs = lhs.strip()
-            rhs = rhs.strip()
-            if not rhs:
-                raise ValueError(f"invalid equation with empty rhs: '{equation}'")
-            if not lhs:
-                raise ValueError(f"invalid equation with empty lhs: '{equation}'")
-            return lhs, rhs
-
-        if not text:
-            raise ValueError("equation must be a non-empty string")
-
-        return None, text
-
     def _apply_variable_mapping(self, text: str) -> str:
         """
         Replace predicted variable names with ground-truth variable names.
-        Uses word boundaries to avoid partial replacements.
+
+        Keys are applied longest-first to prevent a short key (e.g. "A")
+        from partially replacing a longer one (e.g. "AB") before it gets
+        a chance to be substituted.
+
+        Uses word boundaries to avoid replacing substrings inside longer words.
         """
         mapped_text = text
 
-        for source, target in self.variable_mapping.items():
+        sorted_items = sorted(
+            self.variable_mapping.items(),
+            key=lambda kv: -len(kv[0]),
+        )
+
+        for source, target in sorted_items:
             pattern = rf"\b{re.escape(source)}\b"
             mapped_text = re.sub(pattern, target, mapped_text)
 
         return mapped_text
 
-    def _expressions_equivalent(self, expr1: str, expr2: str) -> bool:
+    def _equation_to_expr(self, equation: str) -> Optional[sp.Expr]:
         """
-        Check whether two expressions are algebraically equivalent using sympy.
+        Parse an equation string into a single SymPy expression.
+
+        "lhs = rhs"  →  parse(lhs) - parse(rhs)
+        "expr"       →  parse(expr)
+
+        The lhs - rhs form means side-swapped equations produce negations
+        of each other, which is handled by _expressions_equivalent.
         """
-        sympy_expr1 = sp.sympify(expr1)
-        sympy_expr2 = sp.sympify(expr2)
-        return sp.simplify(sympy_expr1 - sympy_expr2) == 0
+        equation = equation.strip()
+
+        if "=" in equation:
+            lhs_str, rhs_str = equation.split("=", 1)
+            lhs_str = lhs_str.strip()
+            rhs_str = rhs_str.strip()
+            if not lhs_str:
+                raise ValueError(f"invalid equation with empty lhs: '{equation}'")
+            if not rhs_str:
+                raise ValueError(f"invalid equation with empty rhs: '{equation}'")
+            lhs = parse_expr(lhs_str, transformations=_TRANSFORMATIONS)
+            rhs = parse_expr(rhs_str, transformations=_TRANSFORMATIONS)
+            return lhs - rhs
+
+        if not equation:
+            raise ValueError("equation must be a non-empty string")
+        return parse_expr(equation, transformations=_TRANSFORMATIONS)
+
+    @staticmethod
+    def _expressions_equivalent(expr1: sp.Expr, expr2: sp.Expr) -> bool:
+        """
+        Check algebraic equivalence between two SymPy expressions.
+
+        Checks both (expr1 - expr2) and (expr1 + expr2) to handle the case
+        where one equation has its sides swapped, producing a negation.
+        """
+        if sp.simplify(expr1 - expr2) == 0:
+            return True
+
+        if sp.simplify(expr1 + expr2) == 0:
+            return True
+
+        return False

@@ -7,17 +7,30 @@ from src.schemas.observation_schema import Observation
 
 class PromptBuilder:
     """
-    Build the model prompt from task instructions, observation, history,
-    and output format requirements.
+    Assemble the model prompt from config-supplied text and runtime data.
+
+    Responsibilities:
+        - Read all prompt text (system intro, rules, step-type descriptions,
+          output format, section headers) from a prompt config dict.
+        - Substitute runtime values ({target_variable}, {max_steps}) via
+          str.format().
+        - Insert the current observation text and formatted history.
+
+    The builder owns NO hardcoded strings. Every piece of text the model
+    sees must come from the config passed at init time.
     """
 
     def __init__(
         self,
+        prompt_config: Dict[str, Any],
         target_variable: str,
         max_steps: int,
         include_history: bool = True,
         history_window: Optional[int] = None,
     ) -> None:
+        if not isinstance(prompt_config, dict) or not prompt_config:
+            raise ValueError("prompt_config must be a non-empty dictionary")
+
         if not isinstance(target_variable, str) or not target_variable.strip():
             raise ValueError("target_variable must be a non-empty string")
 
@@ -28,10 +41,38 @@ class PromptBuilder:
             if not isinstance(history_window, int) or history_window <= 0:
                 raise ValueError("history_window must be a positive integer or None")
 
+        self._cfg = prompt_config
         self.target_variable = target_variable
         self.max_steps = max_steps
         self.include_history = include_history
         self.history_window = history_window
+
+        self._require_keys(
+            self._cfg,
+            [
+                "system_intro",
+                "task_template",
+                "exploration_lines",
+                "step_type_descriptions",
+                "rules",
+                "output_format_header",
+                "output_format_schema",
+                "section_headers",
+                "history_labels",
+            ],
+        )
+        self._require_keys(
+            self._cfg["section_headers"],
+            ["step_types", "rules", "observation", "history", "output_format"],
+        )
+        self._require_keys(
+            self._cfg["history_labels"],
+            ["empty", "step_prefix", "step_type"],
+        )
+
+    # -------------------------------------------------------------------------
+    # Public API
+    # -------------------------------------------------------------------------
 
     def build_prompt(
         self,
@@ -39,7 +80,7 @@ class PromptBuilder:
         history: Optional[List[Dict[str, Any]]] = None,
     ) -> str:
         """
-        Build the current prompt for the model.
+        Build and return the full prompt string for the current step.
         """
         if not isinstance(observation, Observation):
             raise ValueError("observation must be an Observation instance")
@@ -52,95 +93,116 @@ class PromptBuilder:
             "target_variable", self.target_variable
         )
 
-        history_text = self._format_history(history) if self.include_history else "None"
+        sections: List[str] = []
 
-        sections = [
-            "You are interacting with a scientific environment.",
-            "",
-            f"Your goal is to discover the relationship governing {display_target}.",
-            "Explore the environment step by step.",
-            "Stop only when you are confident enough to output the final equation.",
-            f"You may take up to {self.max_steps} steps in total.",
-            "",
-            "Allowed step types:",
-            "- thought: explain what you are considering next",
-            "- hypothesis: state a current hypothesis about the variable relationship",
-            "- action: choose exactly one valid action from the available actions",
-            "- finish: stop exploring and output the final equation",
-            "",
-            "Rules:",
-            "- At each step, return exactly one step_type.",
-            "- If step_type is action, choose exactly one valid action.",
-            "- If step_type is finish, you must provide final_equation.",
-            "- finish is a step_type, not an action.action_type.",
-            "- Return only valid JSON.",
-            "- Do not include any extra commentary outside the JSON object.",
-            "",
-            "Current observation:",
-            observation.text or "",
-            "",
-            "History:",
-            history_text,
-            "",
-            "Return a JSON object with this format:",
-            "{",
-            '  "step_type": "thought | hypothesis | action | finish",',
-            '  "reasoning": "string or null",',
-            '  "hypothesis": "string or null",',
-            '  "action": {',
-            '    "action_type": "increase | decrease | set",',
-            '    "variable": "string",',
-            '    "value": "number or null"',
-            '  } or null,',
-            '  "final_equation": "string or null"',
-            "}",
-        ]
+        # 1. System intro
+        sections.append(self._cfg["system_intro"])
+
+        # 2. Task + exploration instructions
+        sections.append("")
+        sections.append(
+            self._cfg["task_template"].format(target_variable=display_target)
+        )
+        for line in self._cfg["exploration_lines"]:
+            sections.append(line.format(max_steps=self.max_steps))
+
+        # 3. Allowed step types
+        sections.append("")
+        sections.append(self._cfg["section_headers"]["step_types"])
+        for step_type, description in self._cfg["step_type_descriptions"].items():
+            sections.append(f"- {step_type}: {description}")
+
+        # 4. Rules
+        sections.append("")
+        sections.append(self._cfg["section_headers"]["rules"])
+        for rule in self._cfg["rules"]:
+            sections.append(f"- {rule}")
+
+        # 5. Current observation
+        sections.append("")
+        sections.append(self._cfg["section_headers"]["observation"])
+        sections.append(observation.text or "")
+
+        # 6. History
+        sections.append("")
+        sections.append(self._cfg["section_headers"]["history"])
+        if self.include_history:
+            sections.append(self._format_history(history))
+        else:
+            sections.append(self._cfg["history_labels"]["empty"])
+
+        # 7. Output format
+        sections.append("")
+        sections.append(self._cfg["section_headers"]["output_format"])
+        sections.append(self._cfg["output_format_header"])
+        sections.append(self._cfg["output_format_schema"].rstrip())
 
         return "\n".join(sections)
 
+    # -------------------------------------------------------------------------
+    # Private helpers
+    # -------------------------------------------------------------------------
+
     def _format_history(self, history: List[Dict[str, Any]]) -> str:
         """
-        Convert structured history into a compact text block.
+        Convert history dicts into a compact, labelled text block.
+
+        For action steps:   show step_type, reasoning, action, state before, state after
+        For hypothesis:     show step_type, reasoning, hypothesis text
+        final_equation is not shown — finish always ends the episode immediately
+        so no subsequent step ever reads it from history.
         """
         if not history:
-            return "None"
+            return self._cfg["history_labels"]["empty"]
 
         if self.history_window is not None:
-            history = history[-self.history_window :]
+            history = history[-self.history_window:]
 
+        labels = self._cfg["history_labels"]
         lines: List[str] = []
 
         for item in history:
             if not isinstance(item, dict):
                 raise ValueError("each history item must be a dictionary")
 
-            step_id = item.get("step_id", "?")
+            step_id   = item.get("step_id", "?")
             step_type = item.get("step_type", "?")
+
+            lines.append(labels["step_prefix"].format(step_id=step_id))
+            lines.append(labels["step_type"].format(value=step_type))
+
             reasoning = item.get("reasoning")
-            parsed_action = item.get("parsed_action") or item.get("action")
+            if reasoning and "reasoning" in labels:
+                lines.append(labels["reasoning"].format(value=reasoning))
+
             hypothesis_text = item.get("hypothesis_text") or item.get("hypothesis")
-            final_equation = item.get("final_equation")
-            observation_after = item.get("observation_after")
+            if hypothesis_text and "hypothesis" in labels:
+                lines.append(labels["hypothesis"].format(value=hypothesis_text))
 
-            lines.append(f"Step {step_id}:")
-            lines.append(f"- step_type: {step_type}")
+            if step_type == "action":
+                parsed_action = item.get("parsed_action") or item.get("action")
+                if parsed_action and "action" in labels:
+                    lines.append(
+                        labels["action"].format(
+                            value=self._format_action(parsed_action)
+                        )
+                    )
 
-            if reasoning:
-                lines.append(f"- reasoning: {reasoning}")
+                observation_before = item.get("observation_before")
+                if isinstance(observation_before, dict) and "visible_state_before" in labels:
+                    visible_state = observation_before.get("visible_state")
+                    if visible_state:
+                        lines.append(
+                            labels["visible_state_before"].format(value=visible_state)
+                        )
 
-            if hypothesis_text:
-                lines.append(f"- hypothesis: {hypothesis_text}")
-
-            if parsed_action:
-                lines.append(f"- action: {self._format_action(parsed_action)}")
-
-            if final_equation:
-                lines.append(f"- final_equation: {final_equation}")
-
-            if isinstance(observation_after, dict):
-                visible_state_after = observation_after.get("visible_state")
-                if visible_state_after:
-                    lines.append(f"- visible_state_after: {visible_state_after}")
+                observation_after = item.get("observation_after")
+                if isinstance(observation_after, dict) and "visible_state_after" in labels:
+                    visible_state = observation_after.get("visible_state")
+                    if visible_state:
+                        lines.append(
+                            labels["visible_state_after"].format(value=visible_state)
+                        )
 
             lines.append("")
 
@@ -149,15 +211,14 @@ class PromptBuilder:
     @staticmethod
     def _format_action(action: Any) -> str:
         """
-        Format a parsed action dict into a human-readable string.
-        Falls back to str(action) if the structure is unexpected.
+        Render a parsed action dict into a readable string.
         """
         if not isinstance(action, dict):
             return str(action)
 
         action_type = action.get("action_type", "?")
-        variable = action.get("variable", "?")
-        value = action.get("value")
+        variable    = action.get("variable", "?")
+        value       = action.get("value")
 
         if action_type == "set" and value is not None:
             return f"set {variable} to {value}"
@@ -165,3 +226,11 @@ class PromptBuilder:
             return f"{action_type} {variable}"
 
         return str(action)
+
+    @staticmethod
+    def _require_keys(d: Dict[str, Any], keys: List[str]) -> None:
+        missing = [k for k in keys if k not in d]
+        if missing:
+            raise ValueError(
+                f"prompt_config is missing required keys: {missing}"
+            )

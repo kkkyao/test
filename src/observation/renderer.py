@@ -50,7 +50,7 @@ class TextRenderer:
         self.metadata_level = metadata_level
         self.name_mapping = dict(name_mapping or {})
 
-        self.reverse_name_mapping = {v: k for k, v in self.name_mapping.items()}
+        self._reverse_name_mapping = {v: k for k, v in self.name_mapping.items()}
 
     def render(self, state: Dict[str, Any]) -> Observation:
         """
@@ -81,6 +81,16 @@ class TextRenderer:
             text=text,
             metadata=metadata,
         )
+
+    def to_internal_variable(self, display_name: str) -> str:
+        """
+        Translate a display variable name back to the internal (env) name.
+
+        In concrete mode this is an identity operation.
+        In abstract mode it maps e.g. "A" -> "concentration".
+        Returns the input unchanged if no mapping is found.
+        """
+        return self._reverse_name_mapping.get(display_name, display_name)
 
     def _build_visible_state(self, state: Dict[str, Any]) -> Dict[str, Any]:
         visible_state: Dict[str, Any] = {}
@@ -150,5 +160,5 @@ class TextRenderer:
 
     def _internal_name(self, display_name: str) -> str:
         if self.naming_mode == "abstract":
-            return self.reverse_name_mapping.get(display_name, display_name)
+            return self._reverse_name_mapping.get(display_name, display_name)
         return display_name

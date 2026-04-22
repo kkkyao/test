@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import json
+import re
 from typing import Callable
 
 from src.schemas.action_schema import ActionSpec
 from src.schemas.agent_output_schema import AgentStep
 
-_VALID_STEP_TYPES = {"thought", "hypothesis", "action", "finish"}
+_VALID_STEP_TYPES = {"hypothesis", "action", "finish"}
 
 
 class TextLLMAgent:
@@ -66,10 +67,26 @@ class TextLLMAgent:
         if not isinstance(data["step_type"], str):
             raise ValueError("'step_type' must be a string")
 
-        if data["step_type"] not in _VALID_STEP_TYPES:
+        step_type = data["step_type"]
+
+        if step_type not in _VALID_STEP_TYPES:
             raise ValueError(
-                f"invalid step_type: '{data['step_type']}'. "
+                f"invalid step_type: '{step_type}'. "
                 f"Must be one of: {sorted(_VALID_STEP_TYPES)}"
+            )
+
+        # reasoning is required on every step
+        reasoning = data.get("reasoning")
+        if not isinstance(reasoning, str) or not reasoning.strip():
+            raise ValueError("'reasoning' must be a non-empty string on every step")
+
+        # step_type-specific constraints
+        if step_type == "action" and data.get("action") is None:
+            raise ValueError("'action' must be provided when step_type='action'")
+
+        if step_type in {"hypothesis", "finish"} and data.get("action") is not None:
+            raise ValueError(
+                f"'action' must be null when step_type='{step_type}'"
             )
 
         action = None
@@ -92,33 +109,73 @@ class TextLLMAgent:
             )
 
         return AgentStep(
-            step_type=data.get("step_type"),
-            reasoning=data.get("reasoning"),
+            step_type=step_type,
+            reasoning=reasoning,
             hypothesis=data.get("hypothesis"),
             action=action,
             final_equation=data.get("final_equation"),
         )
 
     def _clean_output(self, raw_text: str) -> str:
-        cleaned = raw_text.strip()
+        """
+        Extract a JSON object from model output.
+
+        Handles common real-model output patterns:
+        - Pure JSON
+        - JSON wrapped in ```json ... ``` fences
+        - Prose before/after a fenced JSON block
+        - Prose before/after a bare JSON object
+
+        Strategy: find the first '{' and the matching closing '}', then
+        verify the extracted substring parses as valid JSON. Falls back
+        to returning the stripped text if no braces are found.
+        """
+        text = raw_text.strip()
 
         if not self.strip_markdown_fences:
-            return cleaned
+            return text
 
-        if "```" in cleaned:
-            parts = cleaned.split("```")
-            if len(parts) >= 3:
-                candidate = parts[1].strip()
-                if candidate.startswith("json"):
-                    candidate = candidate[len("json"):].strip()
+        # 1. Try to extract from a fenced block first (```json ... ```)
+        fence_match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
+        if fence_match:
+            candidate = fence_match.group(1).strip()
+            try:
+                json.loads(candidate)
                 return candidate
+            except json.JSONDecodeError:
+                pass
 
-        if cleaned.startswith("```json"):
-            cleaned = cleaned[len("```json"):].strip()
-        elif cleaned.startswith("```"):
-            cleaned = cleaned[len("```"):].strip()
+        # 2. Find the first '{' and walk to the matching '}'
+        start = text.find("{")
+        if start == -1:
+            return text  # no JSON object found; let caller handle the error
 
-        if cleaned.endswith("```"):
-            cleaned = cleaned[:-3].strip()
+        depth = 0
+        in_string = False
+        escape_next = False
 
-        return cleaned
+        for i, ch in enumerate(text[start:], start):
+            if escape_next:
+                escape_next = False
+                continue
+            if ch == "\\" and in_string:
+                escape_next = True
+                continue
+            if ch == '"':
+                in_string = not in_string
+                continue
+            if in_string:
+                continue
+            if ch == "{":
+                depth += 1
+            elif ch == "}":
+                depth -= 1
+                if depth == 0:
+                    candidate = text[start : i + 1]
+                    try:
+                        json.loads(candidate)
+                        return candidate
+                    except json.JSONDecodeError:
+                        break  # malformed; fall through to returning stripped text
+
+        return text

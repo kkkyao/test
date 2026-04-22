@@ -35,11 +35,13 @@ class EquationEnv:
                 raise ValueError(f"variable config for '{variable}' must be a dictionary")
 
         equation_targets = set(equations.keys())
-        variable_names = set(self.variables.keys())
-        conflicts = equation_targets & variable_names
+        manipulable_names = {
+            k for k, v in self.variables.items() if v.get("manipulable", False)
+        }
+        conflicts = equation_targets & manipulable_names
         if conflicts:
             raise ValueError(
-                f"equation targets must not overlap with variable definitions: {sorted(conflicts)}"
+                f"equation targets must not overlap with manipulable variable definitions: {sorted(conflicts)}"
             )
 
         for variable, cfg in self.variables.items():

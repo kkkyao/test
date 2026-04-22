@@ -3,3 +3,4 @@ sympy
 transformers
 accelerate
 sentencepiece
+wandb

@@ -6,6 +6,7 @@ from src.agents.agent import TextLLMAgent
 from src.envs.env import EquationEnv
 from src.observation.renderer import TextRenderer
 from src.prompts.prompt_builder import PromptBuilder
+from src.schemas.action_schema import ActionSpec
 from src.schemas.trace_schema import TraceStep
 
 
@@ -35,6 +36,18 @@ class EpisodeRunner:
     def run_episode(self) -> Dict[str, Any]:
         """
         Run a single episode and return structured results.
+
+        Returns
+        -------
+        dict with keys:
+            steps            : lightweight per-step view
+            trajectory       : full TraceStep dicts
+            final_equation   : equation submitted by model, or None
+            finish_reached   : whether model emitted finish
+            finish_step_id   : step index of finish, or None
+            num_steps        : total steps executed
+            parse_error      : error message string if agent.act() raised
+                               ValueError, otherwise None
         """
         initial_state = self.env.reset()
         observation = self.renderer.render(initial_state)
@@ -45,6 +58,7 @@ class EpisodeRunner:
         finish_reached = False
         finish_step_id: Optional[int] = None
         final_equation: Optional[str] = None
+        parse_error: Optional[str] = None
 
         for step_id in range(self.max_steps):
             state_before = self.env.get_state()
@@ -55,10 +69,17 @@ class EpisodeRunner:
                 history=history_for_prompt,
             )
 
-            agent_step, raw_output = self.agent.act(prompt)
+            try:
+                agent_step, raw_output = self.agent.act(prompt)
+            except ValueError as exc:
+                parse_error = str(exc)
+                break
 
             if agent_step.step_type == "action":
-                state_after = self.env.step(agent_step.action)
+                # In abstract naming mode the model uses display names (A, B, C).
+                # Use renderer's public interface to translate back to internal names.
+                env_action = self._translate_action(agent_step.action)
+                state_after = self.env.step(env_action)
                 observation = self.renderer.render(state_after)
                 observation_after = observation.to_dict()
                 done = False
@@ -71,7 +92,7 @@ class EpisodeRunner:
                 finish_step_id = step_id
                 final_equation = agent_step.final_equation
 
-            else:  # thought or hypothesis
+            else:  # hypothesis
                 state_after = state_before
                 observation_after = observation_before
                 done = False
@@ -81,6 +102,7 @@ class EpisodeRunner:
                 step_type=agent_step.step_type,
                 raw_model_output=raw_output,
                 reasoning=agent_step.reasoning,
+                # Store original display-name action for logging.
                 parsed_action=agent_step.action.to_dict() if agent_step.action else None,
                 observation_before=observation_before,
                 observation_after=observation_after,
@@ -107,7 +129,25 @@ class EpisodeRunner:
             "finish_reached": finish_reached,
             "finish_step_id": finish_step_id,
             "num_steps": len(trajectory_steps),
+            "parse_error": parse_error,
         }
+
+    def _translate_action(self, action: ActionSpec) -> ActionSpec:
+        """
+        Translate action variable from display name to internal env name.
+
+        Delegates to renderer.to_internal_variable() which is the only
+        component that owns the name mapping. In concrete mode this is a
+        no-op. In abstract mode it converts e.g. "A" -> "concentration".
+        """
+        internal_variable = self.renderer.to_internal_variable(action.variable)
+        if internal_variable == action.variable:
+            return action
+        return ActionSpec(
+            action_type=action.action_type,
+            variable=internal_variable,
+            value=action.value,
+        )
 
     def _to_step_view(self, step: TraceStep) -> Dict[str, Any]:
         """

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 
 class EpisodeLogger:
@@ -38,12 +38,25 @@ class EpisodeLogger:
 
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
-    def save_episode(self, result: Dict[str, Any]) -> Dict[str, str]:
+    def save_episode(
+        self,
+        result: Dict[str, Any],
+        evaluation: Optional[Dict[str, Any]] = None,  # ← new
+    ) -> Dict[str, str]:
         """
         Save one episode result to disk.
 
-        Returns:
-            A dictionary mapping artifact names to saved file paths.
+        Parameters
+        ----------
+        result:
+            Dict returned by EpisodeRunner.run_episode().
+        evaluation:
+            Optional dict returned by EpisodeEvaluator.evaluate().
+            When provided, its fields are merged into summary.json.
+
+        Returns
+        -------
+        A dictionary mapping artifact names to saved file paths.
         """
         if not isinstance(result, dict):
             raise ValueError("result must be a dictionary")
@@ -81,12 +94,17 @@ class EpisodeLogger:
             self._save_json(interaction_path, interaction_log)
             saved_paths["interaction_log"] = str(interaction_path)
 
-        summary = {
+        # summary = runner outcome fields + evaluation metrics (if available)
+        summary: Dict[str, Any] = {
             "final_equation": result.get("final_equation"),
             "finish_reached": result.get("finish_reached"),
             "finish_step_id": result.get("finish_step_id"),
-            "num_steps": result.get("num_steps"),
+            "num_steps":      result.get("num_steps"),
+            "parse_error":    result.get("parse_error"),
         }
+        if evaluation is not None:
+            summary["evaluation"] = evaluation   # ← nested under its own key
+
         summary_path = self.output_dir / "summary.json"
         self._save_json(summary_path, summary)
         saved_paths["summary"] = str(summary_path)
@@ -94,25 +112,13 @@ class EpisodeLogger:
         return saved_paths
 
     def _save_json(self, path: Path, data: Any) -> None:
-        """
-        Save JSON data to disk using UTF-8 encoding.
-        """
         with path.open("w", encoding="utf-8") as f:
-            json.dump(
-                data,
-                f,
-                indent=self.indent,
-                ensure_ascii=False,
-                sort_keys=False,
-            )
+            json.dump(data, f, indent=self.indent, ensure_ascii=False, sort_keys=False)
 
     def _build_interaction_log(
         self,
         trajectory: List[Dict[str, Any]],
     ) -> List[Dict[str, Any]]:
-        """
-        Build a debug-oriented interaction log from the full trajectory.
-        """
         interaction_log: List[Dict[str, Any]] = []
 
         for step in trajectory:
@@ -121,19 +127,19 @@ class EpisodeLogger:
 
             interaction_log.append(
                 {
-                    "step_id": step.get("step_id"),
-                    "step_type": step.get("step_type"),
-                    "prompt": step.get("prompt"),
-                    "raw_model_output": step.get("raw_model_output"),
-                    "reasoning": step.get("reasoning"),
-                    "hypothesis_text": step.get("hypothesis_text"),
-                    "parsed_action": step.get("parsed_action"),
-                    "final_equation": step.get("final_equation"),
+                    "step_id":            step.get("step_id"),
+                    "step_type":          step.get("step_type"),
+                    "prompt":             step.get("prompt"),
+                    "raw_model_output":   step.get("raw_model_output"),
+                    "reasoning":          step.get("reasoning"),
+                    "hypothesis_text":    step.get("hypothesis_text"),
+                    "parsed_action":      step.get("parsed_action"),
+                    "final_equation":     step.get("final_equation"),
                     "observation_before": step.get("observation_before"),
-                    "observation_after": step.get("observation_after"),
-                    "state_before": step.get("state_before"),
-                    "state_after": step.get("state_after"),
-                    "done": step.get("done"),
+                    "observation_after":  step.get("observation_after"),
+                    "state_before":       step.get("state_before"),
+                    "state_after":        step.get("state_after"),
+                    "done":               step.get("done"),
                 }
             )
 

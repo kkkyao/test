@@ -32,30 +32,41 @@ def load_yaml(path: PathLike) -> Dict[str, Any]:
 def load_config(main_config_path: PathLike) -> Dict[str, Any]:
     """
     Load the main config and merge referenced sub-configs into one final config.
+
+    Sub-configs loaded:
+        experiment_config  →  experiment + logging blocks
+        env_config         →  environment + representation + actions + evaluation + noise
+        model_config       →  agent block
+        prompt_config      →  prompt block  (NEW)
+
+    First-stage loader uses top-level block merge only.
     """
     main_config_path = Path(main_config_path)
     main_config = load_yaml(main_config_path)
     base_dir = main_config_path.parent
 
     experiment_path = _resolve_subconfig(base_dir, main_config.get("experiment_config"))
-    env_path = _resolve_subconfig(base_dir, main_config.get("env_config"))
-    model_path = _resolve_subconfig(base_dir, main_config.get("model_config"))
+    env_path        = _resolve_subconfig(base_dir, main_config.get("env_config"))
+    model_path      = _resolve_subconfig(base_dir, main_config.get("model_config"))
+    prompt_path     = _resolve_subconfig(base_dir, main_config.get("prompt_config"))
 
     experiment_config = load_yaml(experiment_path)
-    env_config = load_yaml(env_path)
-    model_config = load_yaml(model_path)
+    env_config        = load_yaml(env_path)
+    model_config      = load_yaml(model_path)
+    prompt_config     = load_yaml(prompt_path)
 
-    # First-stage loader uses top-level block merge only.
     final_config: Dict[str, Any] = {}
     final_config.update(experiment_config)
     final_config.update(env_config)
     final_config.update(model_config)
+    final_config.update(prompt_config)   # adds the "prompt" top-level block
 
     final_config["_config_sources"] = {
-        "main": str(main_config_path),
+        "main":       str(main_config_path),
         "experiment": str(experiment_path),
-        "env": str(env_path),
-        "model": str(model_path),
+        "env":        str(env_path),
+        "model":      str(model_path),
+        "prompt":     str(prompt_path),
     }
 
     _validate_config(final_config)
@@ -65,6 +76,7 @@ def load_config(main_config_path: PathLike) -> Dict[str, Any]:
 def _resolve_subconfig(base_dir: Path, filename: Any) -> Path:
     """
     Resolve a sub-config path relative to the main config directory.
+    Accepts both relative and absolute paths.
     """
     if not isinstance(filename, str) or not filename.strip():
         raise ValueError("sub-config filename must be a non-empty string")
@@ -81,26 +93,21 @@ def _resolve_subconfig(base_dir: Path, filename: Any) -> Path:
 
 def _validate_config(config: Dict[str, Any]) -> None:
     """
-    Perform minimal validation on the merged final config.
+    Minimal validation on the merged final config.
     """
-    required_top_level = ["experiment", "environment", "actions", "agent"]
+    required_top_level = ["experiment", "environment", "actions", "agent", "prompt"]
     for key in required_top_level:
         if key not in config:
             raise ValueError(f"final config must contain top-level key: '{key}'")
 
-    experiment = config["experiment"]
-    environment = config["environment"]
-    actions = config["actions"]
-    agent = config["agent"]
+    for key in required_top_level:
+        if not isinstance(config[key], dict):
+            raise ValueError(f"'{key}' must be a dictionary")
 
-    if not isinstance(experiment, dict):
-        raise ValueError("'experiment' must be a dictionary")
-    if not isinstance(environment, dict):
-        raise ValueError("'environment' must be a dictionary")
-    if not isinstance(actions, dict):
-        raise ValueError("'actions' must be a dictionary")
-    if not isinstance(agent, dict):
-        raise ValueError("'agent' must be a dictionary")
+    experiment  = config["experiment"]
+    environment = config["environment"]
+    actions     = config["actions"]
+    prompt      = config["prompt"]
 
     if "max_steps" not in experiment:
         raise ValueError("'experiment.max_steps' must be provided")
@@ -116,3 +123,21 @@ def _validate_config(config: Dict[str, Any]) -> None:
 
     if "action_mode" not in actions:
         raise ValueError("'actions.action_mode' must be provided")
+
+    # Prompt config must carry the core text blocks.
+    required_prompt_keys = [
+        "system_intro",
+        "task_template",
+        "exploration_lines",
+        "step_type_descriptions",
+        "rules",
+        "output_format_header",
+        "output_format_schema",
+        "section_headers",
+        "history_labels",
+    ]
+    missing = [k for k in required_prompt_keys if k not in prompt]
+    if missing:
+        raise ValueError(
+            f"'prompt' config is missing required keys: {missing}"
+        )

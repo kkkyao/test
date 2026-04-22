@@ -24,11 +24,24 @@ environment:
       step_size: 50
       min_value: null
       max_value: null
+      # Deliberate distractor: wavelength does not appear in the equations.
+      # It is kept manipulable to test whether the model can identify
+      # which variables are relevant to the target relationship.
       description: wavelength of incident light
 
+    transmittance:
+      manipulable: false
+      description: fraction of light transmitted through the solution (as percentage)
+
+    absorbance:
+      manipulable: false
+      description: amount of light absorbed by the solution
+
   equations:
+    # Equations are evaluated in definition order.
+    # absorbance must come before transmittance because transmittance depends on it.
     absorbance: "(concentration * path_length) / 200"
-    transmittance: "100 - absorbance"
+    transmittance: "100 * (10 ** (-absorbance))"
 
 representation:
   naming_mode: concrete
