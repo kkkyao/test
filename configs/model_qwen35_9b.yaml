@@ -1,7 +1,8 @@
-# Qwen2.5-3B-Instruct — baseline, no thinking mode issue
+# Qwen3.5-9B — thinking is OFF by default for small Qwen3.5 models
+# Requires transformers >= 4.51
 agent:
   backend: hf_qwen
-  model_name: Qwen/Qwen2.5-3B-Instruct
+  model_name: Qwen/Qwen3.5-9B
   torch_dtype: bfloat16
   device_map: auto
   trust_remote_code: true
