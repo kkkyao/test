@@ -1,4 +1,4 @@
 experiment_config: experiment_default.yaml
 env_config: env_beers_concrete.yaml
-model_config: model_qwen.yaml
+model_config: Qwen2.5 3b.yaml
 prompt_config: prompt_default.yaml

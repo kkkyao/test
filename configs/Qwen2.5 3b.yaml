@@ -1,9 +1,12 @@
 agent:
   backend: hf_qwen
   model_name: Qwen/Qwen2.5-3B-Instruct
+  torch_dtype: bfloat16
+  device_map: auto
+  trust_remote_code: true
   generation:
-    temperature: 0.7
-    top_p: 0.8
+    temperature: 0.0
+    top_p: 1.0
     top_k: 20
     max_new_tokens: 512
-    do_sample: true
+    do_sample: false
