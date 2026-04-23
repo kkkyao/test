@@ -7,12 +7,13 @@ from src.envs.env import EquationEnv
 from src.observation.renderer import TextRenderer
 from src.prompts.prompt_builder import PromptBuilder
 from src.schemas.action_schema import ActionSpec
+from src.schemas.observation_schema import Observation, ObservationMode
 from src.schemas.trace_schema import TraceStep
 
 
 class EpisodeRunner:
     """
-    Run one full exploration episode by connecting:
+    Run one full exploration episode:
     environment -> renderer -> prompt builder -> agent -> trace
     """
 
@@ -46,8 +47,7 @@ class EpisodeRunner:
             finish_reached   : whether model emitted finish
             finish_step_id   : step index of finish, or None
             num_steps        : total steps executed
-            parse_error      : error message string if agent.act() raised
-                               ValueError, otherwise None
+            parse_error      : error message if agent.act() raised ValueError
         """
         initial_state = self.env.reset()
         observation = self.renderer.render(initial_state)
@@ -69,28 +69,15 @@ class EpisodeRunner:
                 history=history_for_prompt,
             )
 
+            # --- call model ---
             try:
                 agent_step, raw_output = self.agent.act(prompt)
             except ValueError as exc:
                 parse_error = str(exc)
                 break
 
-            if agent_step.step_type == "action":
-                # In abstract naming mode the model uses display names (A, B, C).
-                # Use renderer's public interface to translate back to internal names.
-                env_action = self._translate_action(agent_step.action)
-                try:
-                    state_after = self.env.step(env_action)
-                except (ValueError, KeyError) as exc:
-                    # Model tried to act on a non-manipulable or unknown variable.
-                    # Treat as a parse error and end the episode gracefully.
-                    parse_error = f"invalid action ({env_action.variable}): {exc}"
-                    break
-                observation = self.renderer.render(state_after)
-                observation_after = observation.to_dict()
-                done = False
-
-            elif agent_step.step_type == "finish":
+            # --- branch on step type ---
+            if agent_step.step_type == "finish":
                 state_after = state_before
                 observation_after = observation_before
                 done = True
@@ -98,7 +85,36 @@ class EpisodeRunner:
                 finish_step_id = step_id
                 final_equation = agent_step.final_equation
 
-            else:  # hypothesis
+            elif agent_step.step_type == "action":
+                env_action = self._translate_action(agent_step.action)
+                try:
+                    state_after = self.env.step(env_action)
+                    observation = self.renderer.render(state_after)
+                    observation_after = observation.to_dict()
+
+                except (ValueError, KeyError) as exc:
+                    # Model tried to act on a non-manipulable or unknown variable.
+                    # Do NOT terminate — inject an error message so the model
+                    # knows to choose a different action next step.
+                    error_text = (
+                        f"[ERROR] Invalid action: '{env_action.variable}' cannot be manipulated. "
+                        f"Only the variables shown in 'Available actions' can be changed. "
+                        f"Please choose a valid action.\n\n{observation.text}"
+                    )
+                    observation = Observation(
+                        mode=ObservationMode.TEXT,
+                        visible_state=observation.visible_state,
+                        available_actions=observation.available_actions,
+                        text=error_text,
+                        metadata=observation.metadata,
+                    )
+                    state_after = state_before
+                    observation_after = observation.to_dict()
+
+                done = False
+
+            else:
+                # Should not happen given current schema, but handle gracefully
                 state_after = state_before
                 observation_after = observation_before
                 done = False
@@ -108,7 +124,6 @@ class EpisodeRunner:
                 step_type=agent_step.step_type,
                 raw_model_output=raw_output,
                 reasoning=agent_step.reasoning,
-                # Store original display-name action for logging.
                 parsed_action=agent_step.action.to_dict() if agent_step.action else None,
                 observation_before=observation_before,
                 observation_after=observation_after,
@@ -139,13 +154,7 @@ class EpisodeRunner:
         }
 
     def _translate_action(self, action: ActionSpec) -> ActionSpec:
-        """
-        Translate action variable from display name to internal env name.
-
-        Delegates to renderer.to_internal_variable() which is the only
-        component that owns the name mapping. In concrete mode this is a
-        no-op. In abstract mode it converts e.g. "A" -> "concentration".
-        """
+        """Translate display variable name to internal env name."""
         internal_variable = self.renderer.to_internal_variable(action.variable)
         if internal_variable == action.variable:
             return action
@@ -156,9 +165,6 @@ class EpisodeRunner:
         )
 
     def _to_step_view(self, step: TraceStep) -> Dict[str, Any]:
-        """
-        Build a lighter step-level view from a full trace step.
-        """
         return {
             "step_id": step.step_id,
             "step_type": step.step_type,
