@@ -1,12 +1,12 @@
-# Qwen3.5-9B — thinking OFF by default for small Qwen3.5
-# Official Qwen recommended: temperature=0.7, top_p=0.8, top_k=20
+# thinking is OFF by default for small Qwen3.5 but may still appear.
+# disable_thinking: true passes enable_thinking=False to chat template.
 agent:
   backend: hf_qwen
   model_name: Qwen/Qwen3.5-9B
   dtype: bfloat16
   device_map: auto
   trust_remote_code: true
-  disable_thinking: false
+  disable_thinking: true
   generation:
     temperature: 0.7
     top_p: 0.8
