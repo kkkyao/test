@@ -12,7 +12,7 @@ from src.schemas.trace_schema import TraceStep
 
 class EpisodeRunner:
     """
-    Run one full exploration episode:
+    Run one full exploration episode by connecting:
     environment -> renderer -> prompt builder -> agent -> trace
     """
 
@@ -46,7 +46,8 @@ class EpisodeRunner:
             finish_reached   : whether model emitted finish
             finish_step_id   : step index of finish, or None
             num_steps        : total steps executed
-            parse_error      : error message if agent.act() raised ValueError
+            parse_error      : error message string if agent.act() raised
+                               ValueError, otherwise None
         """
         initial_state = self.env.reset()
         observation = self.renderer.render(initial_state)
@@ -75,13 +76,21 @@ class EpisodeRunner:
                 break
 
             if agent_step.step_type == "action":
+                # In abstract naming mode the model uses display names (A, B, C).
+                # Use renderer's public interface to translate back to internal names.
                 env_action = self._translate_action(agent_step.action)
-                state_after = self.env.step(env_action)
+                try:
+                    state_after = self.env.step(env_action)
+                except (ValueError, KeyError) as exc:
+                    # Model tried to act on a non-manipulable or unknown variable.
+                    # Treat as a parse error and end the episode gracefully.
+                    parse_error = f"invalid action ({env_action.variable}): {exc}"
+                    break
                 observation = self.renderer.render(state_after)
                 observation_after = observation.to_dict()
                 done = False
 
-            else:  # finish
+            elif agent_step.step_type == "finish":
                 state_after = state_before
                 observation_after = observation_before
                 done = True
@@ -89,11 +98,17 @@ class EpisodeRunner:
                 finish_step_id = step_id
                 final_equation = agent_step.final_equation
 
+            else:  # hypothesis
+                state_after = state_before
+                observation_after = observation_before
+                done = False
+
             trace_step = TraceStep(
                 step_id=step_id,
                 step_type=agent_step.step_type,
                 raw_model_output=raw_output,
                 reasoning=agent_step.reasoning,
+                # Store original display-name action for logging.
                 parsed_action=agent_step.action.to_dict() if agent_step.action else None,
                 observation_before=observation_before,
                 observation_after=observation_after,
@@ -124,7 +139,13 @@ class EpisodeRunner:
         }
 
     def _translate_action(self, action: ActionSpec) -> ActionSpec:
-        """Translate display variable name to internal env name."""
+        """
+        Translate action variable from display name to internal env name.
+
+        Delegates to renderer.to_internal_variable() which is the only
+        component that owns the name mapping. In concrete mode this is a
+        no-op. In abstract mode it converts e.g. "A" -> "concentration".
+        """
         internal_variable = self.renderer.to_internal_variable(action.variable)
         if internal_variable == action.variable:
             return action
@@ -135,6 +156,9 @@ class EpisodeRunner:
         )
 
     def _to_step_view(self, step: TraceStep) -> Dict[str, Any]:
+        """
+        Build a lighter step-level view from a full trace step.
+        """
         return {
             "step_id": step.step_id,
             "step_type": step.step_type,
