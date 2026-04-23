@@ -56,7 +56,6 @@ class TextLLMAgent:
         try:
             data = json.loads(cleaned)
         except json.JSONDecodeError as e:
-            print(f"[PARSE ERROR] raw output was:\n{raw_text[:500]}", flush=True)
             raise ValueError(f"model output is not valid JSON: {cleaned}") from e
 
         if not isinstance(data, dict):
@@ -135,6 +134,13 @@ class TextLLMAgent:
 
         if not self.strip_markdown_fences:
             return text
+
+        # Strip Qwen3/Qwen3.5 thinking block if present.
+        # The model may output <think>...</think> before the JSON even when
+        # thinking mode is disabled via chat template. Strip everything up to
+        # and including the closing </think> tag.
+        if "</think>" in text:
+            text = text[text.index("</think>") + len("</think>"):].strip()
 
         # 1. Try to extract from a fenced block first (```json ... ```)
         fence_match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)

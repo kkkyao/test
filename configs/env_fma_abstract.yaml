@@ -1,0 +1,48 @@
+environment:
+  target_variable: force
+
+  variables:
+    mass:
+      manipulable: true
+      initial_value: 10
+      step_size: 10
+      min_value: null
+      max_value: null
+      description: mass of the object in kilograms
+
+    acceleration:
+      manipulable: true
+      initial_value: 2
+      step_size: 1
+      min_value: null
+      max_value: null
+      description: acceleration of the object in metres per second squared
+
+    force:
+      manipulable: false
+      description: net force applied to the object in Newtons
+
+  equations:
+    force: "mass * acceleration"
+
+representation:
+  naming_mode: abstract
+  metadata_level: none
+  name_mapping:
+    mass: A
+    acceleration: B
+    force: Y
+
+actions:
+  action_mode: increase_decrease
+
+evaluation:
+  variable_mapping:
+    A: mass
+    B: acceleration
+    Y: force
+
+noise:
+  enabled: false
+  type: null
+  params: {}
