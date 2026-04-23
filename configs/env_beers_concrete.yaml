@@ -19,7 +19,7 @@ environment:
       description: distance the light travels through the solution
 
     wavelength:
-      manipulable: true
+      manipulable: false
       initial_value: 500
       step_size: 50
       min_value: null
