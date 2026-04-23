@@ -1,24 +1,18 @@
 # Scientific Exploration Framework
 
-A config-driven, multi-step framework for studying how language models explore scientific environments, form hypotheses, and discover underlying equations through iterative interaction.
+A config-driven, multi-step research framework for studying how language models explore scientific environments, form hypotheses, and discover underlying equations through iterative interaction.
 
 ---
 
-## Overview
+## What This Is
 
-This framework is **not** a question-answering system. It is an interactive, trajectory-oriented research pipeline in which a model acts as an explorer inside a controlled scientific environment.
-
-On each step, the model:
-1. Observes the current environment state
-2. Produces a **thought**, **hypothesis**, **action**, or **finish**
-3. If an action is taken, the environment updates and a new observation is generated
-4. The full process is recorded as a trajectory for research analysis
+This is **not** a question-answering system. It is an interactive, trajectory-oriented research pipeline where a model acts as an explorer inside a controlled scientific environment.
 
 The primary research questions are:
-- How do models explore scientific environments?
-- Do models form hypotheses strategically?
-- Does the variable representation (concrete vs. abstract) affect exploration behavior?
-- Does the amount of contextual metadata (rich vs. none) affect whether a model can discover the underlying equation?
+- How do models explore scientific environments step by step?
+- Does variable representation (concrete names vs. abstract symbols) affect exploration behavior?
+- Does contextual metadata (rich descriptions vs. none) affect whether a model can discover the underlying equation?
+- Do larger or newer models explore more efficiently?
 
 The default environment is a Beer's Law-style setup, but the framework is fully **equation-driven**: any equation supplied via config will automatically define the environment, the action space, the ground truth, and the evaluation target.
 
@@ -29,11 +23,18 @@ The default environment is a Beer's Law-style setup, but the framework is fully 
 ```
 project/
   configs/
-    config.yaml                  # Main config router
-    experiment_default.yaml      # Experiment runtime parameters
-    env_beers_concrete.yaml      # Beer's Law env, concrete naming
-    env_beers_abstract.yaml      # Beer's Law env, abstract naming
-    model_qwen.yaml              # Model backend config
+    config.yaml                  # Main entry point — points to sub-configs
+    experiment_default.yaml      # Runtime parameters (steps, logging, evaluate)
+    experiment_concrete.yaml     # Experiment config for concrete condition
+    experiment_abstract.yaml     # Experiment config for abstract condition
+    env_beers_concrete.yaml      # Beer's Law env, concrete naming, rich metadata
+    env_beers_abstract.yaml      # Beer's Law env, abstract naming, no metadata
+    model_mock.yaml              # Mock backend for pipeline testing
+    model_qwen25_3b.yaml         # Qwen2.5-3B-Instruct
+    model_qwen25_7b.yaml         # Qwen2.5-7B-Instruct
+    model_qwen35_4b.yaml         # Qwen3.5-4B
+    model_qwen35_9b.yaml         # Qwen3.5-9B
+    prompt_default.yaml          # All prompt text (no hardcoded strings in code)
 
   src/
     schemas/
@@ -44,10 +45,10 @@ project/
 
     envs/
       env.py                     # EquationEnv: state management + action execution
-      equation_engine.py         # Equation parsing and evaluation
+      equation_engine.py         # Safe AST-based equation parsing and evaluation
 
     observation/
-      renderer.py                # TextRenderer: state → Observation
+      renderer.py                # TextRenderer: state → Observation text
 
     prompts/
       prompt_builder.py          # PromptBuilder: observation + history → prompt
@@ -59,142 +60,18 @@ project/
       runner.py                  # EpisodeRunner: main episode loop
 
     tracing/
-      logger.py                  # EpisodeLogger: saves steps/trajectory/interaction logs
+      logger.py                  # EpisodeLogger: saves all output files
 
     evaluation/
-      evaluator.py               # EpisodeEvaluator: computes episode metrics
-      equation_matcher.py        # EquationMatcher: algebraic equivalence checking
+      evaluator.py               # EpisodeEvaluator: computes all episode metrics
+      equation_matcher.py        # EquationMatcher: algebraic equivalence via SymPy
 
     utils/
-      config_loader.py           # YAML config loading and merging
+      config_loader.py           # YAML loading, merging, and validation
 
-  run_episode.py                 # Entry point
+  run_episode.py                 # Entry point for a single episode
+  run_experiment.py              # Entry point for N runs with W&B logging
 ```
-
----
-
-## Quick Start
-
-### 1. Install dependencies
-
-```bash
-pip install pyyaml sympy
-```
-
-### 2. Run an episode
-
-```bash
-python run_episode.py --config configs/config.yaml
-```
-
-### 3. Switch to abstract condition
-
-In `configs/config.yaml`, change:
-
-```yaml
-env_config: env_beers_concrete.yaml
-```
-
-to:
-
-```yaml
-env_config: env_beers_abstract.yaml
-```
-
-No code changes needed.
-
----
-
-## Configuration System
-
-The framework is fully **config-driven**. All experiment conditions are controlled through YAML files. No source code modification is required to switch between experimental conditions.
-
-### `configs/config.yaml`
-
-The main config acts as a router to sub-configs:
-
-```yaml
-experiment_config: experiment_default.yaml
-env_config: env_beers_concrete.yaml
-model_config: model_qwen.yaml
-```
-
-### `configs/experiment_default.yaml`
-
-Controls runtime behavior:
-
-```yaml
-experiment:
-  name: beers_text_default
-  max_steps: 10
-  history_window: null
-
-logging:
-  output_dir: outputs/beers_text_default
-  save_steps: true
-  save_trajectory: true
-  save_interaction_log: true
-```
-
-### `configs/env_beers_concrete.yaml` / `env_beers_abstract.yaml`
-
-Defines the environment, equations, representation, actions, evaluation, and noise:
-
-```yaml
-environment:
-  target_variable: absorbance
-  variables:
-    concentration:
-      manipulable: true
-      initial_value: 100
-      step_size: 100
-      description: amount of solute per volume
-    # ... other variables
-  equations:
-    absorbance: "(concentration * path_length) / 200"
-    transmittance: "100 - absorbance"
-
-representation:
-  naming_mode: concrete   # or "abstract"
-  metadata_level: rich    # or "minimal" or "none"
-  name_mapping:
-    concentration: concentration  # concrete: identity; abstract: A, B, C...
-
-actions:
-  action_mode: increase_decrease  # or "set_value"
-
-evaluation:
-  variable_mapping:
-    concentration: concentration  # abstract: A -> concentration
-```
-
-### `configs/model_qwen.yaml`
-
-Controls the model backend:
-
-```yaml
-agent:
-  backend: mock               # switch to hf_qwen for real inference
-  model_name: Qwen2.5-14B-Instruct
-  generation:
-    temperature: 0.0
-    max_new_tokens: 512
-```
-
----
-
-## Supported Experiment Conditions
-
-The framework supports two independent representational dimensions, producing four experimental conditions:
-
-| Condition | `naming_mode` | `metadata_level` |
-|---|---|---|
-| Concrete + Rich | `concrete` | `rich` |
-| Concrete + None | `concrete` | `none` |
-| Abstract + Rich | `abstract` | `rich` |
-| Abstract + None | `abstract` | `none` |
-
-All conditions share identical environment logic and equations. Only the representation layer changes.
 
 ---
 
@@ -203,160 +80,261 @@ All conditions share identical environment logic and equations. Only the represe
 ```
 env.reset()
     → initial state
-    → renderer.render(state)
-    → observation
+    → renderer.render(state) → observation
 
 for step in range(max_steps):
-    prompt_builder.build_prompt(observation, history)
-        → prompt
-    agent.act(prompt)
-        → AgentStep, raw_output
+
+    prompt_builder.build_prompt(observation, history) → prompt
+    agent.act(prompt) → AgentStep, raw_output
 
     if step_type == "action":
-        env.step(action)         ← only actions change the environment
-        renderer.render(new_state)
-        → new observation
+        env.step(action)              ← only actions change the environment
+        renderer.render(new_state)    → new observation
 
     elif step_type == "finish":
         record final_equation
-        break                    ← episode ends
+        break                         ← episode ends
 
-    record TraceStep             ← every step is logged
+    record TraceStep                  ← every step is fully logged
 
-→ EpisodeEvaluator.evaluate(result)
-→ EpisodeLogger.save(result, evaluation)
+EpisodeEvaluator.evaluate(result)
+EpisodeLogger.save(result, evaluation)
 ```
 
 ---
 
 ## Model Output Format
 
-The model must return a strict JSON object on every step. The schema is:
+The model must return a strict JSON object on every step, with **`reasoning` first** so the model is forced to think before committing to an action:
 
 ```json
 {
+  "reasoning": "Concentration increased from 100 to 110 and absorbance went from 1.0 to 1.1. I want to test path_length next.",
+  "hypothesis": "Absorbance may be proportional to both concentration and path_length.",
   "step_type": "action",
-  "reasoning": "I want to increase concentration while keeping the others fixed.",
-  "hypothesis": null,
   "action": {
     "action_type": "increase",
-    "variable": "concentration",
+    "variable": "path_length",
     "value": null
   },
   "final_equation": null
 }
 ```
 
-### Step type rules
+`reasoning` is placed first intentionally: because LLMs generate tokens left-to-right, putting `reasoning` before `step_type` forces the model to think before it decides what to do.
+
+### Step types
 
 | `step_type` | Required fields | Changes environment? |
 |---|---|---|
-| `thought` | `reasoning` | No |
-| `hypothesis` | `hypothesis` | No |
 | `action` | `reasoning`, `action` | **Yes** |
-| `finish` | `final_equation` | No — ends episode |
+| `finish` | `reasoning`, `final_equation` | No — ends episode |
 
-### Action types
-
-| `action_type` | When used | `value` required? |
-|---|---|---|
-| `increase` | `increase_decrease` mode | No (`null`) |
-| `decrease` | `increase_decrease` mode | No (`null`) |
-| `set` | `set_value` mode | **Yes** |
-
-Only one action may be taken per step.
+`hypothesis` is optional on any `action` step. It is not a step type — it is an accompanying belief field.
 
 ---
 
-## Module Reference
+## Experimental Conditions
 
-### `equation_engine.py`
+Two representational dimensions combine into four conditions:
 
-Parses equation strings from config and evaluates them against the current state. Supports arbitrary equations with any number of variables. Does not require hardcoded logic per environment.
+| Condition | `naming_mode` | `metadata_level` | Variable names | Descriptions |
+|---|---|---|---|---|
+| Concrete + Rich | `concrete` | `rich` | concentration, path_length | Full descriptions + step sizes |
+| Abstract + None | `abstract` | `none` | A, B, C, Y1, Y2 | None |
 
-```python
-engine = EquationEngine({"absorbance": "(concentration * path_length) / 200"})
-result = engine.evaluate({"concentration": 100, "path_length": 2})
-# → {"absorbance": 1.0}
+The default setup compares **concrete** vs **abstract** using the two env configs provided.
+
+---
+
+## Supported Models
+
+All models use `backend: hf_qwen` and are loaded locally via HuggingFace Transformers.
+
+| Config file | Model | Parameters | Notes |
+|---|---|---|---|
+| `model_mock.yaml` | Mock | — | Pipeline testing only, no GPU needed |
+| `model_qwen25_3b.yaml` | `Qwen/Qwen2.5-3B-Instruct` | 3B | Baseline, no thinking mode |
+| `model_qwen25_7b.yaml` | `Qwen/Qwen2.5-7B-Instruct` | 7B | Scaling comparison |
+| `model_qwen35_4b.yaml` | `Qwen/Qwen3.5-4B` | 4B | Requires transformers ≥ 4.51 |
+| `model_qwen35_9b.yaml` | `Qwen/Qwen3.5-9B` | 9B | Requires transformers ≥ 4.51 |
+
+**Generation settings** (all models): `temperature=0.7`, `top_p=0.8`, `top_k=20`, `do_sample=true` — following official Qwen recommendations for non-thinking instruct mode.
+
+**GPU memory requirements** (bfloat16):
+
+| Model | VRAM needed |
+|---|---|
+| Qwen2.5-3B | ~7 GB |
+| Qwen3.5-4B | ~10 GB |
+| Qwen2.5-7B | ~15 GB |
+| Qwen3.5-9B | ~19 GB |
+
+---
+
+## Installation
+
+```bash
+pip install pyyaml sympy transformers torch wandb
 ```
 
-### `env.py` — `EquationEnv`
+For Qwen3.5 models, install the optional fast linear attention library (optional but recommended):
 
-Maintains the true environment state. Handles `reset()`, `get_state()`, and `step(action)`. Delegates output calculation to `EquationEngine`. Supports arbitrary variable counts and equations driven entirely by config.
+```bash
+pip install flash-linear-attention causal-conv1d
+```
 
-### `renderer.py` — `TextRenderer`
+---
 
-Converts state into a text `Observation`. Applies `naming_mode` (concrete/abstract) and `metadata_level` (rich/minimal/none). Also generates the available action list. Interface is designed to support `image` and `text_image` modes in future phases.
+## Running Experiments
 
-### `prompt_builder.py` — `PromptBuilder`
+### 1. Test the pipeline with mock model
 
-Assembles the full prompt from the current observation, history, task description, action format instructions, and JSON output requirements. Template is fixed; content updates every step.
+```bash
+python run_episode.py --config configs/config.yaml
+```
 
-### `agent.py` — `TextLLMAgent`
+Expected output: 3 steps (2 actions + 1 finish), `finish_reached: true`, no `parse_error`.
 
-Accepts any `model_callable: Callable[[str], str]` so the backend is fully pluggable. Calls the model, strips markdown fences, parses JSON, and returns `(AgentStep, raw_output)`. Strict parsing with clear errors; no silent fallbacks.
+### 2. Run a single episode with a real model
 
-### `runner.py` — `EpisodeRunner`
+```bash
+# Concrete condition
+python run_episode.py \
+  --env_config configs/env_beers_concrete.yaml \
+  --model_config configs/model_qwen25_3b.yaml
 
-The main episode loop. Connects all components:
-`env → renderer → prompt_builder → agent → trace`
+# Abstract condition
+python run_episode.py \
+  --env_config configs/env_beers_abstract.yaml \
+  --model_config configs/model_qwen25_3b.yaml
 
-Enforces `max_steps`. Returns a structured result dict with `steps`, `trajectory`, `final_equation`, `finish_reached`, and `num_steps`.
+# With evaluation
+python run_episode.py \
+  --env_config configs/env_beers_concrete.yaml \
+  --model_config configs/model_qwen25_3b.yaml \
+  --evaluate
+```
 
-### `evaluator.py` — `EpisodeEvaluator`
+### 3. Run a full experiment (N runs + W&B logging)
 
-Computes episode-level metrics from the runner result:
+```bash
+# Login to W&B first
+wandb login
 
-| Metric | Description |
-|---|---|
-| `total_steps` | Steps executed |
-| `finish_reached` | Whether model explicitly finished |
-| `unique_states_visited` | Distinct `state_after` values observed |
-| `state_novelty_rate` | `unique_states / total_steps` |
-| `repeated_state_ratio` | `(total_steps - unique_states) / total_steps` |
-| `final_equation` | Model's final submitted equation |
-| `equation_match` | Whether it matches ground truth (via `EquationMatcher`) |
+python run_experiment.py \
+  --config configs/config.yaml \
+  --env_config configs/env_beers_concrete.yaml \
+  --model_config configs/model_qwen25_3b.yaml \
+  --n_runs 30 \
+  --run_name concrete_qwen25_3b
+```
 
-### `equation_matcher.py` — `EquationMatcher`
+### 4. Run all 8 experimental conditions overnight
 
-Checks algebraic equivalence between the model's final equation and the ground truth. Supports:
+```bash
+nohup bash -c '
+python run_experiment.py --config configs/config.yaml --env_config configs/env_beers_concrete.yaml --model_config configs/model_qwen25_3b.yaml --n_runs 30 --run_name concrete_qwen25_3b && \
+python run_experiment.py --config configs/config.yaml --env_config configs/env_beers_concrete.yaml --model_config configs/model_qwen35_4b.yaml --n_runs 30 --run_name concrete_qwen35_4b && \
+python run_experiment.py --config configs/config.yaml --env_config configs/env_beers_concrete.yaml --model_config configs/model_qwen25_7b.yaml --n_runs 30 --run_name concrete_qwen25_7b && \
+python run_experiment.py --config configs/config.yaml --env_config configs/env_beers_concrete.yaml --model_config configs/model_qwen35_9b.yaml --n_runs 30 --run_name concrete_qwen35_9b && \
+python run_experiment.py --config configs/config.yaml --env_config configs/env_beers_abstract.yaml --model_config configs/model_qwen25_3b.yaml --n_runs 30 --run_name abstract_qwen25_3b && \
+python run_experiment.py --config configs/config.yaml --env_config configs/env_beers_abstract.yaml --model_config configs/model_qwen35_4b.yaml --n_runs 30 --run_name abstract_qwen35_4b && \
+python run_experiment.py --config configs/config.yaml --env_config configs/env_beers_abstract.yaml --model_config configs/model_qwen25_7b.yaml --n_runs 30 --run_name abstract_qwen25_7b && \
+python run_experiment.py --config configs/config.yaml --env_config configs/env_beers_abstract.yaml --model_config configs/model_qwen35_9b.yaml --n_runs 30 --run_name abstract_qwen35_9b
+' > experiment_log.txt 2>&1 &
 
-- **Algebraic equivalence**: `A * B / 200` and `0.005 * A * B` are the same
-- **Variable mapping equivalence**: `Y2 = 0.005 * A * B` matches `absorbance = concentration * path_length / 200` when the mapping `{A: concentration, B: path_length, Y2: absorbance}` is provided
-
-### `logger.py` — `EpisodeLogger`
-
-Saves three output files per episode:
-
-| File | Contents |
-|---|---|
-| `steps.json` | Lightweight step-level view (type, reasoning, action, equation) |
-| `trajectory.json` | Full trace per step including state, observation, prompt, raw output |
-| `interaction_log.json` | Detailed debug log for replay and step-by-step review |
-
-### `config_loader.py`
-
-Loads and merges the main config + sub-configs into a single dict. Validates required keys. Preserves `_config_sources` for reproducibility and W&B tracking.
+# Monitor progress
+tail -f experiment_log.txt
+```
 
 ---
 
 ## Output Files
 
-Each episode produces output in the directory specified by `logging.output_dir`:
+Each episode saves to the directory specified in `experiment_*.yaml`:
 
 ```
 outputs/beers_text_default/
-  steps.json            ← high-level step summary
-  trajectory.json       ← full trace for research analysis
-  interaction_log.json  ← debug-level replay log
-  evaluation.json       ← episode evaluation metrics
+  run_00/
+    steps.json            ← lightweight step summary (step_type, reasoning, action)
+    trajectory.json       ← full trace with state/observation before and after each step
+    interaction_log.json  ← debug log with prompt + raw model output at every step
+    summary.json          ← episode outcome + full evaluation metrics
+  run_01/
+    ...
+  aggregate.json          ← metrics averaged across all runs
 ```
+
+All files are also uploaded to W&B as Artifacts (one artifact per episode), accessible under the **Artifacts** tab in the W&B project.
+
+---
+
+## W&B Metrics
+
+### Per-episode (logged in real time)
+
+| Metric | Description |
+|---|---|
+| `success` | Finish reached AND equation correct |
+| `equation_correct` | Submitted equation matches ground truth algebraically |
+| `finish_called` | Model emitted a finish step |
+| `total_steps` | Steps executed in this episode |
+| `steps_to_success` | Steps taken when succeeded (null if not) |
+| `state_coverage_ratio` | Unique states visited / total steps |
+| `redundancy_penalty` | Repeated actions / total steps |
+| `variable_isolation_score` | Fraction of steps where exactly one variable changed |
+| `discovery_efficiency` | 1 / total_steps if success, else 0 |
+
+### Experiment summary (after all runs)
+
+| Metric | Description |
+|---|---|
+| `success_rate` | Fraction of runs that succeeded |
+| `finish_rate` | Fraction of runs where model called finish |
+| `parse_error_rate` | Fraction of runs that ended due to invalid output |
+| `mean_total_steps` | Average steps per run |
+| `termination_breakdown` | Count of each termination reason |
+
+---
+
+## Module Reference
+
+### `env.py` — `EquationEnv`
+Maintains the true environment state. On each `step(action)`, updates the manipulated variable and recomputes all output variables using `EquationEngine`. Supports any number of variables and any equation defined in config. Raises `ValueError` if a non-manipulable variable is targeted.
+
+### `equation_engine.py` — `EquationEngine`
+Parses equation strings from config using Python's AST module (safe — no `eval()`). Evaluates equations against the current state in definition order so later equations can depend on earlier ones.
+
+### `renderer.py` — `TextRenderer`
+Converts environment state into a text `Observation`. Applies `naming_mode` (concrete/abstract) and `metadata_level` (rich/minimal/none). In `increase_decrease` mode, step sizes are shown in the observation so the model knows the exact magnitude of each action.
+
+### `prompt_builder.py` — `PromptBuilder`
+Assembles the full prompt from config-supplied text templates plus runtime data (current observation, history, step count). No hardcoded strings — all text comes from `prompt_default.yaml`. The JSON schema in the prompt puts `reasoning` first to enforce think-before-act behavior.
+
+### `agent.py` — `TextLLMAgent`
+Accepts any `model_callable: Callable[[str], str]`. Calls the model, strips markdown fences, extracts the JSON object (robust to surrounding prose), and parses it into an `AgentStep`. Raises `ValueError` on invalid output with a detailed error message.
+
+### `runner.py` — `EpisodeRunner`
+The main episode loop. On invalid actions (non-manipulable variable), injects an `[ERROR]` message into the next observation instead of terminating, allowing the model to self-correct. Terminates on `finish`, `max_steps`, or unrecoverable parse error.
+
+### `evaluator.py` — `EpisodeEvaluator`
+Computes all episode metrics from the runner result. Delegates equation comparison to `EquationMatcher`. Returns a flat JSON-friendly dict suitable for W&B logging.
+
+### `equation_matcher.py` — `EquationMatcher`
+Uses SymPy to check algebraic equivalence between the model's final equation and the ground truth. Supports variable name mapping so abstract equations (`Y2 = 0.005 * A * B`) can be matched against concrete ground truth (`absorbance = concentration * path_length / 200`).
+
+### `logger.py` — `EpisodeLogger`
+Saves all output files to disk and returns their paths. Used by `run_experiment.py` to upload files as W&B Artifacts.
+
+### `config_loader.py`
+Loads and merges the main config and all sub-configs into one dict. CLI overrides (`--env_config`, `--model_config`) take precedence over values in the main config file.
 
 ---
 
 ## Adding a New Environment
 
-No code changes are required. Create a new env config YAML:
+No code changes needed. Create a new env YAML:
 
 ```yaml
 # configs/env_velocity.yaml
@@ -367,59 +345,54 @@ environment:
       manipulable: true
       initial_value: 100
       step_size: 50
+      description: distance travelled
     time:
       manipulable: true
       initial_value: 5
       step_size: 1
+      description: time elapsed
     velocity:
       manipulable: false
+      description: speed of the object
   equations:
     velocity: "distance / time"
 
 representation:
   naming_mode: concrete
-  metadata_level: minimal
+  metadata_level: rich
   name_mapping:
     distance: distance
     time: time
     velocity: velocity
 
 actions:
-  action_mode: set_value
+  action_mode: increase_decrease
 
 evaluation:
   variable_mapping:
     distance: distance
     time: time
     velocity: velocity
+
+noise:
+  enabled: false
+  type: null
+  params: {}
 ```
 
-Then point `config.yaml` to it:
+Then run:
 
-```yaml
-env_config: env_velocity.yaml
+```bash
+python run_episode.py --env_config configs/env_velocity.yaml --model_config configs/model_qwen25_3b.yaml
 ```
-
----
-
-## Planned Extensions (Future Phases)
-
-The following are explicitly **not** part of Phase 1 but are supported at the interface level:
-
-- **Image observation** (`ObservationMode.IMAGE`): renderer interface reserved
-- **Text + image observation** (`ObservationMode.TEXT_IMAGE`): renderer interface reserved
-- **VLM backend**: pluggable via `model_callable`
-- **GUI / browser agent backend**: no coupling in current architecture
-- **Noisy environments**: `noise` block reserved in env config
-- **W&B integration**: evaluation output and trace format are W&B-ready
-- **Advanced process metrics**: information gain, variable coverage, hypothesis revision count
 
 ---
 
 ## Design Principles
 
 - **Config-driven**: all experimental conditions are controlled through YAML, not source code
-- **Equation-driven**: any equation in config automatically defines the environment, action space, ground truth, and evaluation target
-- **Trajectory-first**: the primary research artifact is the full exploration trace, not the final answer
-- **Clean module boundaries**: env, observation, prompt, agent, runner, logger, and evaluator each own exactly one responsibility
-- **Debug-friendly**: every step records the prompt, raw model output, parsed step, state before/after, and observation before/after
+- **Equation-driven**: any equation in config automatically defines the environment, ground truth, and evaluation target
+- **Trajectory-first**: the primary research artifact is the full exploration trace, not just the final answer
+- **Think before act**: the JSON schema puts `reasoning` first so the model writes its reasoning before committing to a step type
+- **Graceful error handling**: invalid model actions produce corrective feedback rather than crashing
+- **Clean module boundaries**: each module owns exactly one responsibility; no cross-cutting logic
