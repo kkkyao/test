@@ -1,12 +1,15 @@
+# Qwen2.5-7B-Instruct
+# Official Qwen recommended: temperature=0.7, top_p=0.8, top_k=20
 agent:
   backend: hf_qwen
   model_name: Qwen/Qwen2.5-7B-Instruct
-  torch_dtype: bfloat16
+  dtype: bfloat16
   device_map: auto
   trust_remote_code: true
+  disable_thinking: false
   generation:
-    temperature: 0.0
-    top_p: 1.0
+    temperature: 0.7
+    top_p: 0.8
     top_k: 20
     max_new_tokens: 512
-    do_sample: false
+    do_sample: true

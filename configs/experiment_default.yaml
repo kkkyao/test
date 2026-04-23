@@ -1,8 +1,11 @@
+# Default experiment config — used for debugging single episodes.
+# auto_evaluate=false so you can inspect raw output without evaluation overhead.
+# Use --evaluate flag on CLI to enable evaluation on demand.
 experiment:
   name: beers_text_default
-  max_steps: 100
+  max_steps: 30
   history_window: null
-  auto_evaluate: false
+  auto_evaluate: true
 
 logging:
   output_dir: outputs/beers_text_default

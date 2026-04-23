@@ -1,11 +1,11 @@
 experiment:
-  name: beers_text_abstract
-  max_steps: 100
+  name: beers_abstract
+  max_steps: 50
   history_window: null
-  auto_evaluate: false
+  auto_evaluate: true
 
 logging:
-  output_dir: outputs/beers_text_abstract
+  output_dir: outputs/beers_abstract
   save_steps: true
   save_trajectory: true
   save_interaction_log: true
