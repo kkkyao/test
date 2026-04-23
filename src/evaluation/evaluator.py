@@ -45,8 +45,11 @@ class EpisodeEvaluator:
     ── Scores ────────────────────────────────────────────────────────────────
     state_coverage_ratio       float  unique_states / total_steps
     redundancy_penalty         float  repeated_actions / total_steps
-    variable_isolation_score   float  action steps with exactly 1 var changed
-                                      / total action steps
+    variable_isolation_score   float  action steps where the action variable
+                                      actually changed / total action steps.
+                                      In the current env this is always 1.0
+                                      for well-formed episodes; useful as a
+                                      sanity check and for future noisy envs.
     controlled_experiments_ratio float  alias for variable_isolation_score
     exploration_breadth_score  float  alias for state_coverage_ratio
     discovery_efficiency       float  1 / total_steps if success else 0.0
@@ -79,11 +82,11 @@ class EpisodeEvaluator:
             raise ValueError("'trajectory' must be a list")
 
         # ── Raw facts from runner ─────────────────────────────────────────────
-        total_steps     = len(trajectory)
-        finish_reached  = bool(result.get("finish_reached", False))
-        final_equation  = result.get("final_equation")
-        finish_step_id  = result.get("finish_step_id")   # int | None
-        parse_error     = result.get("parse_error")      # str | None
+        total_steps    = len(trajectory)
+        finish_reached = bool(result.get("finish_reached", False))
+        final_equation = result.get("final_equation")
+        finish_step_id = result.get("finish_step_id")
+        parse_error    = result.get("parse_error")
 
         # ── Outcome fields ────────────────────────────────────────────────────
         equation_submitted = isinstance(final_equation, str) and bool(final_equation.strip())
@@ -96,10 +99,12 @@ class EpisodeEvaluator:
         else:
             equation_correct = False
 
-        success     = finish_reached and equation_correct
+        success      = finish_reached and equation_correct
         valid_finish = finish_reached and equation_submitted
 
-        steps_to_success = (finish_step_id + 1) if (success and finish_step_id is not None) else None
+        steps_to_success = (
+            (finish_step_id + 1) if (success and finish_step_id is not None) else None
+        )
 
         termination_reason = self._termination_reason(
             parse_error, finish_reached, equation_correct
@@ -108,11 +113,11 @@ class EpisodeEvaluator:
         # ── Exploration metrics ───────────────────────────────────────────────
         unique_states = self._count_unique_states(trajectory)
 
-        action_metrics = self._compute_action_metrics(trajectory)
-        unique_actions               = action_metrics["unique_actions"]
-        repeated_actions             = action_metrics["repeated_actions"]
-        loop_count                   = action_metrics["loop_count"]
-        variable_isolation_score     = action_metrics["variable_isolation_score"]
+        action_metrics           = self._compute_action_metrics(trajectory)
+        unique_actions           = action_metrics["unique_actions"]
+        repeated_actions         = action_metrics["repeated_actions"]
+        loop_count               = action_metrics["loop_count"]
+        variable_isolation_score = action_metrics["variable_isolation_score"]
 
         # ── Scores ────────────────────────────────────────────────────────────
         if total_steps > 0:
@@ -126,28 +131,28 @@ class EpisodeEvaluator:
 
         return {
             # outcome
-            "success":                    success,
-            "finish_called":              finish_reached,
-            "valid_finish":               valid_finish,
-            "equation_correct":           equation_correct,
-            "equation_submitted":         equation_submitted,
-            "steps_to_success":           steps_to_success,
-            "termination_reason":         termination_reason,
-            "final_equation":             final_equation,
-            "error_message":              parse_error,
+            "success":                      success,
+            "finish_called":                finish_reached,
+            "valid_finish":                 valid_finish,
+            "equation_correct":             equation_correct,
+            "equation_submitted":           equation_submitted,
+            "steps_to_success":             steps_to_success,
+            "termination_reason":           termination_reason,
+            "final_equation":               final_equation,
+            "error_message":                parse_error,
             # exploration counts
-            "total_steps":                total_steps,
-            "unique_states":              unique_states,
-            "unique_actions":             unique_actions,
-            "repeated_actions":           repeated_actions,
-            "loop_count":                 loop_count,
+            "total_steps":                  total_steps,
+            "unique_states":                unique_states,
+            "unique_actions":               unique_actions,
+            "repeated_actions":             repeated_actions,
+            "loop_count":                   loop_count,
             # scores
-            "state_coverage_ratio":       round(state_coverage_ratio, 4),
-            "redundancy_penalty":         round(redundancy_penalty, 4),
-            "variable_isolation_score":   round(variable_isolation_score, 4),
+            "state_coverage_ratio":         round(state_coverage_ratio, 4),
+            "redundancy_penalty":           round(redundancy_penalty, 4),
+            "variable_isolation_score":     round(variable_isolation_score, 4),
             "controlled_experiments_ratio": round(variable_isolation_score, 4),
-            "exploration_breadth_score":  round(state_coverage_ratio, 4),
-            "discovery_efficiency":       round(discovery_efficiency, 6),
+            "exploration_breadth_score":    round(state_coverage_ratio, 4),
+            "discovery_efficiency":         round(discovery_efficiency, 6),
         }
 
     # ─────────────────────────────────────────────────────────────────────────
@@ -200,22 +205,21 @@ class EpisodeEvaluator:
 
         repeated_actions
             total_action_steps - unique_actions.
-            How many action steps duplicated a previously-seen action.
 
         loop_count
             Number of times a previously-seen action reappears.
-            Same as repeated_actions when counting individual occurrences.
 
         variable_isolation_score
-            Fraction of action steps where exactly one variable changed
-            between state_before and state_after.
-            With the current env design (one variable per action) this is
-            always 1.0 for well-formed episodes, but useful as a sanity check
-            and for future noisier environments.
+            Fraction of action steps where the action's target variable
+            actually changed in state. Checking only the action variable
+            (not all state vars) avoids counting equation output cascades
+            as additional changes. In the current env this is always 1.0
+            for well-formed episodes; useful as a sanity check and for
+            future noisy or multi-action environments.
         """
-        seen_actions: set = set()
+        seen_actions:    set         = set()
         all_action_keys: List[Tuple] = []
-        controlled_count = 0
+        controlled_count   = 0
         total_action_steps = 0
 
         for step in trajectory:
@@ -227,29 +231,23 @@ class EpisodeEvaluator:
 
             total_action_steps += 1
 
-            # ── Action key ────────────────────────────────────────────────────
             parsed_action = step.get("parsed_action")
             if isinstance(parsed_action, dict):
                 key = EpisodeEvaluator._action_key(parsed_action)
                 all_action_keys.append(key)
                 seen_actions.add(key)
 
-            # ── Variable isolation: how many variables changed? ───────────────
-            state_before = step.get("state_before") or {}
-            state_after  = step.get("state_after")  or {}
-
-            changed = sum(
-                1 for var in set(state_before) | set(state_after)
-                if state_before.get(var) != state_after.get(var)
-            )
-            if changed == 1:
-                controlled_count += 1
+                # Variable isolation: did the action variable actually change?
+                action_var   = parsed_action.get("variable")
+                state_before = step.get("state_before") or {}
+                state_after  = step.get("state_after")  or {}
+                if action_var and state_before.get(action_var) != state_after.get(action_var):
+                    controlled_count += 1
 
         unique_actions   = len(seen_actions)
         repeated_actions = total_action_steps - unique_actions
 
-        # loop_count: occurrences after the first time each action appears
-        loop_count = 0
+        loop_count    = 0
         seen_so_far: set = set()
         for key in all_action_keys:
             if key in seen_so_far:
@@ -257,14 +255,13 @@ class EpisodeEvaluator:
             else:
                 seen_so_far.add(key)
 
-        if total_action_steps > 0:
-            variable_isolation_score = controlled_count / total_action_steps
-        else:
-            variable_isolation_score = 0.0
+        variable_isolation_score = (
+            controlled_count / total_action_steps if total_action_steps > 0 else 0.0
+        )
 
         return {
-            "unique_actions":            unique_actions,
-            "repeated_actions":          repeated_actions,
-            "loop_count":                loop_count,
-            "variable_isolation_score":  variable_isolation_score,
+            "unique_actions":           unique_actions,
+            "repeated_actions":         repeated_actions,
+            "loop_count":               loop_count,
+            "variable_isolation_score": variable_isolation_score,
         }
