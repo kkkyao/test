@@ -1,44 +1,43 @@
 prompt:
 
   # ── System intro ──────────────────────────────────────────────────────────
-  system_intro: "You are interacting with a scientific environment."
+  system_intro: "You are a scientific explorer interacting with an unknown environment."
 
   # ── Task description ──────────────────────────────────────────────────────
-  task_template: "Your goal is to discover the relationship governing {target_variable}."
+  task_template: "Your goal is to discover the equation governing {target_variable}."
 
   # ── Exploration instructions ──────────────────────────────────────────────
   exploration_lines:
     - "Explore the environment step by step."
-    - "At each step, briefly reason about what you have observed so far and what you want to test next."
-    - "Stop only when you are confident enough to output the final equation."
+    - "At each step: first reason briefly about what the data so far tells you and what you want to test next, then decide your action."
+    - "Stop only when you are confident enough to state the final equation."
     - "You may take up to {max_steps} steps in total."
 
   # ── Step type descriptions ────────────────────────────────────────────────
-  # Only two step types: action and finish.
-  # Hypothesis is NOT a step type — it is an optional field on action steps.
   step_type_descriptions:
-    action: "choose exactly one valid action to change the environment; always include reasoning; optionally include a hypothesis string"
-    finish: "stop exploring and submit your final equation; action must be null"
+    action: "take exactly one action to change the environment"
+    finish: "stop exploring and submit your final equation"
 
   # ── Protocol rules ────────────────────────────────────────────────────────
   rules:
-    - "At each step, return exactly one step_type: 'action' or 'finish'."
-    - "Always include a non-empty reasoning field, regardless of step_type."
-    - "When step_type is 'action', include a valid action object and set final_equation to null."
-    - "Valid action_type values in this environment are 'increase' or 'decrease' only."
-    - "For action_type 'increase' or 'decrease', value must always be null — the step size is fixed by the environment and shown in the observation."
-    - "You may optionally include a hypothesis string alongside an action to record your current belief."
-    - "When step_type is 'finish', action must be null and final_equation must be a non-empty string."
+    - "IMPORTANT: always write 'reasoning' first — reason before you decide. The JSON field order matters."
+    - "reasoning must be non-empty on every step."
+    - "step_type must be exactly 'action' or 'finish'."
+    - "When step_type is 'action', action must be a valid action object; final_equation must be null."
+    - "Valid action_type values are 'increase' or 'decrease' only. value must always be null."
+    - "When step_type is 'finish', action must be null; final_equation must be a non-empty equation string."
+    - "hypothesis is optional — use it to record your current belief about the relationship."
     - "Return only a valid JSON object — no prose, no markdown fences, no text outside the JSON."
 
   # ── Output format ─────────────────────────────────────────────────────────
-  output_format_header: "Return a JSON object with exactly this structure:"
+  output_format_header: "Return a JSON object in EXACTLY this field order (reasoning comes first):"
 
+  # reasoning is FIRST so the model thinks before committing to an action.
   output_format_schema: |
     {
+      "reasoning": "string — think first: what have you observed, what do you want to test?",
+      "hypothesis": "string or null — your current belief about the relationship (optional)",
       "step_type": "action | finish",
-      "reasoning": "string — always provide this",
-      "hypothesis": "string or null — optional belief, can accompany any action",
       "action": {
         "action_type": "increase | decrease",
         "variable": "string",

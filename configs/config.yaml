@@ -1,9 +1,14 @@
-# Main config — points to sub-config files.
-# Override env_config or model_config at the command line:
+# Main config — default entry point for all runs.
+# Override env_config or model_config on the command line:
 #
 #   python run_episode.py --env_config configs/env_beers_abstract.yaml
-#   python run_episode.py --model_config configs/model_qwen3_4b.yaml
-#   python run_episode.py --env_config configs/env_beers_abstract.yaml --model_config configs/model_qwen3_4b.yaml
+#   python run_episode.py --model_config configs/model_qwen25_3b.yaml
+#   python run_episode.py --env_config configs/env_beers_abstract.yaml --model_config configs/model_qwen35_9b.yaml
+#   python run_episode.py --evaluate    # force evaluation on this single run
+#
+#   python run_experiment.py --env_config configs/env_beers_concrete.yaml \
+#                            --model_config configs/model_qwen25_3b.yaml \
+#                            --n_runs 10 --run_name concrete_qwen25_3b
 
 experiment_config: experiment_default.yaml
 env_config:        env_beers_concrete.yaml

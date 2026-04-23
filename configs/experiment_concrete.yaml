@@ -1,65 +1,11 @@
-environment:
-  target_variable: absorbance
+experiment:
+  name: beers_concrete
+  max_steps: 50
+  history_window: null
+  auto_evaluate: true
 
-  variables:
-    concentration:
-      manipulable: true
-      initial_value: 100
-      step_size: 100
-      min_value: null
-      max_value: null
-      description: amount of solute per volume
-
-    path_length:
-      manipulable: true
-      initial_value: 2
-      step_size: 1
-      min_value: null
-      max_value: null
-      description: distance the light travels through the solution
-
-    wavelength:
-      manipulable: true
-      initial_value: 500
-      step_size: 50
-      min_value: null
-      max_value: null
-      description: wavelength of incident light
-
-    transmittance:
-      manipulable: false
-      description: fraction of light transmitted through the solution
-
-    absorbance:
-      manipulable: false
-      description: amount of light absorbed by the solution
-
-  equations:
-    absorbance: "(concentration * path_length) / 200"
-    transmittance: "100 - absorbance"
-
-representation:
-  naming_mode: concrete
-  metadata_level: rich
-  name_mapping:
-    concentration: concentration
-    path_length: path_length
-    wavelength: wavelength
-    transmittance: transmittance
-    absorbance: absorbance
-
-actions:
-  action_mode: increase_decrease
-
-evaluation:
-  variable_mapping:
-    concentration: concentration
-    path_length: path_length
-    wavelength: wavelength
-    transmittance: transmittance
-    absorbance: absorbance
-
-noise:
-  enabled: false
-  type: null
-  params: {}
+logging:
+  output_dir: outputs/beers_concrete
+  save_steps: true
+  save_trajectory: true
+  save_interaction_log: true
