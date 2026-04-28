@@ -6,8 +6,6 @@ from typing import Any, Dict, Literal, Optional
 from src.schemas.action_schema import ActionSpec
 
 # Two step types only.
-# "hypothesis" has been removed as a standalone step type.
-# Hypotheses are expressed via the optional `hypothesis` field on action steps.
 StepType = Literal["action", "finish"]
 
 
@@ -15,15 +13,10 @@ StepType = Literal["action", "finish"]
 class AgentStep:
     """
     Structured single-step output parsed from the model.
-
-    Every step must carry a reasoning field.
-    hypothesis is optional and may appear on any action step — the model does
-    not need to spend a separate step just to state a hypothesis.
     """
 
     step_type: StepType
     reasoning: Optional[str] = None
-    hypothesis: Optional[str] = None
     action: Optional[ActionSpec] = None
     final_equation: Optional[str] = None
 

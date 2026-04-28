@@ -14,9 +14,6 @@ class TraceStep:
     step_type is one of:
         "action"  — model took an action (environment updated)
         "finish"  — model submitted final equation (episode ends)
-
-    hypothesis_text may be present on any action step as an optional
-    accompanying belief; it is no longer a step type of its own.
     """
 
     step_id: int
@@ -28,7 +25,6 @@ class TraceStep:
     observation_after: Optional[Dict[str, Any]] = None
     state_before: Optional[Dict[str, Any]] = None
     state_after: Optional[Dict[str, Any]] = None
-    hypothesis_text: Optional[str] = None   # optional on action steps
     final_equation: Optional[str] = None
     prompt: Optional[str] = None
     done: bool = False

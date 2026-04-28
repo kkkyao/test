@@ -89,8 +89,7 @@ class TextRenderer:
 
     def _build_available_actions(self) -> List[Dict[str, Any]]:
         """
-        Build the action list. For increase_decrease mode, include step_size
-        so the model knows the exact magnitude of each action.
+        Build the action list shown to the model.
         """
         actions: List[Dict[str, Any]] = []
 
@@ -101,19 +100,20 @@ class TextRenderer:
             display_name = self._display_name(variable)
 
             if self.action_mode == "increase_decrease":
-                step_size = cfg.get("step_size")
                 actions.append({
                     "action_type": "increase",
                     "variable": display_name,
-                    "step_size": step_size,
                 })
                 actions.append({
                     "action_type": "decrease",
                     "variable": display_name,
-                    "step_size": step_size,
                 })
             else:  # set_value
-                actions.append({"action_type": "set", "variable": display_name})
+                actions.append({
+                    "action_type": "set",
+                    "variable": display_name,
+                    "value": "<number>",
+                })
 
         return actions
 
@@ -134,15 +134,7 @@ class TextRenderer:
                 internal_name = self._internal_name(display_name)
                 cfg = self.variables.get(internal_name, {})
                 description = cfg.get("description", "No description available.")
-                # Show step_size for manipulable variables in increase_decrease mode
-                if cfg.get("manipulable") and self.action_mode == "increase_decrease":
-                    step_size = cfg.get("step_size")
-                    if step_size is not None:
-                        lines.append(f"{display_name}: {description} (step size: {step_size})")
-                    else:
-                        lines.append(f"{display_name}: {description}")
-                else:
-                    lines.append(f"{display_name}: {description}")
+                lines.append(f"{display_name}: {description}")
 
         elif self.metadata_level == "minimal":
             lines.append("")
@@ -153,17 +145,7 @@ class TextRenderer:
         lines.append("Available actions:")
 
         for action in available_actions:
-            action_type = action["action_type"]
-            variable = action["variable"]
-
-            if action_type == "set":
-                lines.append(f"- set {variable} to <value>")
-            else:
-                step_size = action.get("step_size")
-                if step_size is not None:
-                    lines.append(f"- {action_type} {variable}  [±{step_size}]")
-                else:
-                    lines.append(f"- {action_type} {variable}")
+            lines.append(f"- {action}")
 
         return "\n".join(lines)
 

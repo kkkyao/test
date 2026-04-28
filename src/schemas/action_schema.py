@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from typing import Any, Dict, Literal, Optional
 
 ActionType = Literal["increase", "decrease", "set"]
@@ -25,8 +25,16 @@ class ActionSpec:
 
         if self.action_type in {"increase", "decrease"} and self.value is not None:
             raise ValueError(
-                "value must be None when action_type is 'increase' or 'decrease'"
+                "value must not be provided when action_type is 'increase' or 'decrease'"
             )
 
     def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
+        data: Dict[str, Any] = {
+            "action_type": self.action_type,
+            "variable": self.variable,
+        }
+
+        if self.action_type == "set":
+            data["value"] = self.value
+
+        return data
