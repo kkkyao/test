@@ -1,0 +1,58 @@
+environment:
+  target_variable: total_distance
+
+  variables:
+    d1:
+      manipulable: true
+      initial_value: 10
+      step_size: 10
+      min_value: null
+      max_value: null
+      description: first segment distance in metres
+
+    d2:
+      manipulable: true
+      initial_value: 20
+      step_size: 10
+      min_value: null
+      max_value: null
+      description: second segment distance in metres
+
+    d3:
+      manipulable: true
+      initial_value: 30
+      step_size: 10
+      min_value: null
+      max_value: null
+      description: third segment distance in metres
+
+    total_distance:
+      manipulable: false
+      description: total distance in metres
+
+  equations:
+    total_distance: "d1 + d2 + d3"
+
+representation:
+  naming_mode: concrete
+  metadata_level: rich
+  name_mapping:
+    d1: d1
+    d2: d2
+    d3: d3
+    total_distance: total_distance
+
+actions:
+  action_mode: increase_decrease
+
+evaluation:
+  variable_mapping:
+    d1: d1
+    d2: d2
+    d3: d3
+    total_distance: total_distance
+
+noise:
+  enabled: false
+  type: null
+  params: {}

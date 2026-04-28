@@ -1,0 +1,58 @@
+environment:
+  target_variable: mass
+
+  variables:
+    density:
+      manipulable: true
+      initial_value: 2
+      step_size: 1
+      min_value: null
+      max_value: null
+      description: density of the material in kg per cubic metre
+
+    volume:
+      manipulable: true
+      initial_value: 10
+      step_size: 10
+      min_value: null
+      max_value: null
+      description: volume of the object in cubic metres
+
+    k:
+      manipulable: true
+      initial_value: 3
+      step_size: 1
+      min_value: null
+      max_value: null
+      description: scaling constant
+
+    mass:
+      manipulable: false
+      description: total mass of the object in kilograms
+
+  equations:
+    mass: "density * volume * k"
+
+representation:
+  naming_mode: abstract
+  metadata_level: none
+  name_mapping:
+    density: A
+    volume: B
+    k: C
+    mass: Y
+
+actions:
+  action_mode: increase_decrease
+
+evaluation:
+  variable_mapping:
+    A: density
+    B: volume
+    C: k
+    Y: mass
+
+noise:
+  enabled: false
+  type: null
+  params: {}

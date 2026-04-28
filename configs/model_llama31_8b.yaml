@@ -1,0 +1,16 @@
+# Meta Llama 3.1 8B Instruct
+# Official recommended: temperature=0.6, top_p=0.9 (from Meta examples)
+# Requires HuggingFace access: https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct
+agent:
+  backend: hf_qwen
+  model_name: meta-llama/Llama-3.1-8B-Instruct
+  dtype: bfloat16
+  device_map: auto
+  trust_remote_code: false
+  disable_thinking: false
+  generation:
+    temperature: 0.6
+    top_p: 0.9
+    top_k: 20
+    max_new_tokens: 512
+    do_sample: true
