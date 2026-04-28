@@ -105,7 +105,7 @@ def _validate_config(config: Dict[str, Any]) -> None:
     required_prompt_keys = [
         "system_intro", "task_template", "exploration_lines",
         "step_type_descriptions", "rules", "output_format_header",
-        "output_format_schema", "section_headers", "history_labels",
+        "output_format_finish", "section_headers", "history_labels",
     ]
     missing = [k for k in required_prompt_keys if k not in config["prompt"]]
     if missing:
