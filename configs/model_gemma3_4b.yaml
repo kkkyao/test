@@ -1,0 +1,16 @@
+# Google Gemma 3 4B Instruct
+# Official recommended: temperature=1.0, top_p=0.95, top_k=64 (confirmed by Gemma team)
+# Requires HuggingFace access: https://huggingface.co/google/gemma-3-4b-it
+agent:
+  backend: hf_qwen
+  model_name: google/gemma-3-4b-it
+  dtype: bfloat16
+  device_map: auto
+  trust_remote_code: false
+  disable_thinking: false
+  generation:
+    temperature: 1.0
+    top_p: 0.95
+    top_k: 64
+    max_new_tokens: 512
+    do_sample: true

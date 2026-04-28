@@ -1,0 +1,16 @@
+# Mistral 7B Instruct v0.3
+# Community recommended: temperature=0.7, top_p=0.95, top_k=50
+# No access request needed
+agent:
+  backend: hf_qwen
+  model_name: mistralai/Mistral-7B-Instruct-v0.3
+  dtype: bfloat16
+  device_map: auto
+  trust_remote_code: false
+  disable_thinking: false
+  generation:
+    temperature: 0.7
+    top_p: 0.95
+    top_k: 50
+    max_new_tokens: 512
+    do_sample: true
