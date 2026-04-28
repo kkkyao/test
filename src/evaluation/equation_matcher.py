@@ -37,6 +37,10 @@ class EquationMatcher:
         Both sides of "lhs = rhs" are converted to a single expression
         (lhs - rhs) before comparison, so equations written with lhs and
         rhs swapped are still recognised as equivalent.
+
+        If the prediction is a full equation but the ground truth is only
+        an expression, also compare the predicted right-hand side against
+        the ground-truth expression.
         """
         if not isinstance(predicted, str) or not predicted.strip():
             return False
@@ -53,7 +57,15 @@ class EquationMatcher:
             if pred_expr is None or gt_expr is None:
                 return False
 
-            return self._expressions_equivalent(pred_expr, gt_expr)
+            if self._expressions_equivalent(pred_expr, gt_expr):
+                return True
+
+            predicted_rhs = self._extract_rhs_if_equation(predicted_mapped)
+            if predicted_rhs is not None and "=" not in ground_truth:
+                rhs_expr = self._equation_to_expr(predicted_rhs)
+                return self._expressions_equivalent(rhs_expr, gt_expr)
+
+            return False
 
         except Exception:
             return False
@@ -108,6 +120,23 @@ class EquationMatcher:
         if not equation:
             raise ValueError("equation must be a non-empty string")
         return parse_expr(equation, transformations=_TRANSFORMATIONS)
+
+    @staticmethod
+    def _extract_rhs_if_equation(equation: str) -> Optional[str]:
+        """
+        Return the right-hand side if the string contains an equation.
+        Otherwise return None.
+        """
+        if "=" not in equation:
+            return None
+
+        _, rhs_str = equation.split("=", 1)
+        rhs_str = rhs_str.strip()
+
+        if not rhs_str:
+            return None
+
+        return rhs_str
 
     @staticmethod
     def _expressions_equivalent(expr1: sp.Expr, expr2: sp.Expr) -> bool:

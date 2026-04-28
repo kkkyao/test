@@ -132,7 +132,6 @@ class EpisodeLogger:
                     "prompt":             step.get("prompt"),
                     "raw_model_output":   step.get("raw_model_output"),
                     "reasoning":          step.get("reasoning"),
-                    "hypothesis_text":    step.get("hypothesis_text"),
                     "parsed_action":      step.get("parsed_action"),
                     "final_equation":     step.get("final_equation"),
                     "observation_before": step.get("observation_before"),

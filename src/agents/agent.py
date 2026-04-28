@@ -7,7 +7,7 @@ from typing import Callable
 from src.schemas.action_schema import ActionSpec
 from src.schemas.agent_output_schema import AgentStep
 
-_VALID_STEP_TYPES = {"hypothesis", "action", "finish"}
+_VALID_STEP_TYPES = {"action", "finish"}
 
 
 class TextLLMAgent:
@@ -61,6 +61,9 @@ class TextLLMAgent:
         if not isinstance(data, dict):
             raise ValueError("model output JSON must be an object")
 
+        if "hypothesis" in data:
+            raise ValueError("model output JSON must not contain 'hypothesis'")
+
         if "step_type" not in data:
             raise ValueError("model output JSON must contain 'step_type'")
 
@@ -84,10 +87,8 @@ class TextLLMAgent:
         if step_type == "action" and data.get("action") is None:
             raise ValueError("'action' must be provided when step_type='action'")
 
-        if step_type in {"hypothesis", "finish"} and data.get("action") is not None:
-            raise ValueError(
-                f"'action' must be null when step_type='{step_type}'"
-            )
+        if step_type == "finish" and data.get("action") is not None:
+            raise ValueError("'action' must be null when step_type='finish'")
 
         action = None
         if data.get("action") is not None:
@@ -102,8 +103,26 @@ class TextLLMAgent:
             if "variable" not in action_data:
                 raise ValueError("'action.variable' is required when action is provided")
 
+            action_type = action_data.get("action_type")
+
+            if action_type in {"increase", "decrease"} and "value" in action_data:
+                raise ValueError(
+                    "'action.value' must not be present when action_type is "
+                    "'increase' or 'decrease'"
+                )
+
+            if action_type == "set":
+                if "value" not in action_data:
+                    raise ValueError(
+                        "'action.value' is required when action_type='set'"
+                    )
+                if not isinstance(action_data.get("value"), (int, float)):
+                    raise ValueError(
+                        "'action.value' must be numeric when action_type='set'"
+                    )
+
             action = ActionSpec(
-                action_type=action_data.get("action_type"),
+                action_type=action_type,
                 variable=action_data.get("variable"),
                 value=action_data.get("value"),
             )
@@ -111,7 +130,6 @@ class TextLLMAgent:
         return AgentStep(
             step_type=step_type,
             reasoning=reasoning,
-            hypothesis=data.get("hypothesis"),
             action=action,
             final_equation=data.get("final_equation"),
         )
