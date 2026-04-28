@@ -14,6 +14,7 @@ prompt:
     action: "take exactly one action to change the environment"
     finish: "stop exploring and submit your final equation"
 
+  # FIX: 去掉了原来关于 value 字段的两条规则（由 parser 在代码层强制，不靠 prompt 说教）
   rules:
     - "Return exactly one valid JSON object."
     - "Do not output prose, markdown fences, bullet points, or any text outside the JSON object."
@@ -22,13 +23,12 @@ prompt:
     - "When step_type is 'action', action must be one valid action object from Available actions; final_equation must be null."
     - "When step_type is 'finish', action must be null; final_equation must be a non-empty equation string."
     - "Do not invent new action_type values, variables, or fields."
-    - "For increase and decrease actions, do not include a value field."
-    - "For set actions, include a numeric value field."
 
   output_format_header: "Your answer must follow one of the JSON templates below."
 
-  output_format_schema: |
-    For an action step using increase/decrease:
+  # FIX: 按 action_mode 拆分为两个独立模板，prompt_builder 根据当前 mode 只取其一
+  output_format_action_increase_decrease: |
+    For an action step:
     {
       "reasoning": "brief string",
       "step_type": "action",
@@ -39,7 +39,8 @@ prompt:
       "final_equation": null
     }
 
-    For an action step using set:
+  output_format_action_set_value: |
+    For an action step:
     {
       "reasoning": "brief string",
       "step_type": "action",
@@ -51,6 +52,7 @@ prompt:
       "final_equation": null
     }
 
+  output_format_finish: |
     For a finish step:
     {
       "reasoning": "brief string",

@@ -20,7 +20,7 @@ def build_model_callable(agent_config: Dict[str, Any]) -> Callable[[str], str]:
 
     Supported backends:
     - mock: multi-step placeholder for pipeline testing
-    - hf_qwen: local Hugging Face Qwen inference
+    - hf_qwen: local Hugging Face inference (Qwen, Llama, Mistral, Gemma, etc.)
     """
     backend = agent_config.get("backend", "mock")
 
@@ -35,8 +35,7 @@ def build_model_callable(agent_config: Dict[str, Any]) -> Callable[[str], str]:
                 return json.dumps({
                     "step_type": "action",
                     "reasoning": "I will increase concentration to observe how absorbance changes.",
-                    "hypothesis": "Absorbance may be proportional to concentration.",
-                    "action": {"action_type": "increase", "variable": "concentration", "value": None},
+                    "action": {"action_type": "increase", "variable": "concentration"},
                     "final_equation": None,
                 })
 
@@ -44,15 +43,13 @@ def build_model_callable(agent_config: Dict[str, Any]) -> Callable[[str], str]:
                 return json.dumps({
                     "step_type": "action",
                     "reasoning": "Now I will vary path_length while keeping concentration fixed.",
-                    "hypothesis": None,
-                    "action": {"action_type": "increase", "variable": "path_length", "value": None},
+                    "action": {"action_type": "increase", "variable": "path_length"},
                     "final_equation": None,
                 })
 
             return json.dumps({
                 "step_type": "finish",
                 "reasoning": "I am confident enough to provide the final equation.",
-                "hypothesis": None,
                 "action": None,
                 "final_equation": "absorbance = concentration * path_length / 200",
             })
@@ -70,27 +67,34 @@ def build_model_callable(agent_config: Dict[str, Any]) -> Callable[[str], str]:
             )
 
         generation_cfg = agent_config.get("generation", {})
-        max_new_tokens = int(generation_cfg.get("max_new_tokens", 512))
+        max_new_tokens = int(generation_cfg.get("max_new_tokens", 1024))
         temperature    = float(generation_cfg.get("temperature", 0.7))
         top_p          = float(generation_cfg.get("top_p", 0.8))
         top_k          = int(generation_cfg.get("top_k", 20))
         do_sample      = bool(generation_cfg.get("do_sample", temperature > 0.0))
 
         device_map        = agent_config.get("device_map", "auto")
-        torch_dtype_cfg   = str(agent_config.get("torch_dtype", "auto")).lower()
         trust_remote_code = bool(agent_config.get("trust_remote_code", True))
+        disable_thinking  = bool(agent_config.get("disable_thinking", False))  # FIX: 原来从未被读取
+
+        # FIX: config 里写的是 dtype，原代码读的是 torch_dtype，字段名不匹配
+        torch_dtype_cfg = str(
+            agent_config.get("dtype", agent_config.get("torch_dtype", "auto"))
+        ).lower()
 
         dtype_map = {
-            "auto": "auto",
-            "float16": torch.float16,
+            "auto":     "auto",
+            "float16":  torch.float16,
             "bfloat16": torch.bfloat16,
-            "float32": torch.float32,
+            "float32":  torch.float32,
         }
         if torch_dtype_cfg not in dtype_map:
-            raise ValueError(f"agent.torch_dtype must be one of: {list(dtype_map)}")
+            raise ValueError(f"agent.dtype must be one of: {list(dtype_map)}")
         torch_dtype: Any = dtype_map[torch_dtype_cfg]
 
-        tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=trust_remote_code)
+        tokenizer = AutoTokenizer.from_pretrained(
+            model_name, trust_remote_code=trust_remote_code
+        )
         model = AutoModelForCausalLM.from_pretrained(
             model_name,
             torch_dtype=torch_dtype,
@@ -101,9 +105,23 @@ def build_model_callable(agent_config: Dict[str, Any]) -> Callable[[str], str]:
 
         def hf_qwen_model(prompt: str) -> str:
             messages = [{"role": "user", "content": prompt}]
-            rendered_text = tokenizer.apply_chat_template(
-                messages, tokenize=False, add_generation_prompt=True
-            )
+
+            # FIX: 根据 disable_thinking 决定是否传 enable_thinking=False
+            # 用 try/except 兜底，Llama/Mistral/Gemma 等不支持该参数的模型不会报错
+            template_kwargs: Dict[str, Any] = {
+                "tokenize": False,
+                "add_generation_prompt": True,
+            }
+            if disable_thinking:
+                template_kwargs["enable_thinking"] = False
+
+            try:
+                rendered_text = tokenizer.apply_chat_template(messages, **template_kwargs)
+            except TypeError:
+                rendered_text = tokenizer.apply_chat_template(
+                    messages, tokenize=False, add_generation_prompt=True
+                )
+
             inputs = tokenizer(rendered_text, return_tensors="pt")
             if hasattr(model, "device"):
                 inputs = {k: v.to(model.device) for k, v in inputs.items()}
@@ -135,7 +153,11 @@ def main(
     env_config: str | None = None,
     model_config: str | None = None,
 ) -> None:
-    config = load_config(config_path, env_config_override=env_config, model_config_override=model_config)
+    config = load_config(
+        config_path,
+        env_config_override=env_config,
+        model_config_override=model_config,
+    )
 
     experiment_cfg     = config["experiment"]
     environment_cfg    = config["environment"]
@@ -165,25 +187,39 @@ def main(
             f"target_variable '{target_variable}' must exist in environment.equations"
         )
 
-    env            = EquationEnv(variables=variables, equations=equations, action_mode=action_mode)
-    renderer       = TextRenderer(
-        variables=variables, action_mode=action_mode, target_variable=target_variable,
-        naming_mode=naming_mode, metadata_level=metadata_level, name_mapping=name_mapping,
+    env = EquationEnv(
+        variables=variables, equations=equations, action_mode=action_mode
+    )
+    renderer = TextRenderer(
+        variables=variables,
+        action_mode=action_mode,
+        target_variable=target_variable,
+        naming_mode=naming_mode,
+        metadata_level=metadata_level,
+        name_mapping=name_mapping,
     )
     prompt_builder = PromptBuilder(
-        prompt_config=config["prompt"], target_variable=target_variable,
-        max_steps=max_steps, include_history=True,
+        prompt_config=config["prompt"],
+        target_variable=target_variable,
+        max_steps=max_steps,
+        action_mode=action_mode,            # FIX: 新增，同步给 PromptBuilder
+        include_history=True,
         history_window=experiment_cfg.get("history_window"),
     )
     model_callable = build_model_callable(agent_cfg)
     agent          = TextLLMAgent(model_callable=model_callable)
     runner         = EpisodeRunner(
-        env=env, renderer=renderer, prompt_builder=prompt_builder,
-        agent=agent, max_steps=max_steps,
+        env=env,
+        renderer=renderer,
+        prompt_builder=prompt_builder,
+        agent=agent,
+        max_steps=max_steps,
     )
-    logger         = EpisodeLogger(
-        output_dir=output_dir, save_steps=save_steps,
-        save_trajectory=save_trajectory, save_interaction_log=save_interaction_log,
+    logger = EpisodeLogger(
+        output_dir=output_dir,
+        save_steps=save_steps,
+        save_trajectory=save_trajectory,
+        save_interaction_log=save_interaction_log,
     )
 
     result = runner.run_episode()
@@ -238,7 +274,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model_config", type=str, default=None,
         help="Override the model_config from main config. "
-             "E.g. configs/model_qwen3_4b.yaml",
+             "E.g. configs/model_qwen35_4b.yaml",
     )
     args = parser.parse_args()
     main(args.config, env_config=args.env_config, model_config=args.model_config)

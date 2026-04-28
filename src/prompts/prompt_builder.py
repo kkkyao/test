@@ -15,6 +15,7 @@ class PromptBuilder:
         - Substitute runtime values ({target_variable}, {max_steps}) via
           str.format().
         - Insert the current observation text and formatted history.
+        - Show only the output format template matching the current action_mode.
 
     The builder owns NO hardcoded strings. Every piece of text the model
     sees must come from the config passed at init time.
@@ -25,6 +26,7 @@ class PromptBuilder:
         prompt_config: Dict[str, Any],
         target_variable: str,
         max_steps: int,
+        action_mode: str,                    # FIX: 新增，用于选择对应的 output format 模板
         include_history: bool = True,
         history_window: Optional[int] = None,
     ) -> None:
@@ -37,6 +39,9 @@ class PromptBuilder:
         if not isinstance(max_steps, int) or max_steps <= 0:
             raise ValueError("max_steps must be a positive integer")
 
+        if action_mode not in {"increase_decrease", "set_value"}:
+            raise ValueError("action_mode must be 'increase_decrease' or 'set_value'")
+
         if history_window is not None:
             if not isinstance(history_window, int) or history_window <= 0:
                 raise ValueError("history_window must be a positive integer or None")
@@ -44,9 +49,11 @@ class PromptBuilder:
         self._cfg = prompt_config
         self.target_variable = target_variable
         self.max_steps = max_steps
+        self.action_mode = action_mode
         self.include_history = include_history
         self.history_window = history_window
 
+        # FIX: 检查 action_mode 对应的模板 key 是否存在
         self._require_keys(
             self._cfg,
             [
@@ -56,7 +63,8 @@ class PromptBuilder:
                 "step_type_descriptions",
                 "rules",
                 "output_format_header",
-                "output_format_schema",
+                f"output_format_action_{action_mode}",
+                "output_format_finish",
                 "section_headers",
                 "history_labels",
             ],
@@ -112,7 +120,7 @@ class PromptBuilder:
         for step_type, description in self._cfg["step_type_descriptions"].items():
             sections.append(f"- {step_type}: {description}")
 
-        # 4. Rules
+        # 4. Rules（与 action_mode 无关；value 格式约束由 parser 在代码层强制）
         sections.append("")
         sections.append(self._cfg["section_headers"]["rules"])
         for rule in self._cfg["rules"]:
@@ -131,11 +139,12 @@ class PromptBuilder:
         else:
             sections.append(self._cfg["history_labels"]["empty"])
 
-        # 7. Output format
+        # 7. Output format: FIX: 只展示当前 action_mode 对应的模板 + finish 模板
         sections.append("")
         sections.append(self._cfg["section_headers"]["output_format"])
         sections.append(self._cfg["output_format_header"])
-        sections.append(self._cfg["output_format_schema"].rstrip())
+        sections.append(self._cfg[f"output_format_action_{self.action_mode}"].rstrip())
+        sections.append(self._cfg["output_format_finish"].rstrip())
 
         return "\n".join(sections)
 
@@ -147,8 +156,7 @@ class PromptBuilder:
         """
         Convert history dicts into a compact, labelled text block.
 
-        For action steps:   show step_type, reasoning, action, state before, state after
-        For hypothesis:     show step_type, reasoning, hypothesis text
+        For action steps: show step_type, reasoning, action, state before/after.
         final_equation is not shown — finish always ends the episode immediately
         so no subsequent step ever reads it from history.
         """
@@ -210,9 +218,7 @@ class PromptBuilder:
 
     @staticmethod
     def _format_action(action: Any) -> str:
-        """
-        Render a parsed action dict into a readable string.
-        """
+        """Render a parsed action dict into a readable string."""
         if not isinstance(action, dict):
             return str(action)
 

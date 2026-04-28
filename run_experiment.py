@@ -119,8 +119,11 @@ def main(
         naming_mode=naming_mode, metadata_level=metadata_level, name_mapping=name_mapping,
     )
     prompt_builder = PromptBuilder(
-        prompt_config=config["prompt"], target_variable=target_variable,
-        max_steps=max_steps, include_history=True,
+        prompt_config=config["prompt"],
+        target_variable=target_variable,
+        max_steps=max_steps,
+        action_mode=action_mode,            # FIX: 新增，同步给 PromptBuilder
+        include_history=True,
         history_window=experiment_cfg.get("history_window"),
     )
     model_callable = build_model_callable(agent_cfg)
@@ -157,12 +160,11 @@ def main(
             save_interaction_log=logging_cfg.get("save_interaction_log", True),
         )
 
-        result     = runner.run_episode()
-        evaluation = evaluator.evaluate(result)
+        result      = runner.run_episode()
+        evaluation  = evaluator.evaluate(result)
         saved_paths = logger.save_episode(result, evaluation=evaluation)
         all_evaluations.append(evaluation)
 
-        # Upload trajectory files as W&B Artifact for this run
         artifact = wandb.Artifact(
             name=f"episode-{run_name or experiment_cfg.get('name', 'run')}-{run_id:02d}",
             type="episode_data",
@@ -179,7 +181,6 @@ def main(
             artifact.add_file(file_path, name=f"{artifact_name}.json")
         wandb.log_artifact(artifact)
 
-        # Per-episode metrics
         wandb.log(
             {
                 "success":                  int(evaluation["success"]),

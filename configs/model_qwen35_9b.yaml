@@ -6,10 +6,10 @@ agent:
   dtype: bfloat16
   device_map: auto
   trust_remote_code: true
-  disable_thinking: false
+  disable_thinking: true
   generation:
     temperature: 0.7
     top_p: 0.8
     top_k: 20
-    max_new_tokens: 512
+    max_new_tokens: 1024
     do_sample: true
