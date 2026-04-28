@@ -100,20 +100,10 @@ class TextRenderer:
             display_name = self._display_name(variable)
 
             if self.action_mode == "increase_decrease":
-                actions.append({
-                    "action_type": "increase",
-                    "variable": display_name,
-                })
-                actions.append({
-                    "action_type": "decrease",
-                    "variable": display_name,
-                })
+                actions.append({"action_type": "increase", "variable": display_name})
+                actions.append({"action_type": "decrease", "variable": display_name})
             else:  # set_value
-                actions.append({
-                    "action_type": "set",
-                    "variable": display_name,
-                    "value": "<number>",
-                })
+                actions.append({"action_type": "set", "variable": display_name, "value": "<number>"})
 
         return actions
 
@@ -144,8 +134,14 @@ class TextRenderer:
         lines.append("")
         lines.append("Available actions:")
 
+        # FIX: 渲染为人类可读格式，而非 Python dict repr
         for action in available_actions:
-            lines.append(f"- {action}")
+            action_type = action["action_type"]
+            variable    = action["variable"]
+            if action_type == "set":
+                lines.append(f"- set {variable} to <number>")
+            else:
+                lines.append(f"- {action_type} {variable}")
 
         return "\n".join(lines)
 
