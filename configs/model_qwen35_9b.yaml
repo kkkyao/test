@@ -6,7 +6,7 @@ agent:
   dtype: bfloat16
   device_map: auto
   trust_remote_code: true
-  disable_thinking: true
+  disable_thinking: false
   generation:
     temperature: 0.7
     top_p: 0.8
