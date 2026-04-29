@@ -71,15 +71,34 @@ def main(
     logging_cfg        = config.get("logging", {})
     evaluation_cfg     = config.get("evaluation", {})
 
-    target_variable  = environment_cfg["target_variable"]
-    variables        = environment_cfg["variables"]
-    equations        = environment_cfg["equations"]
-    action_mode      = actions_cfg["action_mode"]
-    max_steps        = experiment_cfg["max_steps"]
-    naming_mode      = representation_cfg.get("naming_mode", "concrete")
-    metadata_level   = representation_cfg.get("metadata_level", "minimal")
-    name_mapping     = representation_cfg.get("name_mapping", {})
-    base_output_dir  = logging_cfg.get("output_dir", "outputs/default_run")
+    target_variable = environment_cfg["target_variable"]
+    variables       = environment_cfg["variables"]
+    equations       = environment_cfg["equations"]
+    action_mode     = actions_cfg["action_mode"]
+    max_steps       = experiment_cfg["max_steps"]
+    naming_mode     = representation_cfg.get("naming_mode", "concrete")
+    metadata_level  = representation_cfg.get("metadata_level", "minimal")
+    name_mapping    = representation_cfg.get("name_mapping", {})
+
+    # ------------------------------------------------------------------
+    # IMPORTANT CHANGE:
+    # Use --run_name to create a separate local output directory.
+    #
+    # Before:
+    #   base_output_dir = logging_cfg.get("output_dir", "outputs/default_run")
+    #
+    # Problem:
+    #   Every experiment was saved into the same directory from config,
+    #   e.g. outputs/beers_text_default, so different experiments could overwrite
+    #   each other's aggregate.json and run_XX folders.
+    #
+    # Now:
+    #   --run_name kinematics_concrete_qwen25_3b
+    #   -> outputs/kinematics_concrete_qwen25_3b/
+    # ------------------------------------------------------------------
+    output_name = run_name or experiment_cfg.get("name", "default_run")
+    base_output_dir = str(Path("outputs") / output_name)
+    Path(base_output_dir).mkdir(parents=True, exist_ok=True)
 
     if target_variable not in equations:
         raise ValueError(
@@ -100,6 +119,7 @@ def main(
             "target_variable": target_variable,
             "action_mode":     action_mode,
             "experiment_name": experiment_cfg.get("name"),
+            "local_output_dir": base_output_dir,
             "temperature":     agent_cfg.get("generation", {}).get("temperature"),
             "top_p":           agent_cfg.get("generation", {}).get("top_p"),
             "top_k":           agent_cfg.get("generation", {}).get("top_k"),
@@ -113,27 +133,42 @@ def main(
         ],
     )
 
-    env = EquationEnv(variables=variables, equations=equations, action_mode=action_mode)
-    renderer = TextRenderer(
-        variables=variables, action_mode=action_mode, target_variable=target_variable,
-        naming_mode=naming_mode, metadata_level=metadata_level, name_mapping=name_mapping,
+    env = EquationEnv(
+        variables=variables,
+        equations=equations,
+        action_mode=action_mode,
     )
+
+    renderer = TextRenderer(
+        variables=variables,
+        action_mode=action_mode,
+        target_variable=target_variable,
+        naming_mode=naming_mode,
+        metadata_level=metadata_level,
+        name_mapping=name_mapping,
+    )
+
     prompt_builder = PromptBuilder(
         prompt_config=config["prompt"],
         target_variable=target_variable,
         max_steps=max_steps,
-        action_mode=action_mode,            # FIX: 新增，同步给 PromptBuilder
+        action_mode=action_mode,
         include_history=True,
         history_window=experiment_cfg.get("history_window"),
     )
+
     model_callable = build_model_callable(agent_cfg)
-    agent    = TextLLMAgent(model_callable=model_callable)
-    runner   = EpisodeRunner(
-        env=env, renderer=renderer, prompt_builder=prompt_builder,
-        agent=agent, max_steps=max_steps,
+    agent = TextLLMAgent(model_callable=model_callable)
+
+    runner = EpisodeRunner(
+        env=env,
+        renderer=renderer,
+        prompt_builder=prompt_builder,
+        agent=agent,
+        max_steps=max_steps,
     )
 
-    ground_truth     = equations[target_variable]
+    ground_truth = equations[target_variable]
     variable_mapping = evaluation_cfg.get("variable_mapping")
     evaluator = EpisodeEvaluator(
         ground_truth_equation=ground_truth,
@@ -141,13 +176,35 @@ def main(
     )
 
     episode_table = wandb.Table(columns=[
-        "run_id", "success", "equation_correct", "finish_called",
-        "termination_reason", "total_steps", "steps_to_success",
-        "final_equation", "state_coverage_ratio", "redundancy_penalty",
-        "variable_isolation_score", "discovery_efficiency", "error_message",
+        "run_id",
+        "success",
+        "equation_correct",
+        "finish_called",
+        "termination_reason",
+        "total_steps",
+        "steps_to_success",
+        "final_equation",
+        "state_coverage_ratio",
+        "redundancy_penalty",
+        "variable_isolation_score",
+        "discovery_efficiency",
+        "error_message",
     ])
 
     all_evaluations: List[Dict[str, Any]] = []
+
+    print("\n=== Experiment setup ===")
+    print(f"Config:          {config_path}")
+    if env_config:
+        print(f"Env override:    {env_config}")
+    if model_config:
+        print(f"Model override:  {model_config}")
+    print(f"Run name:        {output_name}")
+    print(f"Output dir:      {base_output_dir}")
+    print(f"Target variable: {target_variable}")
+    print(f"Naming mode:     {naming_mode}")
+    print(f"Action mode:     {action_mode}")
+    print(f"N runs:          {n_runs}")
 
     for run_id in range(n_runs):
         print(f"\n--- Run {run_id + 1}/{n_runs} ---")
@@ -160,13 +217,13 @@ def main(
             save_interaction_log=logging_cfg.get("save_interaction_log", True),
         )
 
-        result      = runner.run_episode()
-        evaluation  = evaluator.evaluate(result)
+        result = runner.run_episode()
+        evaluation = evaluator.evaluate(result)
         saved_paths = logger.save_episode(result, evaluation=evaluation)
         all_evaluations.append(evaluation)
 
         artifact = wandb.Artifact(
-            name=f"episode-{run_name or experiment_cfg.get('name', 'run')}-{run_id:02d}",
+            name=f"episode-{output_name}-{run_id:02d}",
             type="episode_data",
             metadata={
                 "run_id":         run_id,
@@ -177,8 +234,10 @@ def main(
                 "final_equation": evaluation["final_equation"],
             },
         )
+
         for artifact_name, file_path in saved_paths.items():
             artifact.add_file(file_path, name=f"{artifact_name}.json")
+
         wandb.log_artifact(artifact)
 
         wandb.log(
@@ -225,34 +284,78 @@ def main(
         json.dump(aggregate, f, indent=2, ensure_ascii=False)
 
     wandb.log({"episodes": episode_table})
+
     for key, value in aggregate.items():
         if isinstance(value, (int, float)) and value is not None:
             wandb.summary[key] = value
+
     wandb.summary["termination_breakdown"] = aggregate["termination_breakdown"]
+    wandb.summary["local_output_dir"] = base_output_dir
 
     print("\n=== Experiment complete ===")
     print(f"  success_rate: {aggregate['success_rate']:.2%}")
     print(f"  finish_rate:  {aggregate['finish_rate']:.2%}")
     print(f"  mean_steps:   {aggregate['mean_total_steps']:.1f}")
+
     if aggregate["mean_steps_to_success"] is not None:
         print(f"  mean_steps_to_success: {aggregate['mean_steps_to_success']:.1f}")
+
     print(f"  aggregate saved to: {aggregate_path}")
+    print(f"  episode files saved under: {base_output_dir}/run_XX/")
 
     wandb.finish()
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run N episodes and log results to W&B.")
-    parser.add_argument("--config",        type=str, default="configs/config.yaml")
-    parser.add_argument("--n_runs",        type=int, default=10)
-    parser.add_argument("--wandb_project", type=str, default="scientific-exploration")
-    parser.add_argument("--wandb_entity",  type=str, default=None)
-    parser.add_argument("--run_name",      type=str, default=None,
-                        help="W&B run display name. Defaults to experiment.name in config.")
-    parser.add_argument("--env_config",    type=str, default=None,
-                        help="Override env_config. E.g. configs/env_beers_abstract.yaml")
-    parser.add_argument("--model_config",  type=str, default=None,
-                        help="Override model_config. E.g. configs/model_qwen25_7b.yaml")
+    parser = argparse.ArgumentParser(
+        description="Run N episodes and log results to W&B."
+    )
+
+    parser.add_argument(
+        "--config",
+        type=str,
+        default="configs/config.yaml",
+    )
+
+    parser.add_argument(
+        "--n_runs",
+        type=int,
+        default=10,
+    )
+
+    parser.add_argument(
+        "--wandb_project",
+        type=str,
+        default="scientific-exploration",
+    )
+
+    parser.add_argument(
+        "--wandb_entity",
+        type=str,
+        default=None,
+    )
+
+    parser.add_argument(
+        "--run_name",
+        type=str,
+        default=None,
+        help="W&B run display name and local output directory name.",
+    )
+
+    parser.add_argument(
+        "--env_config",
+        type=str,
+        default=None,
+        help="Override env_config. E.g. configs/env_beers_abstract.yaml",
+    )
+
+    parser.add_argument(
+        "--model_config",
+        type=str,
+        default=None,
+        help="Override model_config. E.g. configs/model_qwen25_7b.yaml",
+    )
+
     args = parser.parse_args()
 
     main(
