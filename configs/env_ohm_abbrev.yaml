@@ -1,0 +1,48 @@
+environment:
+  target_variable: voltage
+
+  variables:
+    current:
+      manipulable: true
+      initial_value: 2
+      step_size: 1
+      min_value: null
+      max_value: null
+      description: electric current in amperes
+
+    resistance:
+      manipulable: true
+      initial_value: 10
+      step_size: 10
+      min_value: null
+      max_value: null
+      description: electrical resistance in ohms
+
+    voltage:
+      manipulable: false
+      description: electric voltage in volts
+
+  equations:
+    voltage: "current * resistance"
+
+representation:
+  naming_mode: abstract
+  metadata_level: minimal
+  name_mapping:
+    current: I
+    resistance: R
+    voltage: V
+
+actions:
+  action_mode: increase_decrease
+
+evaluation:
+  variable_mapping:
+    I: current
+    R: resistance
+    V: voltage
+
+noise:
+  enabled: false
+  type: null
+  params: {}
