@@ -3,7 +3,7 @@
 # Use --evaluate flag on CLI to enable evaluation on demand.
 experiment:
   name: beers_text_default
-  max_steps: 30
+  max_steps: 100
   history_window: null
   auto_evaluate: true
 
