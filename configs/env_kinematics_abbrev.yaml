@@ -1,0 +1,58 @@
+environment:
+  target_variable: position
+
+  variables:
+    initial_position:
+      manipulable: true
+      initial_value: 0
+      step_size: 10
+      min_value: null
+      max_value: null
+      description: initial position of the object in metres
+
+    velocity:
+      manipulable: true
+      initial_value: 5
+      step_size: 5
+      min_value: null
+      max_value: null
+      description: constant velocity of the object in metres per second
+
+    time:
+      manipulable: true
+      initial_value: 2
+      step_size: 1
+      min_value: null
+      max_value: null
+      description: elapsed time in seconds
+
+    position:
+      manipulable: false
+      description: current position of the object in metres
+
+  equations:
+    position: "initial_position + velocity * time"
+
+representation:
+  naming_mode: abstract
+  metadata_level: minimal
+  name_mapping:
+    initial_position: x0
+    velocity: v
+    time: t
+    position: x
+
+actions:
+  action_mode: increase_decrease
+
+evaluation:
+  variable_mapping:
+    x0: initial_position
+    v: velocity
+    t: time
+    x: position
+
+noise:
+  enabled: false
+  type: null
+  params: {}
