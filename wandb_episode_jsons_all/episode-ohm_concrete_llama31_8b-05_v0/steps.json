@@ -1,0 +1,604 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Start by changing the current to observe its effect on voltage.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Start by changing the current to observe its effect on voltage.",
+    "parsed_action": {
+      "action_type": "decrease current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "Change resistance to observe its effect on voltage.",
+    "parsed_action": {
+      "action_type": "decrease resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "Change resistance to observe its effect on voltage.",
+    "parsed_action": {
+      "action_type": "increase resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "reasoning": "Change resistance to observe its effect on voltage.",
+    "parsed_action": {
+      "action_type": "decrease resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 5,
+    "step_type": "action",
+    "reasoning": "Observe the effect of increasing current on voltage, then try to relate it to resistance.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 6,
+    "step_type": "action",
+    "reasoning": "Try to find a relationship between current and resistance by changing current and observing the effect on voltage.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 7,
+    "step_type": "action",
+    "reasoning": "Change resistance to observe its effect on voltage.",
+    "parsed_action": {
+      "action_type": "increase resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 8,
+    "step_type": "action",
+    "reasoning": "Try to find a relationship between current and resistance by changing current and observing the effect on voltage.",
+    "parsed_action": {
+      "action_type": "decrease current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 9,
+    "step_type": "action",
+    "reasoning": "Change current to observe its effect on voltage, then try to relate it to resistance.",
+    "parsed_action": {
+      "action_type": "decrease current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 10,
+    "step_type": "action",
+    "reasoning": "Change resistance to observe its effect on voltage.",
+    "parsed_action": {
+      "action_type": "decrease resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 11,
+    "step_type": "action",
+    "reasoning": "Increase current to observe its effect on voltage.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 12,
+    "step_type": "action",
+    "reasoning": "Try to find a relationship between current and resistance by changing current and observing the effect on voltage.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 13,
+    "step_type": "action",
+    "reasoning": "Increasing current to see if voltage increases proportionally",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 14,
+    "step_type": "action",
+    "reasoning": "Increase resistance to observe its effect on voltage.",
+    "parsed_action": {
+      "action_type": "increase resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 15,
+    "step_type": "action",
+    "reasoning": "Increasing current to see if voltage increases proportionally",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 16,
+    "step_type": "action",
+    "reasoning": "Observe the effect of changing current and resistance on voltage, and try to find a relationship.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 17,
+    "step_type": "action",
+    "reasoning": "Observe the effect of changing current and resistance on voltage, and try to find a relationship.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 18,
+    "step_type": "action",
+    "reasoning": "Try to increase the current to see if voltage increases proportionally",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 19,
+    "step_type": "action",
+    "reasoning": "Try to find a relationship between current and resistance by changing resistance and observing the effect on voltage.",
+    "parsed_action": {
+      "action_type": "increase resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 20,
+    "step_type": "action",
+    "reasoning": "Increasing current and observing the effect on voltage will help me determine the relationship between current and voltage.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 21,
+    "step_type": "action",
+    "reasoning": "Since the voltage remains the same after multiple changes to current and resistance, I will try to increase current to see if voltage increases proportionally.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 22,
+    "step_type": "action",
+    "reasoning": "The voltage remains constant despite multiple changes to current and resistance, indicating a relationship between voltage and current or resistance.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 23,
+    "step_type": "action",
+    "reasoning": "Try to increase the current to see if voltage increases proportionally",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 24,
+    "step_type": "action",
+    "reasoning": "Change current to observe its effect on voltage.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 25,
+    "step_type": "action",
+    "reasoning": "The voltage remains constant despite multiple changes to current and resistance, indicating a relationship between voltage and current or resistance.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 26,
+    "step_type": "action",
+    "reasoning": "Given that the voltage remains constant despite changes to current and resistance, I will try to find a relationship between current and resistance.",
+    "parsed_action": {
+      "action_type": "increase resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 27,
+    "step_type": "action",
+    "reasoning": "Observe the effect of changing current and resistance on voltage, and try to find a relationship.",
+    "parsed_action": {
+      "action_type": "decrease resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 28,
+    "step_type": "action",
+    "reasoning": "Since the voltage remains constant despite changes to current and resistance, I will try to find a relationship between current and resistance.",
+    "parsed_action": {
+      "action_type": "increase resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 29,
+    "step_type": "action",
+    "reasoning": "Given that the voltage remains constant despite changes to current and resistance, I will try to find a relationship between current and resistance.",
+    "parsed_action": {
+      "action_type": "increase resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 30,
+    "step_type": "action",
+    "reasoning": "Observe the effect of increasing current on voltage, and try to find a relationship with resistance.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 31,
+    "step_type": "action",
+    "reasoning": "Since the voltage remains constant despite changes to current and resistance, I will try to find a relationship between current and resistance.",
+    "parsed_action": {
+      "action_type": "increase resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 32,
+    "step_type": "action",
+    "reasoning": "The voltage remains constant despite multiple changes to current and resistance, indicating a relationship between voltage and current or resistance.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 33,
+    "step_type": "action",
+    "reasoning": "Observe the relationship between current and voltage, and try to relate it to resistance.",
+    "parsed_action": {
+      "action_type": "decrease current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 34,
+    "step_type": "action",
+    "reasoning": "The voltage remains constant despite changes to current and resistance, indicating a relationship between voltage and current or resistance.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 35,
+    "step_type": "action",
+    "reasoning": "The voltage remains constant despite multiple changes to current and resistance, indicating a relationship between voltage and current or resistance. Since the current and resistance have been changed multiple times without affecting the voltage, I will try to find a relationship between current and resistance.",
+    "parsed_action": {
+      "action_type": "increase resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 36,
+    "step_type": "action",
+    "reasoning": "The voltage remains constant despite multiple changes to current and resistance, indicating a relationship between voltage and current or resistance. Since the current and resistance have been changed multiple times without affecting the voltage, I will try to find a relationship between current and resistance.",
+    "parsed_action": {
+      "action_type": "increase resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 37,
+    "step_type": "action",
+    "reasoning": "The voltage remains constant despite multiple changes to current and resistance, indicating a relationship between voltage and current or resistance.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 38,
+    "step_type": "action",
+    "reasoning": "Since the voltage remains constant despite changes to current and resistance, I will try to find a relationship between current and resistance.",
+    "parsed_action": {
+      "action_type": "increase resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 39,
+    "step_type": "action",
+    "reasoning": "Given that the voltage remains constant despite changes to current and resistance, I will try to find a relationship between current and resistance.",
+    "parsed_action": {
+      "action_type": "increase resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 40,
+    "step_type": "action",
+    "reasoning": "Since the voltage remains constant despite multiple changes to current and resistance, I will try to find a relationship between current and resistance.",
+    "parsed_action": {
+      "action_type": "increase resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 41,
+    "step_type": "action",
+    "reasoning": "Observe the relationship between current and resistance, and try to relate it to voltage.",
+    "parsed_action": {
+      "action_type": "decrease resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 42,
+    "step_type": "action",
+    "reasoning": "Given the constant voltage despite changes to current and resistance, I will try to find a relationship between current and resistance.",
+    "parsed_action": {
+      "action_type": "increase resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 43,
+    "step_type": "action",
+    "reasoning": "The voltage remains constant despite changes to current and resistance, indicating a relationship between voltage and current or resistance.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 44,
+    "step_type": "action",
+    "reasoning": "The voltage remains constant despite changes to current and resistance, indicating a relationship between voltage and current or resistance.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 45,
+    "step_type": "action",
+    "reasoning": "Observe the effect of increasing current on voltage, and try to find a relationship with resistance.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 46,
+    "step_type": "action",
+    "reasoning": "The voltage remains constant despite changes to current and resistance, indicating a relationship between voltage and current or resistance.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 47,
+    "step_type": "action",
+    "reasoning": "The voltage remains constant despite changes to current and resistance, indicating a relationship between voltage and current or resistance. Since the current and resistance have been changed multiple times without affecting the voltage, I will try to find a relationship between current and resistance.",
+    "parsed_action": {
+      "action_type": "increase resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 48,
+    "step_type": "action",
+    "reasoning": "The voltage remains constant despite changes to current and resistance, indicating a relationship between voltage and current or resistance.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 49,
+    "step_type": "action",
+    "reasoning": "The voltage remains constant despite changes to current and resistance, indicating a relationship between voltage and current or resistance.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 50,
+    "step_type": "action",
+    "reasoning": "The voltage remains constant despite changes to current and resistance, indicating a relationship between voltage and current or resistance. Since the current and resistance have been changed multiple times without affecting the voltage, I will try to find a relationship between current and resistance.",
+    "parsed_action": {
+      "action_type": "increase resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 51,
+    "step_type": "action",
+    "reasoning": "Observe the effect of changing current and resistance on voltage, and try to find a relationship.",
+    "parsed_action": {
+      "action_type": "increase resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 52,
+    "step_type": "action",
+    "reasoning": "The voltage remains constant despite changes to current and resistance, indicating a relationship between voltage and current or resistance. Since the current and resistance have been changed multiple times without affecting the voltage, I will try to find a relationship between current and resistance.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 53,
+    "step_type": "action",
+    "reasoning": "The voltage remains constant despite changes to current and resistance, indicating a relationship between voltage and current or resistance. Since the current and resistance have been changed multiple times without affecting the voltage, I will try to find a relationship between current and resistance.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 54,
+    "step_type": "finish",
+    "reasoning": "The voltage remains constant despite changes to current and resistance, indicating a relationship between voltage and current or resistance.",
+    "parsed_action": null,
+    "final_equation": "voltage = current * resistance",
+    "done": true
+  }
+]

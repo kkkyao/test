@@ -1,0 +1,43 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Initial state shows A=10, B=20, C=30, Y=60. I need to determine how Y depends on A, B, and C. I will start by increasing A to observe the effect on Y.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "From the history, increasing A from 10 to 20 (delta A=10) caused Y to increase from 60 to 70 (delta Y=10). This suggests Y might be linearly related to A with a coefficient of 1. B and C were constant during this change. I need to vary B next to isolate its effect on Y.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "From Step 0, increasing A by 10 increased Y by 10, suggesting Y = A + ... . From Step 1, increasing B by 10 (from 20 to 30) increased Y by 10 (from 70 to 80), suggesting Y = A + B + ... . C was constant at 30 in both steps. To confirm the role of C, I will vary C while keeping A and B constant.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "C"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "finish",
+    "reasoning": "From Step 0, increasing A by 10 increased Y by 10, suggesting a coefficient of 1 for A. From Step 1, increasing B by 10 increased Y by 10, suggesting a coefficient of 1 for B. From Step 2, increasing C by 10 increased Y by 10, suggesting a coefficient of 1 for C. The initial state in the history (A=10, B=20, C=30, Y=60) fits the equation Y = A + B + C (10+20+30=60). The current state (A=20, B=30, C=40, Y=90) also fits (20+30+40=90). I have sufficient evidence to conclude the equation is Y = A + B + C.",
+    "parsed_action": null,
+    "final_equation": "Y = A + B + C",
+    "done": true
+  }
+]

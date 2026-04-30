@@ -1,0 +1,11 @@
+source_artifact,source_collection,source_version,run_id,success,equation_correct,finish_called,termination_reason,total_steps,steps_to_success,final_equation,state_coverage_ratio,redundancy_penalty,variable_isolation_score,discovery_efficiency,error_message
+leyao-li-epfl/scientific-exploration/run-6oyi5win-episodes:v0,run-6oyi5win-episodes,v0,0,False,False,True,finish_wrong,19,,Y = (-30) * A / 6,0.5789,0.7368,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-6oyi5win-episodes:v0,run-6oyi5win-episodes,v0,1,False,False,True,finish_wrong,18,,Y = 240 = k * (20 * 12) + m,0.7222,0.7222,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-6oyi5win-episodes:v0,run-6oyi5win-episodes,v0,2,False,False,True,finish_wrong,6,,Y = 20 * (A / B),0.6667,0.1667,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-6oyi5win-episodes:v0,run-6oyi5win-episodes,v0,3,False,False,True,finish_wrong,10,,Y = 20.0,0.6,0.5,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-6oyi5win-episodes:v0,run-6oyi5win-episodes,v0,4,False,False,True,finish_wrong,9,,Y = 20 * A / B,0.8889,0.6667,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-6oyi5win-episodes:v0,run-6oyi5win-episodes,v0,5,False,False,True,finish_wrong,12,,Y = k * A / B where k is a constant.,0.8333,0.5833,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-6oyi5win-episodes:v0,run-6oyi5win-episodes,v0,6,False,False,False,max_steps,30,,,1.0,0.9,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-6oyi5win-episodes:v0,run-6oyi5win-episodes,v0,7,False,False,True,finish_wrong,19,,Y = k * A^2 / B,0.9474,0.7895,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-6oyi5win-episodes:v0,run-6oyi5win-episodes,v0,8,False,False,True,finish_wrong,20,,Y = k(A^2 + B^2) + c,0.75,0.75,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-6oyi5win-episodes:v0,run-6oyi5win-episodes,v0,9,False,False,True,finish_wrong,12,,Y = 2 * A,0.75,0.5833,0.0,0.0,

@@ -1,0 +1,54 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Start by increasing A to observe if Y changes.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Since Y did not change when A was increased, A does not seem to affect Y. Let's try changing B now.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "Y remains constant when B is increased, suggesting B does not affect Y. Now, let's try changing C to see if it influences Y.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "C"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "Y remains constant regardless of changes in A and B, but increases when C is increased. This suggests that Y might be directly proportional to C. To confirm, we should check what happens when C is decreased.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "C"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "finish",
+    "reasoning": "Y decreases when C is decreased, confirming that Y is directly proportional to C. The relationship appears to be Y = C + 50.",
+    "parsed_action": null,
+    "final_equation": "Y = C + 50",
+    "done": true
+  }
+]

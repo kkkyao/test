@@ -1,0 +1,108 @@
+config.json: 100%|████████████████████████████████████████████████████████████████████| 601/601 [00:00<00:00, 2.71MB/s]
+tokenizer_config.json: 141kB [00:00, 72.9MB/s]
+tokenizer.model: 100%|███████████████████████████████████████████████████████████████| 587k/587k [00:00<00:00, 715kB/s]
+tokenizer.json: 1.96MB [00:00, 54.8MB/s]
+special_tokens_map.json: 100%|████████████████████████████████████████████████████████| 414/414 [00:00<00:00, 1.50MB/s]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+model.safetensors.index.json: 23.9kB [00:00, 57.0MB/s]
+Fetching 3 files: 100%|██████████████████████████████████████████████████████████████████| 3/3 [00:30<00:00, 10.32s/it]
+Download complete: 100%|███████████████████████████████████████████████████████████| 14.5G/14.5G [00:30<00:00, 468MB/s]
+Loading weights: 100%|███████████████████████████████████████████████████████████████| 291/291 [00:41<00:00,  6.99it/s]
+generation_config.json: 100%|██████████████████████████████████████████████████████████| 116/116 [00:00<00:00, 637kB/s]
+
+--- Run 1/30 ---
+  success=False  steps=2  reason=parse_error
+
+--- Run 2/30 ---
+  success=False  steps=2  reason=parse_error
+
+--- Run 3/30 ---
+  success=True  steps=3  reason=finish_success
+
+--- Run 4/30 ---
+  success=False  steps=1  reason=parse_error
+
+--- Run 5/30 ---
+  success=False  steps=4  reason=parse_error
+
+--- Run 6/30 ---
+  success=False  steps=5  reason=parse_error
+
+--- Run 7/30 ---
+  success=False  steps=2  reason=parse_error
+
+--- Run 8/30 ---
+  success=False  steps=3  reason=parse_error
+
+--- Run 9/30 ---
+  success=True  steps=3  reason=finish_success
+
+--- Run 10/30 ---
+  success=True  steps=3  reason=finish_success
+
+--- Run 11/30 ---
+  success=False  steps=2  reason=parse_error
+
+--- Run 12/30 ---
+  success=False  steps=4  reason=parse_error
+
+--- Run 13/30 ---
+  success=False  steps=0  reason=parse_error
+
+--- Run 14/30 ---
+  success=False  steps=5  reason=parse_error
+
+--- Run 15/30 ---
+  success=False  steps=2  reason=parse_error
+
+--- Run 16/30 ---
+  success=False  steps=3  reason=parse_error
+
+--- Run 17/30 ---
+  success=False  steps=9  reason=finish_wrong
+
+--- Run 18/30 ---
+  success=False  steps=4  reason=parse_error
+
+--- Run 19/30 ---
+  success=False  steps=2  reason=parse_error
+
+--- Run 20/30 ---
+  success=False  steps=12  reason=parse_error
+
+--- Run 21/30 ---
+  success=False  steps=6  reason=parse_error
+
+--- Run 22/30 ---
+  success=False  steps=5  reason=parse_error
+
+--- Run 23/30 ---
+  success=False  steps=4  reason=parse_error
+
+--- Run 24/30 ---
+  success=False  steps=4  reason=parse_error
+
+--- Run 25/30 ---
+  success=False  steps=3  reason=parse_error
+
+--- Run 26/30 ---
+  success=False  steps=2  reason=parse_error
+
+--- Run 27/30 ---
+  success=False  steps=2  reason=parse_error
+
+--- Run 28/30 ---
+  success=False  steps=2  reason=parse_error
+
+--- Run 29/30 ---
+  success=False  steps=3  reason=parse_error
+
+--- Run 30/30 ---
+  success=True  steps=3  reason=finish_success
+
+=== Experiment complete ===
+  success_rate: 13.33%
+  finish_rate:  16.67%
+  mean_steps:   3.5
+  mean_steps_to_success: 3.0
+  aggregate saved to: outputs/beers_text_default/aggregate.json

@@ -1,0 +1,54 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "I observe a simple relationship between A, B, and Y. Let's try increasing A to see if it affects Y.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "I observed that when A increased from 2.0 to 3.0, Y increased from 20.0 to 30.0.  Let's increase B to see if it affects Y.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "I observed that when A increased from 3.0 to 3.0 and B increased from 10.0 to 20.0, Y increased from 60.0 to 60.0. This suggests that Y is directly proportional to B. Let's try increasing B further to confirm.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "I observed that increasing B from 20.0 to 30.0 resulted in Y increasing from 60.0 to 90.0. This suggests that Y is directly proportional to B. Let's test another increase to solidify the relationship.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": "Y = 3 * B",
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "finish",
+    "reasoning": "I have observed a clear linear relationship between B and Y, where Y is directly proportional to B.  A seems to have a constant effect on Y when B changes. I believe I have enough data to state the equation.",
+    "parsed_action": null,
+    "final_equation": "Y = 3 * B",
+    "done": true
+  }
+]

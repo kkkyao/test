@@ -1,0 +1,514 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "prompt": "You are a scientific explorer interacting with an unknown environment. You must respond with exactly one valid JSON object.\n\nYour goal is to discover the equation that determines Y from the other variables in the environment.\nExplore the environment step by step through interaction.\nUse the current observation and previous history when deciding your next step.\nPut any reasoning inside the JSON reasoning field only.\nStop only when you have gathered enough evidence from interaction to state a final equation supported by the observations.\nYou may take up to 100 steps in total.\n\nAllowed step types:\n- action: take exactly one action to change the environment\n- finish: stop exploring and submit your final equation\n\nRules:\n- Return exactly one valid JSON object.\n- Do not output prose, markdown fences, bullet points, or any text outside the JSON object.\n- reasoning must be a non-empty string on every step.\n- step_type must be exactly 'action' or 'finish'.\n- When step_type is 'action', action must be one valid action object from Available actions; final_equation must be null.\n- When step_type is 'finish', action must be null; final_equation must be a non-empty equation string.\n- Do not invent new action_type values, variables, or fields.\n\nCurrent observation:\nCurrent state:\nA = 2.0\nB = 10.0\nY = 20.0\n\nAvailable actions:\n- increase A\n- decrease A\n- increase B\n- decrease B\n\nHistory:\nNone\n\nOutput format:\nYour answer must follow one of the JSON templates below.\nFor an action step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"variable_name\"\n  },\n  \"final_equation\": null\n}\nFor a finish step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"finish\",\n  \"action\": null,\n  \"final_equation\": \"equation string\"\n}",
+    "raw_model_output": "```json\n{\n  \"reasoning\": \"I observe that Y is twice the value of B. Let's try increasing B to see if it affects Y in a predictable way.\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"B\"\n  },\n  \"final_equation\": null\n}\n```",
+    "reasoning": "I observe that Y is twice the value of B. Let's try increasing B to see if it affects Y in a predictable way.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "observation_before": {
+      "mode": "text",
+      "visible_state": {
+        "A": 2.0,
+        "B": 10.0,
+        "Y": 20.0
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "A"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "A"
+        },
+        {
+          "action_type": "increase",
+          "variable": "B"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "B"
+        }
+      ],
+      "text": "Current state:\nA = 2.0\nB = 10.0\nY = 20.0\n\nAvailable actions:\n- increase A\n- decrease A\n- increase B\n- decrease B",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "Y",
+        "target_variable_internal": "voltage",
+        "naming_mode": "abstract",
+        "metadata_level": "none",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "current": "A",
+          "resistance": "B",
+          "voltage": "Y"
+        }
+      }
+    },
+    "observation_after": {
+      "mode": "text",
+      "visible_state": {
+        "A": 2.0,
+        "B": 20.0,
+        "Y": 40.0
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "A"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "A"
+        },
+        {
+          "action_type": "increase",
+          "variable": "B"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "B"
+        }
+      ],
+      "text": "Current state:\nA = 2.0\nB = 20.0\nY = 40.0\n\nAvailable actions:\n- increase A\n- decrease A\n- increase B\n- decrease B",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "Y",
+        "target_variable_internal": "voltage",
+        "naming_mode": "abstract",
+        "metadata_level": "none",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "current": "A",
+          "resistance": "B",
+          "voltage": "Y"
+        }
+      }
+    },
+    "state_before": {
+      "current": 2.0,
+      "resistance": 10.0,
+      "voltage": 20.0
+    },
+    "state_after": {
+      "current": 2.0,
+      "resistance": 20.0,
+      "voltage": 40.0
+    },
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "prompt": "You are a scientific explorer interacting with an unknown environment. You must respond with exactly one valid JSON object.\n\nYour goal is to discover the equation that determines Y from the other variables in the environment.\nExplore the environment step by step through interaction.\nUse the current observation and previous history when deciding your next step.\nPut any reasoning inside the JSON reasoning field only.\nStop only when you have gathered enough evidence from interaction to state a final equation supported by the observations.\nYou may take up to 100 steps in total.\n\nAllowed step types:\n- action: take exactly one action to change the environment\n- finish: stop exploring and submit your final equation\n\nRules:\n- Return exactly one valid JSON object.\n- Do not output prose, markdown fences, bullet points, or any text outside the JSON object.\n- reasoning must be a non-empty string on every step.\n- step_type must be exactly 'action' or 'finish'.\n- When step_type is 'action', action must be one valid action object from Available actions; final_equation must be null.\n- When step_type is 'finish', action must be null; final_equation must be a non-empty equation string.\n- Do not invent new action_type values, variables, or fields.\n\nCurrent observation:\nCurrent state:\nA = 2.0\nB = 20.0\nY = 40.0\n\nAvailable actions:\n- increase A\n- decrease A\n- increase B\n- decrease B\n\nHistory:\nStep 0:\nstep_type: action\nreasoning: I observe that Y is twice the value of B. Let's try increasing B to see if it affects Y in a predictable way.\naction: increase B\nstate before: {'A': 2.0, 'B': 10.0, 'Y': 20.0}\nstate after: {'A': 2.0, 'B': 20.0, 'Y': 40.0}\n\nOutput format:\nYour answer must follow one of the JSON templates below.\nFor an action step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"variable_name\"\n  },\n  \"final_equation\": null\n}\nFor a finish step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"finish\",\n  \"action\": null,\n  \"final_equation\": \"equation string\"\n}",
+    "raw_model_output": "```json\n{\n  \"reasoning\": \"Y is twice the value of B. I've already increased B to its current value and Y increased accordingly. Let's try increasing A to see if Y changes in a predictable manner.\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"A\"\n  },\n  \"final_equation\": null\n}\n```",
+    "reasoning": "Y is twice the value of B. I've already increased B to its current value and Y increased accordingly. Let's try increasing A to see if Y changes in a predictable manner.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "observation_before": {
+      "mode": "text",
+      "visible_state": {
+        "A": 2.0,
+        "B": 20.0,
+        "Y": 40.0
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "A"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "A"
+        },
+        {
+          "action_type": "increase",
+          "variable": "B"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "B"
+        }
+      ],
+      "text": "Current state:\nA = 2.0\nB = 20.0\nY = 40.0\n\nAvailable actions:\n- increase A\n- decrease A\n- increase B\n- decrease B",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "Y",
+        "target_variable_internal": "voltage",
+        "naming_mode": "abstract",
+        "metadata_level": "none",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "current": "A",
+          "resistance": "B",
+          "voltage": "Y"
+        }
+      }
+    },
+    "observation_after": {
+      "mode": "text",
+      "visible_state": {
+        "A": 3.0,
+        "B": 20.0,
+        "Y": 60.0
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "A"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "A"
+        },
+        {
+          "action_type": "increase",
+          "variable": "B"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "B"
+        }
+      ],
+      "text": "Current state:\nA = 3.0\nB = 20.0\nY = 60.0\n\nAvailable actions:\n- increase A\n- decrease A\n- increase B\n- decrease B",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "Y",
+        "target_variable_internal": "voltage",
+        "naming_mode": "abstract",
+        "metadata_level": "none",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "current": "A",
+          "resistance": "B",
+          "voltage": "Y"
+        }
+      }
+    },
+    "state_before": {
+      "current": 2.0,
+      "resistance": 20.0,
+      "voltage": 40.0
+    },
+    "state_after": {
+      "current": 3.0,
+      "resistance": 20.0,
+      "voltage": 60.0
+    },
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "prompt": "You are a scientific explorer interacting with an unknown environment. You must respond with exactly one valid JSON object.\n\nYour goal is to discover the equation that determines Y from the other variables in the environment.\nExplore the environment step by step through interaction.\nUse the current observation and previous history when deciding your next step.\nPut any reasoning inside the JSON reasoning field only.\nStop only when you have gathered enough evidence from interaction to state a final equation supported by the observations.\nYou may take up to 100 steps in total.\n\nAllowed step types:\n- action: take exactly one action to change the environment\n- finish: stop exploring and submit your final equation\n\nRules:\n- Return exactly one valid JSON object.\n- Do not output prose, markdown fences, bullet points, or any text outside the JSON object.\n- reasoning must be a non-empty string on every step.\n- step_type must be exactly 'action' or 'finish'.\n- When step_type is 'action', action must be one valid action object from Available actions; final_equation must be null.\n- When step_type is 'finish', action must be null; final_equation must be a non-empty equation string.\n- Do not invent new action_type values, variables, or fields.\n\nCurrent observation:\nCurrent state:\nA = 3.0\nB = 20.0\nY = 60.0\n\nAvailable actions:\n- increase A\n- decrease A\n- increase B\n- decrease B\n\nHistory:\nStep 0:\nstep_type: action\nreasoning: I observe that Y is twice the value of B. Let's try increasing B to see if it affects Y in a predictable way.\naction: increase B\nstate before: {'A': 2.0, 'B': 10.0, 'Y': 20.0}\nstate after: {'A': 2.0, 'B': 20.0, 'Y': 40.0}\n\nStep 1:\nstep_type: action\nreasoning: Y is twice the value of B. I've already increased B to its current value and Y increased accordingly. Let's try increasing A to see if Y changes in a predictable manner.\naction: increase A\nstate before: {'A': 2.0, 'B': 20.0, 'Y': 40.0}\nstate after: {'A': 3.0, 'B': 20.0, 'Y': 60.0}\n\nOutput format:\nYour answer must follow one of the JSON templates below.\nFor an action step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"variable_name\"\n  },\n  \"final_equation\": null\n}\nFor a finish step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"finish\",\n  \"action\": null,\n  \"final_equation\": \"equation string\"\n}",
+    "raw_model_output": "```json\n{\n  \"reasoning\": \"Y is currently 60 when A is 3 and B is 20. Let's try decreasing A to see how it affects Y.\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"decrease\",\n    \"variable\": \"A\"\n  },\n  \"final_equation\": null\n}\n```",
+    "reasoning": "Y is currently 60 when A is 3 and B is 20. Let's try decreasing A to see how it affects Y.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "observation_before": {
+      "mode": "text",
+      "visible_state": {
+        "A": 3.0,
+        "B": 20.0,
+        "Y": 60.0
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "A"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "A"
+        },
+        {
+          "action_type": "increase",
+          "variable": "B"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "B"
+        }
+      ],
+      "text": "Current state:\nA = 3.0\nB = 20.0\nY = 60.0\n\nAvailable actions:\n- increase A\n- decrease A\n- increase B\n- decrease B",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "Y",
+        "target_variable_internal": "voltage",
+        "naming_mode": "abstract",
+        "metadata_level": "none",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "current": "A",
+          "resistance": "B",
+          "voltage": "Y"
+        }
+      }
+    },
+    "observation_after": {
+      "mode": "text",
+      "visible_state": {
+        "A": 2.0,
+        "B": 20.0,
+        "Y": 40.0
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "A"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "A"
+        },
+        {
+          "action_type": "increase",
+          "variable": "B"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "B"
+        }
+      ],
+      "text": "Current state:\nA = 2.0\nB = 20.0\nY = 40.0\n\nAvailable actions:\n- increase A\n- decrease A\n- increase B\n- decrease B",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "Y",
+        "target_variable_internal": "voltage",
+        "naming_mode": "abstract",
+        "metadata_level": "none",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "current": "A",
+          "resistance": "B",
+          "voltage": "Y"
+        }
+      }
+    },
+    "state_before": {
+      "current": 3.0,
+      "resistance": 20.0,
+      "voltage": 60.0
+    },
+    "state_after": {
+      "current": 2.0,
+      "resistance": 20.0,
+      "voltage": 40.0
+    },
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "prompt": "You are a scientific explorer interacting with an unknown environment. You must respond with exactly one valid JSON object.\n\nYour goal is to discover the equation that determines Y from the other variables in the environment.\nExplore the environment step by step through interaction.\nUse the current observation and previous history when deciding your next step.\nPut any reasoning inside the JSON reasoning field only.\nStop only when you have gathered enough evidence from interaction to state a final equation supported by the observations.\nYou may take up to 100 steps in total.\n\nAllowed step types:\n- action: take exactly one action to change the environment\n- finish: stop exploring and submit your final equation\n\nRules:\n- Return exactly one valid JSON object.\n- Do not output prose, markdown fences, bullet points, or any text outside the JSON object.\n- reasoning must be a non-empty string on every step.\n- step_type must be exactly 'action' or 'finish'.\n- When step_type is 'action', action must be one valid action object from Available actions; final_equation must be null.\n- When step_type is 'finish', action must be null; final_equation must be a non-empty equation string.\n- Do not invent new action_type values, variables, or fields.\n\nCurrent observation:\nCurrent state:\nA = 2.0\nB = 20.0\nY = 40.0\n\nAvailable actions:\n- increase A\n- decrease A\n- increase B\n- decrease B\n\nHistory:\nStep 0:\nstep_type: action\nreasoning: I observe that Y is twice the value of B. Let's try increasing B to see if it affects Y in a predictable way.\naction: increase B\nstate before: {'A': 2.0, 'B': 10.0, 'Y': 20.0}\nstate after: {'A': 2.0, 'B': 20.0, 'Y': 40.0}\n\nStep 1:\nstep_type: action\nreasoning: Y is twice the value of B. I've already increased B to its current value and Y increased accordingly. Let's try increasing A to see if Y changes in a predictable manner.\naction: increase A\nstate before: {'A': 2.0, 'B': 20.0, 'Y': 40.0}\nstate after: {'A': 3.0, 'B': 20.0, 'Y': 60.0}\n\nStep 2:\nstep_type: action\nreasoning: Y is currently 60 when A is 3 and B is 20. Let's try decreasing A to see how it affects Y.\naction: decrease A\nstate before: {'A': 3.0, 'B': 20.0, 'Y': 60.0}\nstate after: {'A': 2.0, 'B': 20.0, 'Y': 40.0}\n\nOutput format:\nYour answer must follow one of the JSON templates below.\nFor an action step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"variable_name\"\n  },\n  \"final_equation\": null\n}\nFor a finish step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"finish\",\n  \"action\": null,\n  \"final_equation\": \"equation string\"\n}",
+    "raw_model_output": "```json\n{\n  \"reasoning\": \"Y is equal to 2 * B. I have observed that Y is twice B. Let's test this by increasing B further.\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"B\"\n  },\n  \"final_equation\": null\n}\n```",
+    "reasoning": "Y is equal to 2 * B. I have observed that Y is twice B. Let's test this by increasing B further.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "observation_before": {
+      "mode": "text",
+      "visible_state": {
+        "A": 2.0,
+        "B": 20.0,
+        "Y": 40.0
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "A"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "A"
+        },
+        {
+          "action_type": "increase",
+          "variable": "B"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "B"
+        }
+      ],
+      "text": "Current state:\nA = 2.0\nB = 20.0\nY = 40.0\n\nAvailable actions:\n- increase A\n- decrease A\n- increase B\n- decrease B",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "Y",
+        "target_variable_internal": "voltage",
+        "naming_mode": "abstract",
+        "metadata_level": "none",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "current": "A",
+          "resistance": "B",
+          "voltage": "Y"
+        }
+      }
+    },
+    "observation_after": {
+      "mode": "text",
+      "visible_state": {
+        "A": 2.0,
+        "B": 30.0,
+        "Y": 60.0
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "A"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "A"
+        },
+        {
+          "action_type": "increase",
+          "variable": "B"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "B"
+        }
+      ],
+      "text": "Current state:\nA = 2.0\nB = 30.0\nY = 60.0\n\nAvailable actions:\n- increase A\n- decrease A\n- increase B\n- decrease B",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "Y",
+        "target_variable_internal": "voltage",
+        "naming_mode": "abstract",
+        "metadata_level": "none",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "current": "A",
+          "resistance": "B",
+          "voltage": "Y"
+        }
+      }
+    },
+    "state_before": {
+      "current": 2.0,
+      "resistance": 20.0,
+      "voltage": 40.0
+    },
+    "state_after": {
+      "current": 2.0,
+      "resistance": 30.0,
+      "voltage": 60.0
+    },
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "finish",
+    "prompt": "You are a scientific explorer interacting with an unknown environment. You must respond with exactly one valid JSON object.\n\nYour goal is to discover the equation that determines Y from the other variables in the environment.\nExplore the environment step by step through interaction.\nUse the current observation and previous history when deciding your next step.\nPut any reasoning inside the JSON reasoning field only.\nStop only when you have gathered enough evidence from interaction to state a final equation supported by the observations.\nYou may take up to 100 steps in total.\n\nAllowed step types:\n- action: take exactly one action to change the environment\n- finish: stop exploring and submit your final equation\n\nRules:\n- Return exactly one valid JSON object.\n- Do not output prose, markdown fences, bullet points, or any text outside the JSON object.\n- reasoning must be a non-empty string on every step.\n- step_type must be exactly 'action' or 'finish'.\n- When step_type is 'action', action must be one valid action object from Available actions; final_equation must be null.\n- When step_type is 'finish', action must be null; final_equation must be a non-empty equation string.\n- Do not invent new action_type values, variables, or fields.\n\nCurrent observation:\nCurrent state:\nA = 2.0\nB = 30.0\nY = 60.0\n\nAvailable actions:\n- increase A\n- decrease A\n- increase B\n- decrease B\n\nHistory:\nStep 0:\nstep_type: action\nreasoning: I observe that Y is twice the value of B. Let's try increasing B to see if it affects Y in a predictable way.\naction: increase B\nstate before: {'A': 2.0, 'B': 10.0, 'Y': 20.0}\nstate after: {'A': 2.0, 'B': 20.0, 'Y': 40.0}\n\nStep 1:\nstep_type: action\nreasoning: Y is twice the value of B. I've already increased B to its current value and Y increased accordingly. Let's try increasing A to see if Y changes in a predictable manner.\naction: increase A\nstate before: {'A': 2.0, 'B': 20.0, 'Y': 40.0}\nstate after: {'A': 3.0, 'B': 20.0, 'Y': 60.0}\n\nStep 2:\nstep_type: action\nreasoning: Y is currently 60 when A is 3 and B is 20. Let's try decreasing A to see how it affects Y.\naction: decrease A\nstate before: {'A': 3.0, 'B': 20.0, 'Y': 60.0}\nstate after: {'A': 2.0, 'B': 20.0, 'Y': 40.0}\n\nStep 3:\nstep_type: action\nreasoning: Y is equal to 2 * B. I have observed that Y is twice B. Let's test this by increasing B further.\naction: increase B\nstate before: {'A': 2.0, 'B': 20.0, 'Y': 40.0}\nstate after: {'A': 2.0, 'B': 30.0, 'Y': 60.0}\n\nOutput format:\nYour answer must follow one of the JSON templates below.\nFor an action step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"variable_name\"\n  },\n  \"final_equation\": null\n}\nFor a finish step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"finish\",\n  \"action\": null,\n  \"final_equation\": \"equation string\"\n}",
+    "raw_model_output": "```json\n{\n  \"reasoning\": \"I have observed that Y is twice the value of B. I have confirmed this with multiple trials. Let's formalize this relationship.\",\n  \"step_type\": \"finish\",\n  \"action\": null,\n  \"final_equation\": \"Y = 2 * B\"\n}\n```",
+    "reasoning": "I have observed that Y is twice the value of B. I have confirmed this with multiple trials. Let's formalize this relationship.",
+    "parsed_action": null,
+    "final_equation": "Y = 2 * B",
+    "observation_before": {
+      "mode": "text",
+      "visible_state": {
+        "A": 2.0,
+        "B": 30.0,
+        "Y": 60.0
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "A"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "A"
+        },
+        {
+          "action_type": "increase",
+          "variable": "B"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "B"
+        }
+      ],
+      "text": "Current state:\nA = 2.0\nB = 30.0\nY = 60.0\n\nAvailable actions:\n- increase A\n- decrease A\n- increase B\n- decrease B",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "Y",
+        "target_variable_internal": "voltage",
+        "naming_mode": "abstract",
+        "metadata_level": "none",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "current": "A",
+          "resistance": "B",
+          "voltage": "Y"
+        }
+      }
+    },
+    "observation_after": {
+      "mode": "text",
+      "visible_state": {
+        "A": 2.0,
+        "B": 30.0,
+        "Y": 60.0
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "A"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "A"
+        },
+        {
+          "action_type": "increase",
+          "variable": "B"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "B"
+        }
+      ],
+      "text": "Current state:\nA = 2.0\nB = 30.0\nY = 60.0\n\nAvailable actions:\n- increase A\n- decrease A\n- increase B\n- decrease B",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "Y",
+        "target_variable_internal": "voltage",
+        "naming_mode": "abstract",
+        "metadata_level": "none",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "current": "A",
+          "resistance": "B",
+          "voltage": "Y"
+        }
+      }
+    },
+    "state_before": {
+      "current": 2.0,
+      "resistance": 30.0,
+      "voltage": 60.0
+    },
+    "state_after": {
+      "current": 2.0,
+      "resistance": 30.0,
+      "voltage": 60.0
+    },
+    "done": true
+  }
+]

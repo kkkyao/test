@@ -1,0 +1,32 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "The current state shows initial_position=0, velocity=5, time=2, and position=10. The relationship position = initial_position + velocity * time holds (0 + 5*2 = 10). To verify this linear relationship with velocity, I will increase the velocity to 10 while keeping initial_position and time constant, expecting position to become 20.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "velocity"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "The current state shows initial_position=0, velocity=10, time=2, and position=20. The relationship position = initial_position + velocity * time holds (0 + 10*2 = 20). To further verify the linearity with respect to time, I will increase the time to 3 while keeping initial_position and velocity constant, expecting position to become 30.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "time"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "finish",
+    "reasoning": "The current state shows initial_position=0, velocity=10, time=3, and position=30. This confirms the relationship position = initial_position + velocity * time (0 + 10*3 = 30). I have verified the relationship with two different values of velocity (5 and 10) and one value of time (3) while keeping others constant. The pattern is consistent. I will now finish and submit the final equation.",
+    "parsed_action": null,
+    "final_equation": "position = initial_position + velocity * time",
+    "done": true
+  }
+]

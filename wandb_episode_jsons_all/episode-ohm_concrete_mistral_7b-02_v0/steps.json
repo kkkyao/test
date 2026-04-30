@@ -1,0 +1,65 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Given the current observation, we can see that voltage is directly proportional to resistance and inversely proportional to the resistance. However, we don't have enough information about how the current affects the voltage to formulate a definitive equation. Let's first observe the voltage changes when we manipulate the current.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "The current observation shows a direct proportionality between voltage and resistance, but we need to understand the impact of current on voltage. Let's increase the resistance to further investigate.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "The current observation shows a direct proportionality between voltage and resistance. To confirm this and understand the relationship between current and voltage, let's decrease the current again.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "Voltage is directly proportional to resistance and inversely proportional to the current. Let's confirm this by increasing the current to see if voltage decreases.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "reasoning": "Voltage is directly proportional to resistance and inversely proportional to the current. Let's confirm this relationship by decreasing the resistance to see if voltage increases.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 5,
+    "step_type": "finish",
+    "reasoning": "We have confirmed that voltage is directly proportional to resistance and inversely proportional to the current. Now, we can formulate the equation.",
+    "parsed_action": null,
+    "final_equation": "V = I * R",
+    "done": true
+  }
+]

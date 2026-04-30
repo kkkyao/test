@@ -1,0 +1,846 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Start exploring the environment by increasing I to see how it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Increasing I by 1 to see if it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "Increasing R to see if it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "Increasing I by 1 to see if it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "reasoning": "I have observed that increasing I increases V, and increasing R also increases V. Now, I will decrease I to see how it affects V.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 5,
+    "step_type": "action",
+    "reasoning": "Now that I have seen that increasing I increases V and increasing R also increases V, I will decrease R to see how it affects V.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 6,
+    "step_type": "action",
+    "reasoning": "I will decrease R by 1 to see if it affects V.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 7,
+    "step_type": "action",
+    "reasoning": "Decreasing R by 1 to see if it affects V.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 8,
+    "step_type": "action",
+    "reasoning": "I will increase R by 1 to see if it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 9,
+    "step_type": "action",
+    "reasoning": "Increasing R by 1 to see if it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 10,
+    "step_type": "action",
+    "reasoning": "I have observed that increasing I increases V, and increasing R also increases V. However, decreasing R to 0 or below causes V to decrease. This suggests a relationship between V, I, and R.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 11,
+    "step_type": "action",
+    "reasoning": "Increasing R by 1 to see if it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 12,
+    "step_type": "action",
+    "reasoning": "Now that I have seen that increasing I increases V and increasing R also increases V, I will decrease R to 0 and observe the change in V.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 13,
+    "step_type": "action",
+    "reasoning": "I have observed that increasing I increases V, and increasing R also increases V. However, decreasing R to 0 or below causes V to decrease. This suggests a relationship between V, I, and R.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 14,
+    "step_type": "action",
+    "reasoning": "Increasing I increases V, and increasing R also increases V. I will decrease I to see how it affects V.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 15,
+    "step_type": "action",
+    "reasoning": "I will increase I to see if it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 16,
+    "step_type": "action",
+    "reasoning": "Increasing I and R to see if it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 17,
+    "step_type": "action",
+    "reasoning": "Increasing R by 1 to see if it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 18,
+    "step_type": "action",
+    "reasoning": "Increasing I and R to see if it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 19,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear. I will decrease R to see if it affects V.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 20,
+    "step_type": "action",
+    "reasoning": "I have observed that increasing I increases V, and increasing R also increases V. However, decreasing R to 0 or below causes V to decrease. This suggests a relationship between V, I, and R.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 21,
+    "step_type": "action",
+    "reasoning": "Since increasing I and R increases V, and decreasing R to 0 or below causes V to decrease, I will try to find a linear relationship between V, I, and R.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 22,
+    "step_type": "action",
+    "reasoning": "I have observed that increasing I increases V, and increasing R also increases V. However, decreasing R to 0 or below causes V to decrease. This suggests a relationship between V, I, and R.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 23,
+    "step_type": "action",
+    "reasoning": "I will decrease R to 0 to see how it affects V.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 24,
+    "step_type": "action",
+    "reasoning": "Since increasing I and R increases V, and decreasing R to 0 or below causes V to decrease, I will try to find a linear relationship between V, I, and R.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 25,
+    "step_type": "action",
+    "reasoning": "I have observed that increasing I increases V, and increasing R also increases V. However, decreasing R to 0 or below causes V to decrease. This suggests a linear relationship between V, I, and R.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 26,
+    "step_type": "action",
+    "reasoning": "I will increase I and R to see if it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 27,
+    "step_type": "action",
+    "reasoning": "Since increasing I and R increases V, and decreasing R to 0 or below causes V to decrease, I will try to find a linear relationship between V, I, and R.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 28,
+    "step_type": "action",
+    "reasoning": "I have observed that increasing I increases V, and increasing R also increases V. However, decreasing R to 0 or below causes V to decrease. This suggests a linear relationship between V, I, and R.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 29,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 30,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 31,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 32,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 33,
+    "step_type": "action",
+    "reasoning": "Since I have observed a linear relationship between V, I, and R, I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 34,
+    "step_type": "action",
+    "reasoning": "I will try to find the slope of the line by increasing R to see if it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 35,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 36,
+    "step_type": "action",
+    "reasoning": "Since the relationship between V, I, and R seems to be linear, I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 37,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 38,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 39,
+    "step_type": "action",
+    "reasoning": "Since the relationship between V, I, and R seems to be linear, I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 40,
+    "step_type": "action",
+    "reasoning": "I will increase R to see if it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 41,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 42,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 43,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear. I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 44,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 45,
+    "step_type": "action",
+    "reasoning": "I have observed that increasing I increases V, and increasing R also increases V. However, decreasing R to 0 or below causes V to decrease. This suggests a linear relationship between V, I, and R.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 46,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 47,
+    "step_type": "action",
+    "reasoning": "Since the relationship between V, I, and R seems to be linear, I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 48,
+    "step_type": "action",
+    "reasoning": "I have observed that increasing I increases V, and increasing R also increases V. However, decreasing R to 0 or below causes V to decrease. This suggests a linear relationship between V, I, and R.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 49,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 50,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear. I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 51,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 52,
+    "step_type": "action",
+    "reasoning": "I will increase R to see if it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 53,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 54,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 55,
+    "step_type": "action",
+    "reasoning": "I have observed a linear relationship between V, I, and R, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 56,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 57,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 58,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 59,
+    "step_type": "action",
+    "reasoning": "I have observed a linear relationship between V, I, and R, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 60,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 61,
+    "step_type": "action",
+    "reasoning": "I have observed a linear relationship between V, I, and R, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 62,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 63,
+    "step_type": "action",
+    "reasoning": "I will increase I to see how it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 64,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 65,
+    "step_type": "action",
+    "reasoning": "Increasing R to see if it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 66,
+    "step_type": "action",
+    "reasoning": "I will increase R to see if it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 67,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear, so I will try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 68,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear. I will calculate the slope of the line using the points (I=4, R=260, V=1040) and (I=5, R=300, V=1500).",
+    "parsed_action": {
+      "action_type": "finish",
+      "variable": "I"
+    },
+    "final_equation": "V = 50*I + 200*R",
+    "done": false
+  },
+  {
+    "step_id": 69,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear, so I will calculate the slope of the line using the points (I=4, R=260, V=1040) and (I=5, R=300, V=1500).",
+    "parsed_action": {
+      "action_type": "finish",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 70,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear. I will calculate the slope of the line using the points (I=4, R=260, V=1040) and (I=5, R=300, V=1500).",
+    "parsed_action": {
+      "action_type": "finish",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 71,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R seems to be linear, so I will calculate the slope of the line using the points (I=4, R=260, V=1040) and (I=5, R=300, V=1500).",
+    "parsed_action": {
+      "action_type": "finish",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 72,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R is linear. I will calculate the slope of the line using the points (I=4, R=260, V=1040) and (I=5, R=300, V=1500).",
+    "parsed_action": {
+      "action_type": "finish",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 73,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R is linear, so I will calculate the slope of the line using the points (I=4, R=260, V=1040) and (I=5, R=300, V=1500).",
+    "parsed_action": {
+      "action_type": "finish",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 74,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R is linear, so I will calculate the slope of the line using the points (I=4, R=260, V=1040) and (I=5, R=300, V=1500).",
+    "parsed_action": {
+      "action_type": "finish",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 75,
+    "step_type": "action",
+    "reasoning": "The relationship between V, I, and R is linear. I will calculate the slope of the line using the points (I=4, R=260, V=1040) and (I=5, R=300, V=1500).",
+    "parsed_action": {
+      "action_type": "finish",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 76,
+    "step_type": "finish",
+    "reasoning": "The relationship between V, I, and R is linear, so I will calculate the slope of the line using the points (I=4, R=260, V=1040) and (I=5, R=300, V=1500).",
+    "parsed_action": null,
+    "final_equation": "V = 300 * I",
+    "done": true
+  }
+]

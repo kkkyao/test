@@ -1,0 +1,186 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Start by varying current to see its effect on voltage.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Start by varying current to see its effect on voltage.",
+    "parsed_action": {
+      "action_type": "decrease current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "To confirm Ohm's Law, vary resistance and see its effect on voltage.",
+    "parsed_action": {
+      "action_type": "increase resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "To further confirm Ohm's Law, vary current and resistance simultaneously to see their effect on voltage.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "reasoning": "Vary resistance to see its effect on voltage, as per Ohm's Law.",
+    "parsed_action": {
+      "action_type": "decrease resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 5,
+    "step_type": "action",
+    "reasoning": "Varying current to see its effect on voltage.",
+    "parsed_action": {
+      "action_type": "decrease current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 6,
+    "step_type": "action",
+    "reasoning": "Try to increase resistance and see its effect on voltage.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 7,
+    "step_type": "action",
+    "reasoning": "Varying resistance to see its effect on voltage.",
+    "parsed_action": {
+      "action_type": "decrease resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 8,
+    "step_type": "action",
+    "reasoning": "Varying current to see its effect on voltage.",
+    "parsed_action": {
+      "action_type": "decrease current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 9,
+    "step_type": "action",
+    "reasoning": "Varying resistance to see its effect on voltage.",
+    "parsed_action": {
+      "action_type": "increase resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 10,
+    "step_type": "action",
+    "reasoning": "Since the voltage remains constant when varying current and resistance, we can conclude that the equation is in the form V = k * I * R, where k is a constant.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 11,
+    "step_type": "action",
+    "reasoning": "Varying resistance and current to see their effect on voltage.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 12,
+    "step_type": "action",
+    "reasoning": "Varying resistance to see its effect on voltage.",
+    "parsed_action": {
+      "action_type": "increase resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 13,
+    "step_type": "action",
+    "reasoning": "Varying current and resistance to see their effect on voltage.",
+    "parsed_action": {
+      "action_type": "increase resistance",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 14,
+    "step_type": "action",
+    "reasoning": "The voltage remains constant when varying current and resistance, so we can conclude that the equation is in the form V = k * I * R, where k is a constant.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 15,
+    "step_type": "action",
+    "reasoning": "The voltage remains constant when varying current and resistance, so we can conclude that the equation is in the form V = k * I * R, where k is a constant.",
+    "parsed_action": {
+      "action_type": "increase current",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 16,
+    "step_type": "finish",
+    "reasoning": "The voltage remains constant when varying current and resistance, so we can conclude that the equation is in the form V = k * I * R, where k is a constant.",
+    "parsed_action": null,
+    "final_equation": "V = k * I * R",
+    "done": true
+  }
+]

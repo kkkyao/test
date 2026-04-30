@@ -1,0 +1,54 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Let's try increasing A to see if it affects Y. A simple linear relationship is a good starting point.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Increasing A resulted in a change in Y. Let's try increasing B to see if it influences Y.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "B is currently 10 and Y is 30. Increasing B again might reveal a pattern. Let's increase B further.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "We have observed that increasing A increases Y, and increasing B increases Y. Let's analyze the changes. When A increased from 10 to 20, Y increased from 15 to 25. When B increased from 5 to 10, Y increased from 15 to 30. Now, with A at 20 and B at 15, Y is 35. The increase in Y is proportional to the increase in both A and B. It looks like Y = A + B. Let's test this.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "finish",
+    "reasoning": "I have observed that Y increases as both A and B increase. The current state is A=20, B=20, Y=40. I want to confirm the equation Y = A + B.",
+    "parsed_action": null,
+    "final_equation": "Y = A + B",
+    "done": true
+  }
+]

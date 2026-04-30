@@ -1,0 +1,32 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Initial observation suggests a possible linear relationship between Y and A, B. Increasing A will help determine if Y changes in a predictable manner.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Increasing A from 3.0 to 4.0 and observing the effect on Y will help confirm if there is a linear relationship and what the slope might be.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "finish",
+    "reasoning": "Y increases linearly with A when B remains constant. Increasing A from 3.0 to 4.0 increased Y from 30.0 to 40.0, suggesting a slope of 10 for Y with respect to A.",
+    "parsed_action": null,
+    "final_equation": "Y = 10 * A + 0",
+    "done": true
+  }
+]

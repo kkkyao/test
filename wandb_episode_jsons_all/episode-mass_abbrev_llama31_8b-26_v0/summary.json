@@ -1,0 +1,29 @@
+{
+  "final_equation": "m = k * rho * V",
+  "finish_reached": true,
+  "finish_step_id": 32,
+  "num_steps": 33,
+  "parse_error": null,
+  "evaluation": {
+    "success": true,
+    "finish_called": true,
+    "valid_finish": true,
+    "equation_correct": true,
+    "equation_submitted": true,
+    "steps_to_success": 33,
+    "termination_reason": "finish_success",
+    "final_equation": "m = k * rho * V",
+    "error_message": null,
+    "total_steps": 33,
+    "unique_states": 17,
+    "unique_actions": 8,
+    "repeated_actions": 24,
+    "loop_count": 24,
+    "state_coverage_ratio": 0.5152,
+    "redundancy_penalty": 0.7273,
+    "variable_isolation_score": 0.4062,
+    "controlled_experiments_ratio": 0.4062,
+    "exploration_breadth_score": 0.5152,
+    "discovery_efficiency": 0.030303
+  }
+}

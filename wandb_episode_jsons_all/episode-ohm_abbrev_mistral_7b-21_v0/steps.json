@@ -1,0 +1,57 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Initial observation shows a linear relationship between I, R, and V. To verify the equation, let's first isolate V in the equation. We can start by maintaining I constant and varying R.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Maintain I constant and increase R to observe the change in V",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "Maintain R constant and increase I to observe the change in V",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "Maintain I constant and decrease R to observe the change in V",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "reasoning": "We have observed that when I is increased, V increases proportionally. Now, let's verify the relationship between R and V when I is kept constant.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  }
+]

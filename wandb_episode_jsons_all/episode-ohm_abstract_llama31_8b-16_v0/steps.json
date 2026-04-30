@@ -1,0 +1,439 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Start with current observation and available actions",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Try to decrease A to see if Y changes",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "Try to increase B to see if Y changes",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "Try to decrease B to see if Y changes",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "reasoning": "Try to increase A to see if Y changes",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 5,
+    "step_type": "action",
+    "reasoning": "Try to decrease B to see if Y changes, then try to increase A",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 6,
+    "step_type": "action",
+    "reasoning": "Try to increase A to see if Y changes",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 7,
+    "step_type": "action",
+    "reasoning": "Try to increase A and B to see if Y changes",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 8,
+    "step_type": "action",
+    "reasoning": "Try to decrease B to see if Y changes, then try to increase A to see the relationship between A and Y when B is constant",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 9,
+    "step_type": "action",
+    "reasoning": "Try to decrease B to see if Y changes",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 10,
+    "step_type": "action",
+    "reasoning": "Try to increase B to see if Y changes",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 11,
+    "step_type": "action",
+    "reasoning": "Try to increase A to see if Y changes",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 12,
+    "step_type": "action",
+    "reasoning": "Y is 0 when B is 0, so B is not a factor in Y",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 13,
+    "step_type": "action",
+    "reasoning": "Y does not change when B is 0, so B is not a factor in Y",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 14,
+    "step_type": "action",
+    "reasoning": "Y does not change when B is 0, so B is not a factor in Y",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 15,
+    "step_type": "action",
+    "reasoning": "Y is 0 when B is 0, and Y changes with A, so the relationship between Y and A is linear",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 16,
+    "step_type": "action",
+    "reasoning": "Try to decrease A to see if Y changes",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 17,
+    "step_type": "action",
+    "reasoning": "Try to increase B to see if Y changes",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 18,
+    "step_type": "action",
+    "reasoning": "Y is 0 when B is 0, and Y changes with A, so the relationship between Y and A is linear",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 19,
+    "step_type": "action",
+    "reasoning": "Try to increase B to see if Y changes, then try to increase A to see the relationship between A and Y when B is constant",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 20,
+    "step_type": "action",
+    "reasoning": "Try to decrease B to see if Y changes",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 21,
+    "step_type": "action",
+    "reasoning": "Y is 0 when B is 0, and Y changes with A, so the relationship between Y and A is linear",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 22,
+    "step_type": "action",
+    "reasoning": "Y is 0 when B is 0, and Y changes with A, so the relationship between Y and A is linear",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 23,
+    "step_type": "action",
+    "reasoning": "Try to decrease B to see if Y changes",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 24,
+    "step_type": "action",
+    "reasoning": "Try to increase A to see if Y changes",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 25,
+    "step_type": "action",
+    "reasoning": "Try to increase A to see if Y changes",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 26,
+    "step_type": "action",
+    "reasoning": "Y is 0 when B is 0, and Y changes with A, so the relationship between Y and A is linear",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 27,
+    "step_type": "action",
+    "reasoning": "Try to increase B to see if Y changes",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 28,
+    "step_type": "action",
+    "reasoning": "Try to decrease B to see if Y changes",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 29,
+    "step_type": "action",
+    "reasoning": "Y is 0 when B is 0, and Y changes with A, so the relationship between Y and A is linear",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 30,
+    "step_type": "action",
+    "reasoning": "Try to increase B to see the relationship between A and Y",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 31,
+    "step_type": "action",
+    "reasoning": "Y is 0 when B is 0, and Y changes with A, so the relationship between Y and A is linear",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 32,
+    "step_type": "action",
+    "reasoning": "Try to increase B to see if Y changes",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 33,
+    "step_type": "action",
+    "reasoning": "Try to decrease A to see the relationship between A and Y",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 34,
+    "step_type": "action",
+    "reasoning": "Y is 0 when B is 0, and Y changes with A, so the relationship between Y and A is linear",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 35,
+    "step_type": "action",
+    "reasoning": "Try to decrease B to see if Y changes",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 36,
+    "step_type": "action",
+    "reasoning": "Try to increase B to see the relationship between A and Y",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 37,
+    "step_type": "action",
+    "reasoning": "Try to increase B to see if Y changes, then try to increase A to see the relationship between A and Y when B is constant",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 38,
+    "step_type": "action",
+    "reasoning": "Try to increase B to see if Y changes",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 39,
+    "step_type": "finish",
+    "reasoning": "B is not a factor in Y, Y changes with A, and the relationship between Y and A is linear",
+    "parsed_action": null,
+    "final_equation": "Y = 12A",
+    "done": true
+  }
+]

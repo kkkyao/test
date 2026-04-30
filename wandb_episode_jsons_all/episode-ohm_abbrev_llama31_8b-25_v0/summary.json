@@ -1,0 +1,29 @@
+{
+  "final_equation": "V = 21.0 + 30.0 * I + 20.0 * R",
+  "finish_reached": true,
+  "finish_step_id": 69,
+  "num_steps": 70,
+  "parse_error": null,
+  "evaluation": {
+    "success": false,
+    "finish_called": true,
+    "valid_finish": true,
+    "equation_correct": false,
+    "equation_submitted": true,
+    "steps_to_success": null,
+    "termination_reason": "finish_wrong",
+    "final_equation": "V = 21.0 + 30.0 * I + 20.0 * R",
+    "error_message": null,
+    "total_steps": 70,
+    "unique_states": 57,
+    "unique_actions": 4,
+    "repeated_actions": 65,
+    "loop_count": 65,
+    "state_coverage_ratio": 0.8143,
+    "redundancy_penalty": 0.9286,
+    "variable_isolation_score": 0.0,
+    "controlled_experiments_ratio": 0.0,
+    "exploration_breadth_score": 0.8143,
+    "discovery_efficiency": 0.0
+  }
+}

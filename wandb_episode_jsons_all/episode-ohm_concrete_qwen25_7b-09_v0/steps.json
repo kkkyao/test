@@ -1,0 +1,21 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Initial observation suggests a relationship between voltage, current, and resistance. To confirm the relationship, I will increase the current and observe the change in voltage.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "finish",
+    "reasoning": "The increase in current from 2.0A to 3.0A resulted in a proportional increase in voltage from 20V to 30V. This supports Ohm's Law, V = IR.",
+    "parsed_action": null,
+    "final_equation": "voltage = current * resistance",
+    "done": true
+  }
+]

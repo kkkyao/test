@@ -2,7 +2,7 @@ environment:
   target_variable: total_resistance
 
   variables:
-    R1:
+    resistance_1:
       manipulable: true
       initial_value: 10
       step_size: 10
@@ -10,7 +10,7 @@ environment:
       max_value: null
       description: resistance of the first resistor in ohms
 
-    R2:
+    resistance_2:
       manipulable: true
       initial_value: 5
       step_size: 5
@@ -23,14 +23,14 @@ environment:
       description: total resistance of the circuit in ohms
 
   equations:
-    total_resistance: "R1 + R2"
+    total_resistance: "resistance_1 + resistance_2"
 
 representation:
   naming_mode: concrete
   metadata_level: rich
   name_mapping:
-    R1: R1
-    R2: R2
+    resistance_1: resistance_1
+    resistance_2: resistance_2
     total_resistance: total_resistance
 
 actions:
@@ -38,8 +38,8 @@ actions:
 
 evaluation:
   variable_mapping:
-    R1: R1
-    R2: R2
+    resistance_1: resistance_1
+    resistance_2: resistance_2
     total_resistance: total_resistance
 
 noise:

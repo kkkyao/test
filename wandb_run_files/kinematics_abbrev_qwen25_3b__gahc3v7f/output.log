@@ -1,0 +1,111 @@
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights: 100%|██████████| 434/434 [00:23<00:00, 18.52it/s]
+
+=== Experiment setup ===
+Config:          configs/config.yaml
+Env override:    configs/env_kinematics_abbrev.yaml
+Model override:  configs/model_qwen25_3b.yaml
+Run name:        kinematics_abbrev_qwen25_3b
+Output dir:      outputs/kinematics_abbrev_qwen25_3b
+Target variable: position
+Naming mode:     abstract
+Action mode:     increase_decrease
+N runs:          30
+
+--- Run 1/30 ---
+  success=False  steps=5  reason=finish_wrong
+
+--- Run 2/30 ---
+  success=False  steps=8  reason=finish_wrong
+
+--- Run 3/30 ---
+  success=False  steps=1  reason=finish_wrong
+
+--- Run 4/30 ---
+  success=True  steps=4  reason=finish_success
+
+--- Run 5/30 ---
+  success=False  steps=1  reason=parse_error
+
+--- Run 6/30 ---
+  success=True  steps=7  reason=finish_success
+
+--- Run 7/30 ---
+  success=True  steps=4  reason=finish_success
+
+--- Run 8/30 ---
+  success=False  steps=8  reason=finish_wrong
+
+--- Run 9/30 ---
+  success=False  steps=1  reason=finish_wrong
+
+--- Run 10/30 ---
+  success=False  steps=2  reason=parse_error
+
+--- Run 11/30 ---
+  success=False  steps=5  reason=finish_wrong
+
+--- Run 12/30 ---
+  success=False  steps=3  reason=finish_wrong
+
+--- Run 13/30 ---
+  success=False  steps=1  reason=finish_wrong
+
+--- Run 14/30 ---
+  success=False  steps=8  reason=finish_wrong
+
+--- Run 15/30 ---
+  success=False  steps=6  reason=finish_wrong
+
+--- Run 16/30 ---
+  success=False  steps=3  reason=finish_wrong
+
+--- Run 17/30 ---
+  success=True  steps=9  reason=finish_success
+
+--- Run 18/30 ---
+  success=False  steps=7  reason=finish_wrong
+
+--- Run 19/30 ---
+  success=False  steps=5  reason=finish_wrong
+
+--- Run 20/30 ---
+  success=False  steps=2  reason=finish_wrong
+
+--- Run 21/30 ---
+  success=True  steps=16  reason=finish_success
+
+--- Run 22/30 ---
+  success=False  steps=7  reason=finish_wrong
+
+--- Run 23/30 ---
+  success=False  steps=3  reason=finish_wrong
+
+--- Run 24/30 ---
+  success=True  steps=5  reason=finish_success
+
+--- Run 25/30 ---
+  success=False  steps=1  reason=finish_wrong
+
+--- Run 26/30 ---
+  success=True  steps=1  reason=finish_success
+
+--- Run 27/30 ---
+  success=False  steps=6  reason=parse_error
+
+--- Run 28/30 ---
+  success=True  steps=3  reason=finish_success
+
+--- Run 29/30 ---
+  success=False  steps=3  reason=finish_wrong
+
+--- Run 30/30 ---
+  success=False  steps=7  reason=finish_wrong
+
+=== Experiment complete ===
+  success_rate: 26.67%
+  finish_rate:  90.00%
+  mean_steps:   4.7
+  mean_steps_to_success: 6.1
+  aggregate saved to: outputs/kinematics_abbrev_qwen25_3b/aggregate.json
+  episode files saved under: outputs/kinematics_abbrev_qwen25_3b/run_XX/

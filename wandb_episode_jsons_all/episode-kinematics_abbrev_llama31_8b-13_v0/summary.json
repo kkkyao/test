@@ -1,0 +1,29 @@
+{
+  "final_equation": "x = x0 + v*t",
+  "finish_reached": true,
+  "finish_step_id": 57,
+  "num_steps": 58,
+  "parse_error": null,
+  "evaluation": {
+    "success": true,
+    "finish_called": true,
+    "valid_finish": true,
+    "equation_correct": true,
+    "equation_submitted": true,
+    "steps_to_success": 58,
+    "termination_reason": "finish_success",
+    "final_equation": "x = x0 + v*t",
+    "error_message": null,
+    "total_steps": 58,
+    "unique_states": 53,
+    "unique_actions": 6,
+    "repeated_actions": 51,
+    "loop_count": 51,
+    "state_coverage_ratio": 0.9138,
+    "redundancy_penalty": 0.8793,
+    "variable_isolation_score": 0.0,
+    "controlled_experiments_ratio": 0.0,
+    "exploration_breadth_score": 0.9138,
+    "discovery_efficiency": 0.017241
+  }
+}

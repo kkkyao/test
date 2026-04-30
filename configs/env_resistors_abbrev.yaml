@@ -1,0 +1,48 @@
+environment:
+  target_variable: total_resistance
+
+  variables:
+    resistance_1:
+      manipulable: true
+      initial_value: 10
+      step_size: 10
+      min_value: null
+      max_value: null
+      description: resistance of the first resistor in ohms
+
+    resistance_2:
+      manipulable: true
+      initial_value: 5
+      step_size: 5
+      min_value: null
+      max_value: null
+      description: resistance of the second resistor in ohms
+
+    total_resistance:
+      manipulable: false
+      description: total resistance of the circuit in ohms
+
+  equations:
+    total_resistance: "resistance_1 + resistance_2"
+
+representation:
+  naming_mode: abstract
+  metadata_level: minimal
+  name_mapping:
+    resistance_1: R1
+    resistance_2: R2
+    total_resistance: Rt
+
+actions:
+  action_mode: increase_decrease
+
+evaluation:
+  variable_mapping:
+    R1: resistance_1
+    R2: resistance_2
+    Rt: total_resistance
+
+noise:
+  enabled: false
+  type: null
+  params: {}

@@ -1,0 +1,296 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "I will increase I to see how it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "I will increase R to see how it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "I will increase I to see how it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "I will decrease I to see how it affects V.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "reasoning": "I will increase R to see how it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 5,
+    "step_type": "action",
+    "reasoning": "I will increase R to see how it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 6,
+    "step_type": "action",
+    "reasoning": "I will increase I to see how it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 7,
+    "step_type": "action",
+    "reasoning": "I will increase R to see how it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 8,
+    "step_type": "action",
+    "reasoning": "I will increase I to see how it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 9,
+    "step_type": "action",
+    "reasoning": "I will decrease R to see if I can find a pattern with I.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 10,
+    "step_type": "action",
+    "reasoning": "I will increase I to see if I can find a pattern with R.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 11,
+    "step_type": "action",
+    "reasoning": "I will increase R to see how it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 12,
+    "step_type": "action",
+    "reasoning": "I will increase I to see how it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 13,
+    "step_type": "action",
+    "reasoning": "I will increase R to see how it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 14,
+    "step_type": "action",
+    "reasoning": "I will increase R to see if I can find a pattern with I.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 15,
+    "step_type": "action",
+    "reasoning": "I will decrease I to see how it affects V.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 16,
+    "step_type": "action",
+    "reasoning": "I will increase I to see how it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 17,
+    "step_type": "action",
+    "reasoning": "I will decrease R to see if I can find a pattern with I.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 18,
+    "step_type": "action",
+    "reasoning": "I will increase I to see how it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 19,
+    "step_type": "action",
+    "reasoning": "I will decrease I to see how it affects V.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 20,
+    "step_type": "action",
+    "reasoning": "I will decrease I to see how it affects V.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 21,
+    "step_type": "action",
+    "reasoning": "Looking at the pattern of I and R changes, I notice that V increases by the product of I and R.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 22,
+    "step_type": "action",
+    "reasoning": "I will increase I to see how it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 23,
+    "step_type": "action",
+    "reasoning": "Looking at the pattern of I and R changes, I notice that V increases by the product of I and R.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 24,
+    "step_type": "action",
+    "reasoning": "I will increase I to see how it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 25,
+    "step_type": "action",
+    "reasoning": "Looking at the pattern of I and R changes, I notice that V increases by the product of I and R.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 26,
+    "step_type": "finish",
+    "reasoning": "Looking at the pattern of I and R changes, I notice that V increases by the product of I and R.",
+    "parsed_action": null,
+    "final_equation": "V = I * R",
+    "done": true
+  }
+]

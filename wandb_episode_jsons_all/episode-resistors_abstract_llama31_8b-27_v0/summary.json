@@ -1,0 +1,29 @@
+{
+  "final_equation": "Y = C",
+  "finish_reached": true,
+  "finish_step_id": 39,
+  "num_steps": 40,
+  "parse_error": null,
+  "evaluation": {
+    "success": false,
+    "finish_called": true,
+    "valid_finish": true,
+    "equation_correct": false,
+    "equation_submitted": true,
+    "steps_to_success": null,
+    "termination_reason": "finish_wrong",
+    "final_equation": "Y = C",
+    "error_message": null,
+    "total_steps": 40,
+    "unique_states": 6,
+    "unique_actions": 9,
+    "repeated_actions": 30,
+    "loop_count": 30,
+    "state_coverage_ratio": 0.15,
+    "redundancy_penalty": 0.75,
+    "variable_isolation_score": 0.0,
+    "controlled_experiments_ratio": 0.0,
+    "exploration_breadth_score": 0.15,
+    "discovery_efficiency": 0.0
+  }
+}

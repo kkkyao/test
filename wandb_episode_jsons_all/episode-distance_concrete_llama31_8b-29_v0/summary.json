@@ -1,0 +1,29 @@
+{
+  "final_equation": "total_distance = 0.5 * d1 + 0.25 * d2 + 0.25 * d3",
+  "finish_reached": true,
+  "finish_step_id": 79,
+  "num_steps": 80,
+  "parse_error": null,
+  "evaluation": {
+    "success": false,
+    "finish_called": true,
+    "valid_finish": true,
+    "equation_correct": false,
+    "equation_submitted": true,
+    "steps_to_success": null,
+    "termination_reason": "finish_wrong",
+    "final_equation": "total_distance = 0.5 * d1 + 0.25 * d2 + 0.25 * d3",
+    "error_message": null,
+    "total_steps": 80,
+    "unique_states": 76,
+    "unique_actions": 6,
+    "repeated_actions": 73,
+    "loop_count": 73,
+    "state_coverage_ratio": 0.95,
+    "redundancy_penalty": 0.9125,
+    "variable_isolation_score": 1.0,
+    "controlled_experiments_ratio": 1.0,
+    "exploration_breadth_score": 0.95,
+    "discovery_efficiency": 0.0
+  }
+}

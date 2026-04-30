@@ -1,0 +1,31 @@
+source_artifact,source_collection,source_version,run_id,success,equation_correct,finish_called,termination_reason,total_steps,steps_to_success,final_equation,state_coverage_ratio,redundancy_penalty,variable_isolation_score,discovery_efficiency,error_message
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,0,False,False,False,max_steps,100,,,0.09,0.94,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,1,False,False,True,finish_wrong,60,,Y = 5A,0.1167,0.8667,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,2,False,False,True,finish_wrong,55,,A * B = Y,0.8909,0.9273,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,3,False,False,False,max_steps,100,,,0.19,0.93,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,4,False,False,False,max_steps,100,,,0.11,0.94,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,5,False,False,True,finish_wrong,13,,Y = 10*A + 5*B,0.8462,0.6923,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,6,False,False,True,finish_wrong,12,,Y = 2A,0.75,0.5833,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,7,False,False,True,finish_wrong,30,,Y = k * B,0.2,0.7,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,8,False,False,True,finish_wrong,18,,Y = A + B,0.2222,0.6111,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,9,False,False,False,parse_error,22,,,0.5455,0.7273,0.0,0.0,'action' must be provided when step_type='action'
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,10,False,False,True,finish_wrong,9,,Y = k * B,0.3333,0.3333,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,11,False,False,True,finish_wrong,17,,Y = 10A - 6B,0.5882,0.7059,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,12,False,False,True,finish_wrong,51,,Y = k * B,0.3725,0.8824,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,13,False,False,True,finish_wrong,13,,Y = 20A,0.8462,0.6923,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,14,False,False,True,finish_wrong,12,,Y = 10 * A,0.5,0.5833,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,15,False,False,True,finish_wrong,12,,Y = 3B,0.4167,0.4167,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,16,False,False,True,finish_wrong,40,,Y = 12A,0.675,0.875,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,17,False,False,True,finish_wrong,55,,Y = 20A + 40B,0.8727,0.9091,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,18,False,False,False,max_steps,100,,,0.07,0.93,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,19,False,False,True,finish_wrong,22,,Y = 4*A + 3*B,0.2727,0.6364,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,20,False,False,False,parse_error,13,,,0.6154,0.6154,0.0,0.0,'action.variable' is required when action is provided
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,21,False,False,False,max_steps,100,,,0.06,0.94,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,22,False,False,True,finish_wrong,17,,Y = 10 * B,0.6471,0.7059,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,23,False,False,False,parse_error,9,,,0.3333,0.3333,0.0,0.0,'action' must be provided when step_type='action'
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,24,False,False,True,finish_wrong,94,,Y = 5B,0.8617,0.9468,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,25,False,False,True,finish_wrong,41,,Y = k * A^1 * B^1,0.2927,0.8293,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,26,False,False,False,parse_error,11,,,0.5455,0.4545,0.0,0.0,'action' must be provided when step_type='action'
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,27,False,False,True,finish_wrong,19,,Y = B,0.8421,0.7368,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,28,False,False,True,finish_wrong,19,,Y = 30A,0.5263,0.5263,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-vb62743l-episodes:v0,run-vb62743l-episodes,v0,29,False,False,True,finish_wrong,11,,Y = 10*A + 20*B,0.6364,0.5455,0.0,0.0,

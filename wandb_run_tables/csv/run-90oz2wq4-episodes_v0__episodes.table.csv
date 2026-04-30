@@ -1,0 +1,39 @@
+source_artifact,source_collection,source_version,run_id,success,equation_correct,finish_called,termination_reason,total_steps,steps_to_success,final_equation,state_coverage_ratio,redundancy_penalty,variable_isolation_score,discovery_efficiency,error_message
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,0,False,False,False,parse_error,2,,,1.0,0.0,0.0,0.0,invalid action (wavelength): variable 'wavelength' is not manipulable
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,1,False,False,False,parse_error,2,,,1.0,0.0,0.0,0.0,invalid action (wavelength): variable 'wavelength' is not manipulable
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,2,False,False,False,parse_error,2,,,1.0,0.0,0.0,0.0,invalid action (wavelength): variable 'wavelength' is not manipulable
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,3,False,False,False,parse_error,2,,,1.0,0.0,0.0,0.0,invalid action (wavelength): variable 'wavelength' is not manipulable
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,4,False,False,False,parse_error,2,,,1.0,0.0,0.0,0.0,invalid action (wavelength): variable 'wavelength' is not manipulable
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,5,False,False,False,parse_error,2,,,1.0,0.0,0.0,0.0,invalid action (wavelength): variable 'wavelength' is not manipulable
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,6,False,False,False,parse_error,3,,,1.0,0.3333,0.0,0.0,invalid action (wavelength): variable 'wavelength' is not manipulable
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,7,False,False,False,parse_error,3,,,1.0,0.3333,0.0,0.0,invalid action (wavelength): variable 'wavelength' is not manipulable
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,8,False,False,False,parse_error,4,,,1.0,0.5,0.0,0.0,invalid action (wavelength): variable 'wavelength' is not manipulable
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,9,False,False,True,finish_wrong,17,,A = ε * c * l,0.5882,0.8235,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,10,False,False,True,finish_wrong,24,,A = 0.009C,0.9583,0.9167,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,11,False,False,False,parse_error,2,,,1.0,0.0,0.0,0.0,invalid action (wavelength): variable 'wavelength' is not manipulable
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,12,False,False,False,parse_error,0,,,0.0,0.0,0.0,0.0,"model output is not valid JSON: {
+  ""reasoning"": ""The initial observation shows that absorbance is 1.0 for a concentration of 100.0, a path length of 2.0, and a wavelength of 500.0. To determine the equation governing absorbance, I should first test how absorbance changes with concentration while keeping other variables constant."",
+  ""hypothesis"": ""The relationship might follow the Beer-Lambert Law, which states that absorbance \( A \) is proportional to the product of concentration \( C \), path length \( L \), and the molar absorptivity \( \epsilon \): \( A = \epsilon \cdot C \cdot L \)."",
+  ""step_type"": ""action"",
+  ""action"": {
+    ""action_type"": ""increase"",
+    ""variable"": ""concentration""
+  }
+}"
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,13,False,False,False,parse_error,2,,,1.0,0.0,0.0,0.0,invalid action (wavelength): variable 'wavelength' is not manipulable
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,14,False,False,False,parse_error,2,,,1.0,0.0,0.0,0.0,invalid action (wavelength): variable 'wavelength' is not manipulable
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,15,False,False,True,finish_wrong,11,,A ∝ (c × l) / t,0.6364,0.5455,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,16,False,False,False,parse_error,2,,,1.0,0.0,0.0,0.0,invalid action (wavelength): variable 'wavelength' is not manipulable
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,17,False,False,False,parse_error,2,,,1.0,0.0,0.0,0.0,invalid action (wavelength): variable 'wavelength' is not manipulable
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,18,False,False,False,parse_error,2,,,1.0,0.0,0.0,0.0,invalid action (wavelength): variable 'wavelength' is not manipulable
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,19,False,False,True,finish_wrong,11,,A = mC + b,0.9091,0.8182,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,20,False,False,False,parse_error,2,,,1.0,0.0,0.0,0.0,invalid action (wavelength): variable 'wavelength' is not manipulable
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,21,False,False,False,parse_error,5,,,0.8,0.4,0.0,0.0,invalid action (wavelength): variable 'wavelength' is not manipulable
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,22,False,False,False,parse_error,3,,,1.0,0.0,0.0,0.0,invalid action (wavelength): variable 'wavelength' is not manipulable
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,23,False,False,False,parse_error,2,,,1.0,0.0,0.0,0.0,invalid action (wavelength): variable 'wavelength' is not manipulable
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,24,False,False,False,parse_error,2,,,1.0,0.0,0.0,0.0,invalid action (wavelength): variable 'wavelength' is not manipulable
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,25,False,False,True,finish_wrong,11,,A = k * C / L,0.9091,0.7273,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,26,False,False,False,parse_error,3,,,0.6667,0.0,0.0,0.0,invalid action (wavelength): variable 'wavelength' is not manipulable
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,27,False,False,False,parse_error,2,,,1.0,0.0,0.0,0.0,invalid action (wavelength): variable 'wavelength' is not manipulable
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,28,False,False,False,max_steps,30,,,0.5,0.9333,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-90oz2wq4-episodes:v0,run-90oz2wq4-episodes,v0,29,False,False,False,parse_error,6,,,1.0,0.6667,0.0,0.0,invalid action (wavelength): variable 'wavelength' is not manipulable

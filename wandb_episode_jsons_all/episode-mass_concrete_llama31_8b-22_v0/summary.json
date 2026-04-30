@@ -1,0 +1,29 @@
+{
+  "final_equation": "mass = k * volume * density",
+  "finish_reached": true,
+  "finish_step_id": 69,
+  "num_steps": 70,
+  "parse_error": null,
+  "evaluation": {
+    "success": true,
+    "finish_called": true,
+    "valid_finish": true,
+    "equation_correct": true,
+    "equation_submitted": true,
+    "steps_to_success": 70,
+    "termination_reason": "finish_success",
+    "final_equation": "mass = k * volume * density",
+    "error_message": null,
+    "total_steps": 70,
+    "unique_states": 6,
+    "unique_actions": 9,
+    "repeated_actions": 60,
+    "loop_count": 60,
+    "state_coverage_ratio": 0.0857,
+    "redundancy_penalty": 0.8571,
+    "variable_isolation_score": 0.087,
+    "controlled_experiments_ratio": 0.087,
+    "exploration_breadth_score": 0.0857,
+    "discovery_efficiency": 0.014286
+  }
+}

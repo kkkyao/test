@@ -1,0 +1,29 @@
+{
+  "final_equation": "V = IR",
+  "finish_reached": true,
+  "finish_step_id": 85,
+  "num_steps": 86,
+  "parse_error": null,
+  "evaluation": {
+    "success": false,
+    "finish_called": true,
+    "valid_finish": true,
+    "equation_correct": false,
+    "equation_submitted": true,
+    "steps_to_success": null,
+    "termination_reason": "finish_wrong",
+    "final_equation": "V = IR",
+    "error_message": null,
+    "total_steps": 86,
+    "unique_states": 16,
+    "unique_actions": 7,
+    "repeated_actions": 78,
+    "loop_count": 78,
+    "state_coverage_ratio": 0.186,
+    "redundancy_penalty": 0.907,
+    "variable_isolation_score": 0.2,
+    "controlled_experiments_ratio": 0.2,
+    "exploration_breadth_score": 0.186,
+    "discovery_efficiency": 0.0
+  }
+}

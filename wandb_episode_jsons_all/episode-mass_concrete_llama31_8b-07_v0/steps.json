@@ -1,0 +1,120 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Start by decreasing volume to see if mass changes proportionally",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "volume"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Decrease volume to see if mass changes proportionally",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "volume"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "Increase density to see how it affects mass",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "density"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "Increase volume to see if mass changes proportionally with volume",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "volume"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "reasoning": "Increase k to see its effect on mass",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "k"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 5,
+    "step_type": "action",
+    "reasoning": "Increase volume to see if mass is directly proportional to volume",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "volume"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 6,
+    "step_type": "action",
+    "reasoning": "Mass is directly proportional to volume and density, and inversely proportional to k, so the equation should be mass = k * density * volume.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "k"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 7,
+    "step_type": "action",
+    "reasoning": "Increase volume to see if mass is directly proportional to volume",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "volume"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 8,
+    "step_type": "action",
+    "reasoning": "Increase density to see how it affects mass and check the proportionality with volume",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "density"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 9,
+    "step_type": "action",
+    "reasoning": "Increase k to see if mass changes proportionally with k",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "k"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 10,
+    "step_type": "finish",
+    "reasoning": "Mass is directly proportional to volume and density, and inversely proportional to k, so the equation should be mass = k * density * volume.",
+    "parsed_action": null,
+    "final_equation": "mass = k * density * volume",
+    "done": true
+  }
+]

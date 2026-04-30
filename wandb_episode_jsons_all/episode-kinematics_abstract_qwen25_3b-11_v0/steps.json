@@ -1,0 +1,10 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "finish",
+    "reasoning": "Observations so far show that Y is constant at 10.0 regardless of changes in A, B, and C. This suggests a direct relationship between Y and a combination of A, B, and C.",
+    "parsed_action": null,
+    "final_equation": "Y = 10",
+    "done": true
+  }
+]

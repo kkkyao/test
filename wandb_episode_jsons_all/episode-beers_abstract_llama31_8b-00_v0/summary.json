@@ -1,0 +1,29 @@
+{
+  "final_equation": "Y2 = 2*A*B*C",
+  "finish_reached": true,
+  "finish_step_id": 13,
+  "num_steps": 14,
+  "parse_error": null,
+  "evaluation": {
+    "success": false,
+    "finish_called": true,
+    "valid_finish": true,
+    "equation_correct": false,
+    "equation_submitted": true,
+    "steps_to_success": null,
+    "termination_reason": "finish_wrong",
+    "final_equation": "Y2 = 2*A*B*C",
+    "error_message": null,
+    "total_steps": 14,
+    "unique_states": 6,
+    "unique_actions": 6,
+    "repeated_actions": 7,
+    "loop_count": 7,
+    "state_coverage_ratio": 0.4286,
+    "redundancy_penalty": 0.5,
+    "variable_isolation_score": 0.0,
+    "controlled_experiments_ratio": 0.0,
+    "exploration_breadth_score": 0.4286,
+    "discovery_efficiency": 0.0
+  }
+}

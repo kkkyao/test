@@ -1,0 +1,43 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "I want to test the relationship between current and voltage by increasing the current and observing the effect on voltage. Increasing the current should, according to Ohm's Law, increase the voltage proportionally.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "I have observed that increasing the current increases the voltage proportionally. Now I will decrease the current to see if the voltage decreases proportionally.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "current"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "I have observed a linear relationship between current and voltage. Now I will change the resistance to see if it affects the relationship.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "resistance"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "finish",
+    "reasoning": "I have observed a relationship between current, resistance, and voltage. I will now try to determine the equation.",
+    "parsed_action": null,
+    "final_equation": "voltage = current * resistance",
+    "done": true
+  }
+]

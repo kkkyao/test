@@ -1,0 +1,43 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "I observe that A is greater than B. Let's increase A to see if it affects Y.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "A and Y are related, and B seems constant. I will increase A to see how it affects Y.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "A and Y seem to be directly proportional. Increasing A increases Y linearly. Let's test increasing B to see if it affects the relationship.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "finish",
+    "reasoning": "I observe that A increases Y linearly. Now I will try to find the equation.",
+    "parsed_action": null,
+    "final_equation": "Y = 2X",
+    "done": true
+  }
+]

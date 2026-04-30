@@ -1,0 +1,332 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Initial observation shows a relationship between I, R, and V. No clear dependency of V on a single variable is apparent. Let's try to manipulate one variable to see the effect on V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Increasing I did not significantly affect V, but decreasing R might provide more information about the relationship between R and V. Let's try decreasing R.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "Decreasing R from 0.0 to 0.0 did not affect V, suggesting that V is not directly proportional to R. Let's try increasing I again to see if we can find a relationship between I and V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "V does not seem to be directly related to R or I individually, but the increase in I to 4.0 while R is 0.0 resulted in V becoming 0.0. This suggests a possible inverse relationship between I and V. Let's try decreasing I to confirm.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "reasoning": "V appears to be inversely proportional to I. Let's confirm this by increasing I again and checking the change in V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 5,
+    "step_type": "action",
+    "reasoning": "V appears to be inversely proportional to I, and no relationship has been found with R. Let's confirm the inverse relationship between I and V by observing the change in V when I is decreased.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 6,
+    "step_type": "action",
+    "reasoning": "V appears to be inversely proportional to I, and no relationship has been found with R. Let's confirm the inverse relationship between I and V by observing the change in V when I is decreased more to establish the degree of the inverse relationship.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 7,
+    "step_type": "action",
+    "reasoning": "V appears to be inversely proportional to I, and no relationship has been found with R. Let's confirm the inverse relationship by observing the change in V when I is increased slightly, which will help us determine the degree of the inverse relationship.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 8,
+    "step_type": "action",
+    "reasoning": "V is inversely proportional to I, and no relationship has been found with R. To determine the degree of the inverse relationship, let's observe the change in V when I is increased more.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 9,
+    "step_type": "action",
+    "reasoning": "V is inversely proportional to I, and no relationship has been found with R. To further determine the degree of the inverse relationship, let's observe the change in V when I is increased more, and then decrease I to a lower value to see the relationship more clearly.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 10,
+    "step_type": "action",
+    "reasoning": "V is inversely proportional to I, and no relationship has been found with R. To determine the degree of the inverse relationship, let's observe the change in V when I is increased more, and then decrease I to a lower value to see the relationship more clearly. This will help us identify the exact function that describes the inverse relationship.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 11,
+    "step_type": "action",
+    "reasoning": "V is inversely proportional to I. To determine the exact function, let's observe the change in V when I is decreased to a lower value and then increase I again to see the relationship more clearly.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 12,
+    "step_type": "action",
+    "reasoning": "V is inversely proportional to I. To determine the exact function, let's observe the change in V when I is decreased to a lower value and then increase I again to see the relationship more clearly. This will help us identify the exact function that describes the inverse relationship.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 13,
+    "step_type": "action",
+    "reasoning": "V is inversely proportional to I. To further confirm this relationship, let's observe the change in V when I is decreased to a lower value and then increase I again to see the relationship more clearly. This will help us identify the exact function that describes the inverse relationship.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 14,
+    "step_type": "action",
+    "reasoning": "V is inversely proportional to I, and no relationship has been found with R. To determine the exact function that describes the inverse relationship, let's observe the change in V when I is decreased to a lower value and then increase I again to see the relationship more clearly. This will help us identify the exact function that describes the inverse relationship.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 15,
+    "step_type": "action",
+    "reasoning": "V continues to be inversely proportional to I. To determine the exact function, let's observe the change in V when I is increased again and then decrease I to see the relationship more clearly. This will help us identify the exact function that describes the inverse relationship.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 16,
+    "step_type": "action",
+    "reasoning": "V continues to be inversely proportional to I. To further confirm this relationship, let's observe the change in V when I is increased again and then decrease I to see the relationship more clearly. This will help us identify the exact function that describes the inverse relationship.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 17,
+    "step_type": "action",
+    "reasoning": "V continues to be inversely proportional to I. To further confirm this relationship, let's observe the change in V when I is increased again and then decrease I to see the relationship more clearly. This will help us identify the exact function that describes the inverse relationship.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 18,
+    "step_type": "action",
+    "reasoning": "V continues to be inversely proportional to I. To further confirm this relationship and determine the exact function, let's observe the change in V when I is increased again and then decrease I to see the relationship more clearly. This will help us identify the exact function that describes the inverse relationship.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 19,
+    "step_type": "action",
+    "reasoning": "V continues to be inversely proportional to I. To further confirm this relationship and determine the exact function, let's observe the change in V when I is increased again and then decrease I to see the relationship more clearly. This will help us identify the exact function that describes the inverse relationship.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 20,
+    "step_type": "action",
+    "reasoning": "V is inversely proportional to I, and no relationship has been found with R. To determine the exact function, let's observe the change in V when I is increased again and then decrease I to see the relationship more clearly. This will help us identify the exact function that describes the inverse relationship.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 21,
+    "step_type": "action",
+    "reasoning": "V continues to be inversely proportional to I, and no relationship has been found with R. To further confirm this relationship and determine the exact function, let's observe the change in V when I is increased again and then decrease I to see the relationship more clearly. This will help us identify the exact function that describes the inverse relationship.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 22,
+    "step_type": "action",
+    "reasoning": "V is inversely proportional to I, and no relationship has been found with R. To further confirm this relationship and determine the exact function, let's observe the change in V when I is increased again and then decrease I to see the relationship more clearly. This will help us identify the exact function that describes the inverse relationship.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 23,
+    "step_type": "action",
+    "reasoning": "V continues to be inversely proportional to I, and no relationship has been found with R. To further confirm this relationship and determine the exact function, let's observe the change in V when I is increased again and then decrease I to see the relationship more clearly. This will help us identify the exact function that describes the inverse relationship.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 24,
+    "step_type": "action",
+    "reasoning": "V continues to be inversely proportional to I, and no relationship has been found with R. To further confirm this relationship and determine the exact function, let's observe the change in V when I is increased again and then decrease I to see the relationship more clearly. This will help us identify the exact function that describes the inverse relationship.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 25,
+    "step_type": "action",
+    "reasoning": "Observed that V is inversely proportional to I, and no relationship has been found with R. To further confirm this relationship and determine the exact function, let's observe the change in V when I is increased again and then decrease I to see the relationship more clearly. This will help us identify the exact function that describes the inverse relationship.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 26,
+    "step_type": "action",
+    "reasoning": "Observed that V is inversely proportional to I, and no relationship has been found with R. To further confirm this relationship and determine the exact function, let's observe the change in V when I is increased again and then decrease I to see the relationship more clearly. This will help us identify the exact function that describes the inverse relationship.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 27,
+    "step_type": "action",
+    "reasoning": "V continues to be inversely proportional to I, and no relationship has been found with R. To further confirm this relationship and determine the exact function, let's observe the change in V when I is increased again and then decrease I to see the relationship more clearly. This will help us identify the exact function that describes the inverse relationship.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 28,
+    "step_type": "action",
+    "reasoning": "V continues to be inversely proportional to I, and no relationship has been found with R. To further confirm this relationship and determine the exact function, let's observe the change in V when I is increased again and then decrease I to see the relationship more clearly. This will help us identify the exact function that describes the inverse relationship.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 29,
+    "step_type": "action",
+    "reasoning": "V continues to be inversely proportional to I, and no relationship has been found with R. To further confirm this relationship and determine the exact function, let's observe the change in V when I is increased again and then decrease I to see the relationship more clearly. This will help us identify the exact function that describes the inverse relationship.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  }
+]

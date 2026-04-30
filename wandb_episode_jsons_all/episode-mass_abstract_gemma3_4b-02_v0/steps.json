@@ -1,0 +1,32 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "I want to see how changing A affects Y. Increasing A might reveal a linear relationship.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Changing A did not result in a change in Y, so let's try changing B to see if there's a relationship between B and Y.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "finish",
+    "reasoning": "B increased from 10 to 20, and Y increased from 60 to 180. Since A was held constant and B increased, it suggests that Y is proportional to B. Let's try to express Y as a function of B.",
+    "parsed_action": null,
+    "final_equation": "Y = 9 * B",
+    "done": true
+  }
+]

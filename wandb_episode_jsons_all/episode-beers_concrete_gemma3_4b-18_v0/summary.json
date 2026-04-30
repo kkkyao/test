@@ -1,0 +1,29 @@
+{
+  "final_equation": "absorbance = molar_absorptivity * concentration / path_length",
+  "finish_reached": true,
+  "finish_step_id": 9,
+  "num_steps": 10,
+  "parse_error": null,
+  "evaluation": {
+    "success": false,
+    "finish_called": true,
+    "valid_finish": true,
+    "equation_correct": false,
+    "equation_submitted": true,
+    "steps_to_success": null,
+    "termination_reason": "finish_wrong",
+    "final_equation": "absorbance = molar_absorptivity * concentration / path_length",
+    "error_message": null,
+    "total_steps": 10,
+    "unique_states": 9,
+    "unique_actions": 3,
+    "repeated_actions": 6,
+    "loop_count": 6,
+    "state_coverage_ratio": 0.9,
+    "redundancy_penalty": 0.6,
+    "variable_isolation_score": 1.0,
+    "controlled_experiments_ratio": 1.0,
+    "exploration_breadth_score": 0.9,
+    "discovery_efficiency": 0.0
+  }
+}

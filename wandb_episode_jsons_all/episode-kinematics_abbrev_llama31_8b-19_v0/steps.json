@@ -1,0 +1,791 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Start with a simple action to observe how variables change.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Start with a simple action to observe how variables change.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "v"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "Increase t to see how x changes over time.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "t"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "The environment seems to be linear with respect to v, so let's try to find a relationship between x and v.",
+    "parsed_action": {
+      "action_type": "decrease v",
+      "variable": "v"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "reasoning": "The previous action didn't change the state, so let's try a different action to see if we can find a relationship between x and v.",
+    "parsed_action": {
+      "action_type": "increase t",
+      "variable": "t"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 5,
+    "step_type": "action",
+    "reasoning": "Try to find a relationship between x and t.",
+    "parsed_action": {
+      "action_type": "decrease t",
+      "variable": "t"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 6,
+    "step_type": "action",
+    "reasoning": "Try to find a relationship between x and t by changing t and observing the change in x.",
+    "parsed_action": {
+      "action_type": "increase t",
+      "variable": "t"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 7,
+    "step_type": "action",
+    "reasoning": "Try to find a relationship between x and t by changing t and observing the change in x.",
+    "parsed_action": {
+      "action_type": "increase t",
+      "variable": "t"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 8,
+    "step_type": "action",
+    "reasoning": "Try to find a relationship between x and v by changing v and observing the change in x.",
+    "parsed_action": {
+      "action_type": "decrease v",
+      "variable": "v"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 9,
+    "step_type": "action",
+    "reasoning": "Try to find a relationship between x and t by changing x0 and observing the change in x.",
+    "parsed_action": {
+      "action_type": "increase x0",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 10,
+    "step_type": "action",
+    "reasoning": "Try to find a relationship between x and t by changing x0 and observing the change in x.",
+    "parsed_action": {
+      "action_type": "decrease x0",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 11,
+    "step_type": "action",
+    "reasoning": "Since changing t didn't affect x, let's try to find a relationship between x and x0.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 12,
+    "step_type": "action",
+    "reasoning": "Increase x0 to see if there's a relationship between x and x0.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 13,
+    "step_type": "action",
+    "reasoning": "Since changing x0 affects x, let's try to find a relationship between x and x0.",
+    "parsed_action": {
+      "action_type": "decrease x0",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 14,
+    "step_type": "action",
+    "reasoning": "Since changing x0 affects x, let's try to find a relationship between x and x0.",
+    "parsed_action": {
+      "action_type": "increase x0",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 15,
+    "step_type": "action",
+    "reasoning": "Try to find a relationship between x and t by changing t and observing the change in x.",
+    "parsed_action": {
+      "action_type": "increase t",
+      "variable": "t"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 16,
+    "step_type": "action",
+    "reasoning": "Since changing x0 affects x, let's try to find a relationship between x and x0.",
+    "parsed_action": {
+      "action_type": "decrease x0",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 17,
+    "step_type": "action",
+    "reasoning": "The environment seems to be linear with respect to x0, so let's try to find a relationship between x and x0.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 18,
+    "step_type": "action",
+    "reasoning": "Try to find a relationship between x and x0 by changing x0 and observing the change in x.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 19,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "decrease x0",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 20,
+    "step_type": "action",
+    "reasoning": "Try to find a relationship between x and x0 by changing x0 and observing the change in x.",
+    "parsed_action": {
+      "action_type": "increase x0",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 21,
+    "step_type": "action",
+    "reasoning": "Try to find a relationship between x and x0 by changing x0 and observing the change in x.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 22,
+    "step_type": "action",
+    "reasoning": "Try to find a relationship between x and x0 by changing x0 and observing the change in x.",
+    "parsed_action": {
+      "action_type": "increase x0",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 23,
+    "step_type": "action",
+    "reasoning": "Try to find a relationship between x and x0 by changing x0 and observing the change in x.",
+    "parsed_action": {
+      "action_type": "increase x0",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 24,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase x0",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 25,
+    "step_type": "action",
+    "reasoning": "Try to find a relationship between x and x0 by changing x0 and observing the change in x.",
+    "parsed_action": {
+      "action_type": "increase x0",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 26,
+    "step_type": "action",
+    "reasoning": "Try to find a relationship between x and x0 by changing x0 and observing the change in x.",
+    "parsed_action": {
+      "action_type": "increase x0",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 27,
+    "step_type": "action",
+    "reasoning": "Since the relationship between x and x0 seems linear, we can calculate the slope using the initial and final values.",
+    "parsed_action": {
+      "action_type": "increase x0",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 28,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase x0",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 29,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase x0",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 30,
+    "step_type": "action",
+    "reasoning": "Since the relationship between x and x0 seems linear, we can calculate the slope using the initial and final values.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 31,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 32,
+    "step_type": "action",
+    "reasoning": "Try to find a relationship between x and x0 by changing x0 and observing the change in x.",
+    "parsed_action": {
+      "action_type": "increase x0",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 33,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 34,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 35,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 36,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 37,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 38,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase x0",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 39,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 40,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 41,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 42,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase x0",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 43,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 44,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 45,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase x0",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 46,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 47,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 48,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 49,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 50,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 51,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 52,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase x0",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 53,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 54,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 55,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 56,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 57,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 58,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 59,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so let's try to find the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 60,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 is linear, so we can use the initial and final values to calculate the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 61,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 is linear, so we can use the initial and final values to calculate the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 62,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 is linear, so we can use the initial and final values to calculate the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 63,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 is linear, so we can use the initial and final values to calculate the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 64,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 is linear, so we can use the initial and final values to calculate the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 65,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 is linear, so we can use the initial and final values to calculate the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 66,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 is linear, so we can use the initial and final values to calculate the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 67,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 is linear, so we can use the initial and final values to calculate the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 68,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 is linear, so we can use the initial and final values to calculate the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 69,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 is linear, so we can use the initial and final values to calculate the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 70,
+    "step_type": "action",
+    "reasoning": "The relationship between x and x0 seems linear, so we can use the initial and final values to calculate the slope.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 71,
+    "step_type": "finish",
+    "reasoning": "The relationship between x and x0 is linear, so we can use the initial and final values to calculate the slope.",
+    "parsed_action": null,
+    "final_equation": "x = 10 + 10 * x0",
+    "done": true
+  }
+]

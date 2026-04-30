@@ -1,0 +1,21 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "I observe A=10, B=20, C=30, Y=60. Testing the hypothesis Y = A + B + C: 10 + 20 + 30 = 60, which matches Y. To confirm this linear relationship and ensure no other factors are involved, I will increase A by 10 to 20, keeping B and C constant, and see if Y increases by 10 to 70.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "finish",
+    "reasoning": "The initial observation was A=10, B=20, C=30, Y=60. The hypothesis Y = A + B + C held (10+20+30=60). I increased A by 10 to 20, and Y increased to 70 (20+20+30=70), confirming the linear relationship where Y depends on the sum of A, B, and C. The current state matches the hypothesis perfectly. I have sufficient evidence to conclude the equation is Y = A + B + C.",
+    "parsed_action": null,
+    "final_equation": "Y = A + B + C",
+    "done": true
+  }
+]

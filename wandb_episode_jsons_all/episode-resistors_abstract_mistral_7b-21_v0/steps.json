@@ -1,0 +1,57 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Start by adjusting variable B to see its impact on Y. Decrease B to observe the change.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Decreasing B did not affect Y, suggesting Y might depend only on A. Let's increase A to confirm.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "Y appears to be directly proportional to A. To confirm, let's decrease A and see the change in Y.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "Y appears to be directly proportional to A, so let's confirm this by increasing A again and checking the new value of Y.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "reasoning": "Y seems to be directly proportional to A. To confirm the equation, let's increase A and check the new Y value again.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  }
+]

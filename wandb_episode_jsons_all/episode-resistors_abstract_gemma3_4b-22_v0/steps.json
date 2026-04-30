@@ -1,0 +1,43 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "I observe a simple linear relationship between A, B, and Y. Let's try increasing A to see if it affects Y in a predictable way.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "I've observed that increasing A increases Y. Let's test this by increasing B.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "I have observed that increasing A increases Y, and that increasing B also increases Y. Let's try to determine the relationship between A, B, and Y. It appears to be a linear relationship. I will increase A again to see if Y increases further.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "finish",
+    "reasoning": "I have found that increasing A increases Y, and increasing B also increases Y. The current values of A, B, and Y are A = 30, B = 10, and Y = 40.  I believe I've found the relationship. Let's state the final equation.",
+    "parsed_action": null,
+    "final_equation": "Y = 10 * A + 10",
+    "done": true
+  }
+]

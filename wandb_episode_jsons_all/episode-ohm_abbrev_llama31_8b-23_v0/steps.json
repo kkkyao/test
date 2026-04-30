@@ -1,0 +1,120 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Start by increasing I to see how V changes.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Increase I to observe its effect on V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "Increase R to observe its effect on V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "V is changing in relation to I and R, need to determine the exact relationship.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "reasoning": "Observe how V changes when I and R are varied.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 5,
+    "step_type": "action",
+    "reasoning": "Observe how V changes when R is increased.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 6,
+    "step_type": "action",
+    "reasoning": "Observe how V changes when I is decreased while R is constant.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 7,
+    "step_type": "action",
+    "reasoning": "V is changing in relation to I and R, need to determine the exact relationship.",
+    "parsed_action": {
+      "action_type": "decrease R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 8,
+    "step_type": "action",
+    "reasoning": "V is changing in relation to I and R, need to determine the exact relationship.",
+    "parsed_action": {
+      "action_type": "increase I",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 9,
+    "step_type": "action",
+    "reasoning": "I and R are inversely related to V, and I is directly related to V, so V = k*I/R.",
+    "parsed_action": {
+      "action_type": "increase I",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 10,
+    "step_type": "finish",
+    "reasoning": "I and R are inversely related to V, and I is directly related to V, so V = k*I/R.",
+    "parsed_action": null,
+    "final_equation": "V = k*I/R",
+    "done": true
+  }
+]

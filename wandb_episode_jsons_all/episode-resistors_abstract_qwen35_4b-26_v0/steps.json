@@ -1,0 +1,21 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "I need to find the relationship between A, B, and Y. Current values are A=10, B=5, Y=15. Let's test if Y = A + B. 10 + 5 = 15, which matches Y. To confirm, I will increase A by 1 to 11 and see if Y becomes 16.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "finish",
+    "reasoning": "The data points (A=10, B=5, Y=15) and (A=20, B=5, Y=25) both satisfy the equation Y = A + B. The change in A directly corresponds to the change in Y while B is constant. I am confident in this relationship.",
+    "parsed_action": null,
+    "final_equation": "Y = A + B",
+    "done": true
+  }
+]
