@@ -3,3 +3,10 @@ __pycache__/
 *.pyc
 outputs/
 wandb_downloads/
+wandb_downloads/
+wandb_episode_jsons_all/
+wandb_run_files/
+wandb_run_tables/
+wandb/
+outputs/
+*.log
