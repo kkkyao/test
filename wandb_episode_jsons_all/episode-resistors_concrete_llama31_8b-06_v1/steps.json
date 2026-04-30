@@ -1,0 +1,100 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Start by decreasing R1 to observe the effect on total_resistance.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "R1"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Start by decreasing R2 to observe the effect on total_resistance.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "R2"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "Since R1 is already at its minimum value, try increasing R2 to observe its effect on total_resistance.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R2"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "R1 is already at its minimum value, try increasing R1 to observe its effect on total_resistance.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R1"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "reasoning": "Since total_resistance is back to its original value after resetting R1, try increasing R2 to observe its effect on total_resistance.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R2"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 5,
+    "step_type": "action",
+    "reasoning": "Since R1 and R2 are now back to their original values and total_resistance is back to its original value, try decreasing R2 to observe its effect on total_resistance.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "R2"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 6,
+    "step_type": "action",
+    "reasoning": "Since the total_resistance is the sum of R1 and R2, try setting R1 to 0 and R2 to a value and observe the effect on total_resistance.",
+    "parsed_action": {
+      "action_type": "set",
+      "variable": "R1",
+      "value": 0.0
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 7,
+    "step_type": "action",
+    "reasoning": "Try setting R1 to a non-zero value and observe the effect on total_resistance to confirm the relationship.",
+    "parsed_action": {
+      "action_type": "set",
+      "variable": "R1",
+      "value": 20.0
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 8,
+    "step_type": "finish",
+    "reasoning": "R1 and R2 are additive, so the total resistance should be the sum of R1 and R2.",
+    "parsed_action": null,
+    "final_equation": "total_resistance = R1 + R2",
+    "done": true
+  }
+]

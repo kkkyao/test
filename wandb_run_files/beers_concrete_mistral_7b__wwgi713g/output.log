@@ -1,0 +1,111 @@
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights: 100%|██████████| 291/291 [01:07<00:00,  4.29it/s]
+
+=== Experiment setup ===
+Config:          configs/config.yaml
+Env override:    configs/env_beers_concrete.yaml
+Model override:  configs/model_mistral_7b.yaml
+Run name:        beers_concrete_mistral_7b
+Output dir:      outputs/beers_concrete_mistral_7b
+Target variable: absorbance
+Naming mode:     concrete
+Action mode:     increase_decrease
+N runs:          30
+
+--- Run 1/30 ---
+  success=False  steps=3  reason=parse_error
+
+--- Run 2/30 ---
+  success=True  steps=5  reason=finish_success
+
+--- Run 3/30 ---
+  success=False  steps=3  reason=parse_error
+
+--- Run 4/30 ---
+  success=False  steps=5  reason=finish_wrong
+
+--- Run 5/30 ---
+  success=False  steps=2  reason=parse_error
+
+--- Run 6/30 ---
+  success=False  steps=5  reason=parse_error
+
+--- Run 7/30 ---
+  success=False  steps=9  reason=parse_error
+
+--- Run 8/30 ---
+  success=False  steps=3  reason=parse_error
+
+--- Run 9/30 ---
+  success=True  steps=5  reason=finish_success
+
+--- Run 10/30 ---
+  success=False  steps=18  reason=parse_error
+
+--- Run 11/30 ---
+  success=False  steps=3  reason=parse_error
+
+--- Run 12/30 ---
+  success=True  steps=6  reason=finish_success
+
+--- Run 13/30 ---
+  success=False  steps=3  reason=parse_error
+
+--- Run 14/30 ---
+  success=False  steps=5  reason=parse_error
+
+--- Run 15/30 ---
+  success=False  steps=3  reason=finish_wrong
+
+--- Run 16/30 ---
+  success=False  steps=3  reason=finish_wrong
+
+--- Run 17/30 ---
+  success=False  steps=3  reason=finish_wrong
+
+--- Run 18/30 ---
+  success=False  steps=6  reason=finish_wrong
+
+--- Run 19/30 ---
+  success=False  steps=10  reason=parse_error
+
+--- Run 20/30 ---
+  success=False  steps=8  reason=parse_error
+
+--- Run 21/30 ---
+  success=False  steps=67  reason=finish_wrong
+
+--- Run 22/30 ---
+  success=False  steps=7  reason=parse_error
+
+--- Run 23/30 ---
+  success=False  steps=8  reason=parse_error
+
+--- Run 24/30 ---
+  success=False  steps=2  reason=parse_error
+
+--- Run 25/30 ---
+  success=False  steps=3  reason=parse_error
+
+--- Run 26/30 ---
+  success=True  steps=6  reason=finish_success
+
+--- Run 27/30 ---
+  success=False  steps=4  reason=parse_error
+
+--- Run 28/30 ---
+  success=False  steps=7  reason=finish_wrong
+
+--- Run 29/30 ---
+  success=False  steps=0  reason=parse_error
+
+--- Run 30/30 ---
+  success=False  steps=14  reason=finish_wrong
+
+=== Experiment complete ===
+  success_rate: 13.33%
+  finish_rate:  40.00%
+  mean_steps:   7.5
+  mean_steps_to_success: 5.5
+  aggregate saved to: outputs/beers_concrete_mistral_7b/aggregate.json
+  episode files saved under: outputs/beers_concrete_mistral_7b/run_XX/

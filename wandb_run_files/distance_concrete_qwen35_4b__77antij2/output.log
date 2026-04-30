@@ -1,0 +1,101 @@
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Fetching 2 files: 100%|██████████| 2/2 [00:00<00:00, 2699.04it/s]
+[transformers] The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+Loading weights: 100%|██████████| 426/426 [00:34<00:00, 12.35it/s]
+
+--- Run 1/30 ---
+  success=True  steps=4  reason=finish_success
+
+--- Run 2/30 ---
+  success=True  steps=3  reason=finish_success
+
+--- Run 3/30 ---
+  success=True  steps=2  reason=finish_success
+
+--- Run 4/30 ---
+  success=True  steps=4  reason=finish_success
+
+--- Run 5/30 ---
+  success=True  steps=2  reason=finish_success
+
+--- Run 6/30 ---
+  success=True  steps=2  reason=finish_success
+
+--- Run 7/30 ---
+  success=True  steps=2  reason=finish_success
+
+--- Run 8/30 ---
+  success=True  steps=3  reason=finish_success
+
+--- Run 9/30 ---
+  success=True  steps=3  reason=finish_success
+
+--- Run 10/30 ---
+  success=True  steps=4  reason=finish_success
+
+--- Run 11/30 ---
+  success=True  steps=2  reason=finish_success
+
+--- Run 12/30 ---
+  success=True  steps=4  reason=finish_success
+
+--- Run 13/30 ---
+  success=True  steps=3  reason=finish_success
+
+--- Run 14/30 ---
+  success=True  steps=2  reason=finish_success
+
+--- Run 15/30 ---
+  success=True  steps=2  reason=finish_success
+
+--- Run 16/30 ---
+  success=True  steps=2  reason=finish_success
+
+--- Run 17/30 ---
+  success=True  steps=2  reason=finish_success
+
+--- Run 18/30 ---
+  success=True  steps=2  reason=finish_success
+
+--- Run 19/30 ---
+  success=True  steps=4  reason=finish_success
+
+--- Run 20/30 ---
+  success=True  steps=3  reason=finish_success
+
+--- Run 21/30 ---
+  success=True  steps=2  reason=finish_success
+
+--- Run 22/30 ---
+  success=True  steps=4  reason=finish_success
+
+--- Run 23/30 ---
+  success=True  steps=3  reason=finish_success
+
+--- Run 24/30 ---
+  success=True  steps=4  reason=finish_success
+
+--- Run 25/30 ---
+  success=True  steps=2  reason=finish_success
+
+--- Run 26/30 ---
+  success=True  steps=5  reason=finish_success
+
+--- Run 27/30 ---
+  success=True  steps=3  reason=finish_success
+
+--- Run 28/30 ---
+  success=True  steps=4  reason=finish_success
+
+--- Run 29/30 ---
+  success=True  steps=3  reason=finish_success
+
+--- Run 30/30 ---
+  success=True  steps=2  reason=finish_success
+
+=== Experiment complete ===
+  success_rate: 100.00%
+  finish_rate:  100.00%
+  mean_steps:   2.9
+  mean_steps_to_success: 2.9
+  aggregate saved to: outputs/beers_text_default/aggregate.json

@@ -1,0 +1,538 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Start with a simple action to see the effect on the variables",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Start with a simple action to see the effect on the variables",
+    "parsed_action": {
+      "action_type": "decrease B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "Start with a simple action to see the effect on the variables",
+    "parsed_action": {
+      "action_type": "increase C",
+      "variable": "C"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "Try decreasing A to see its effect on Y",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "reasoning": "Try increasing B to see its effect on Y",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 5,
+    "step_type": "action",
+    "reasoning": "Try decreasing C to see its effect on Y",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "C"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 6,
+    "step_type": "action",
+    "reasoning": "Try increasing A and B to see the combined effect on Y",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 7,
+    "step_type": "action",
+    "reasoning": "Try increasing A and C to see their combined effect on Y",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "C"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 8,
+    "step_type": "action",
+    "reasoning": "Since the last action increased C and resulted in a change in Y, it's possible that C has a direct relationship with Y.",
+    "parsed_action": {
+      "action_type": "increase C",
+      "variable": "C"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 9,
+    "step_type": "action",
+    "reasoning": "Since the last action didn't change Y, it's possible that C is already at its maximum value or has no effect on Y.",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 10,
+    "step_type": "action",
+    "reasoning": "Try increasing A and B together to see their combined effect on Y",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 11,
+    "step_type": "action",
+    "reasoning": "Try increasing A and B together to see their combined effect on Y",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 12,
+    "step_type": "action",
+    "reasoning": "Since the last action resulted in a change in Y, it's possible that B has a direct relationship with Y.",
+    "parsed_action": {
+      "action_type": "decrease B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 13,
+    "step_type": "action",
+    "reasoning": "Try to find a relationship between A and Y",
+    "parsed_action": {
+      "action_type": "increase A",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 14,
+    "step_type": "action",
+    "reasoning": "Y is not changing when A and C are changed, so B must be the main variable affecting Y",
+    "parsed_action": {
+      "action_type": "decrease B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 15,
+    "step_type": "action",
+    "reasoning": "Try increasing B and C together to see their combined effect on Y",
+    "parsed_action": {
+      "action_type": "increase C",
+      "variable": "C"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 16,
+    "step_type": "action",
+    "reasoning": "Try increasing A and B together to see their combined effect on Y",
+    "parsed_action": {
+      "action_type": "increase A",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 17,
+    "step_type": "action",
+    "reasoning": "Y is not changing when A and C are changed, so B must be the main variable affecting Y",
+    "parsed_action": {
+      "action_type": "decrease B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 18,
+    "step_type": "action",
+    "reasoning": "B is the only variable affecting Y, so it must be a linear relationship",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 19,
+    "step_type": "action",
+    "reasoning": "Try increasing B to see its effect on Y",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 20,
+    "step_type": "action",
+    "reasoning": "B is the only variable affecting Y, so it must be a linear relationship",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 21,
+    "step_type": "action",
+    "reasoning": "B is the only variable affecting Y, so it must be a linear relationship",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 22,
+    "step_type": "action",
+    "reasoning": "B is the only variable affecting Y, so it must be a linear relationship",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 23,
+    "step_type": "action",
+    "reasoning": "Since B is the only variable affecting Y and the last action did not change Y, it's possible that the relationship is linear and Y = k * B + b",
+    "parsed_action": {
+      "action_type": "decrease B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 24,
+    "step_type": "action",
+    "reasoning": "Try increasing B and C together to see their combined effect on Y",
+    "parsed_action": {
+      "action_type": "increase C",
+      "variable": "C"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 25,
+    "step_type": "action",
+    "reasoning": "B is the only variable affecting Y, so it must be a linear relationship",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 26,
+    "step_type": "action",
+    "reasoning": "Since B is the only variable affecting Y and the last action did not change Y, it's possible that the relationship is linear and Y = k * B + b",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 27,
+    "step_type": "action",
+    "reasoning": "Try increasing B to see its effect on Y",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 28,
+    "step_type": "action",
+    "reasoning": "Since B is the only variable affecting Y and the last action did not change Y, it's possible that the relationship is linear and Y = k * B + b",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 29,
+    "step_type": "action",
+    "reasoning": "Since B is the only variable affecting Y and the last action did not change Y, it's possible that the relationship is linear and Y = k * B + b",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 30,
+    "step_type": "action",
+    "reasoning": "B is the only variable affecting Y, so it must be a linear relationship",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 31,
+    "step_type": "action",
+    "reasoning": "B is the only variable affecting Y, so it must be a linear relationship",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 32,
+    "step_type": "action",
+    "reasoning": "B is the only variable affecting Y, so it must be a linear relationship",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 33,
+    "step_type": "action",
+    "reasoning": "Since B is the only variable affecting Y and the last action did not change Y, it's possible that the relationship is linear and Y = k * B + b",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 34,
+    "step_type": "action",
+    "reasoning": "B is the only variable affecting Y, so it must be a linear relationship",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 35,
+    "step_type": "action",
+    "reasoning": "B is the only variable affecting Y, so it must be a linear relationship",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 36,
+    "step_type": "action",
+    "reasoning": "Since B is the only variable affecting Y and the last action did not change Y, it's possible that the relationship is linear and Y = k * B + b",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 37,
+    "step_type": "action",
+    "reasoning": "Since B is the only variable affecting Y and the last action did not change Y, it's possible that the relationship is linear and Y = k * B + b",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 38,
+    "step_type": "action",
+    "reasoning": "Since B is the only variable affecting Y and the last action did not change Y, it's possible that the relationship is linear and Y = k * B + b",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 39,
+    "step_type": "action",
+    "reasoning": "B is the only variable affecting Y, so it must be a linear relationship",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 40,
+    "step_type": "action",
+    "reasoning": "B is the only variable affecting Y, so it must be a linear relationship",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 41,
+    "step_type": "action",
+    "reasoning": "B is the only variable affecting Y, so it must be a linear relationship",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 42,
+    "step_type": "action",
+    "reasoning": "B is the only variable affecting Y, so it must be a linear relationship",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 43,
+    "step_type": "action",
+    "reasoning": "B is the only variable affecting Y, so it must be a linear relationship",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 44,
+    "step_type": "action",
+    "reasoning": "B is the only variable affecting Y, so it must be a linear relationship",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 45,
+    "step_type": "action",
+    "reasoning": "Since B is the only variable affecting Y and the last action did not change Y, it's possible that the relationship is linear and Y = k * B + b",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 46,
+    "step_type": "action",
+    "reasoning": "B is the only variable affecting Y, so it must be a linear relationship",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 47,
+    "step_type": "action",
+    "reasoning": "B is the only variable affecting Y, so it must be a linear relationship",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 48,
+    "step_type": "finish",
+    "reasoning": "B is the only variable affecting Y, so it must be a linear relationship and Y = k * B + b",
+    "parsed_action": null,
+    "final_equation": "Y = 2 * B",
+    "done": true
+  }
+]

@@ -1,0 +1,111 @@
+'[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1016)' thrown while requesting HEAD https://huggingface.co/google/gemma-3-4b-it/resolve/main/config.json
+Retrying in 1s [Retry 1/5].
+config.json: 100%|████████████████████████████████████████████████████████████████████| 855/855 [00:00<00:00, 2.35MB/s]
+[transformers] You are using a model of type `gemma3` to instantiate a model of type ``. This may be expected if you are loading a checkpoint that shares a subset of the architecture (e.g., loading a `sam2_video` checkpoint into `Sam2Model`), but is otherwise not supported and can yield errors. Please verify that the checkpoint is compatible with the model you are instantiating.
+tokenizer_config.json: 1.16MB [00:01, 677kB/s]
+tokenizer.json: 100%|█████████████████████████████████████████████████████████████| 33.4M/33.4M [00:03<00:00, 9.22MB/s]
+added_tokens.json: 100%|█████████████████████████████████████████████████████████████| 35.0/35.0 [00:00<00:00, 212kB/s]
+special_tokens_map.json: 100%|████████████████████████████████████████████████████████| 662/662 [00:00<00:00, 3.17MB/s]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+model.safetensors.index.json: 90.6kB [00:00, 92.7MB/s]
+Fetching 2 files: 100%|██████████████████████████████████████████████████████████████████| 2/2 [01:39<00:00, 49.90s/it]
+Download complete: 100%|██████████████████████████████████████████████████████████| 8.60G/8.60G [01:39<00:00, 86.1MB/s]
+Loading weights: 100%|███████████████████████████████████████████████████████████████| 883/883 [00:24<00:00, 36.19it/s]
+generation_config.json: 100%|██████████████████████████████████████████████████████████| 215/215 [00:00<00:00, 996kB/s]
+
+--- Run 1/30 ---
+  success=True  steps=3  reason=finish_success
+
+--- Run 2/30 ---
+  success=True  steps=6  reason=finish_success
+
+--- Run 3/30 ---
+  success=True  steps=4  reason=finish_success
+
+--- Run 4/30 ---
+  success=True  steps=6  reason=finish_success
+
+--- Run 5/30 ---
+  success=True  steps=4  reason=finish_success
+
+--- Run 6/30 ---
+  success=True  steps=3  reason=finish_success
+
+--- Run 7/30 ---
+  success=True  steps=3  reason=finish_success
+
+--- Run 8/30 ---
+  success=True  steps=7  reason=finish_success
+
+--- Run 9/30 ---
+  success=True  steps=5  reason=finish_success
+
+--- Run 10/30 ---
+  success=True  steps=4  reason=finish_success
+
+--- Run 11/30 ---
+  success=True  steps=4  reason=finish_success
+
+--- Run 12/30 ---
+  success=True  steps=4  reason=finish_success
+
+--- Run 13/30 ---
+  success=True  steps=7  reason=finish_success
+
+--- Run 14/30 ---
+  success=True  steps=3  reason=finish_success
+
+--- Run 15/30 ---
+  success=True  steps=6  reason=finish_success
+
+--- Run 16/30 ---
+  success=True  steps=5  reason=finish_success
+
+--- Run 17/30 ---
+  success=True  steps=4  reason=finish_success
+
+--- Run 18/30 ---
+  success=True  steps=5  reason=finish_success
+
+--- Run 19/30 ---
+  success=True  steps=5  reason=finish_success
+
+--- Run 20/30 ---
+  success=True  steps=9  reason=finish_success
+
+--- Run 21/30 ---
+  success=True  steps=4  reason=finish_success
+
+--- Run 22/30 ---
+  success=True  steps=3  reason=finish_success
+
+--- Run 23/30 ---
+  success=True  steps=4  reason=finish_success
+
+--- Run 24/30 ---
+  success=True  steps=4  reason=finish_success
+
+--- Run 25/30 ---
+  success=True  steps=4  reason=finish_success
+
+--- Run 26/30 ---
+  success=True  steps=5  reason=finish_success
+
+--- Run 27/30 ---
+  success=True  steps=5  reason=finish_success
+
+--- Run 28/30 ---
+  success=True  steps=9  reason=finish_success
+
+--- Run 29/30 ---
+  success=True  steps=5  reason=finish_success
+
+--- Run 30/30 ---
+  success=True  steps=7  reason=finish_success
+
+=== Experiment complete ===
+  success_rate: 100.00%
+  finish_rate:  100.00%
+  mean_steps:   4.9
+  mean_steps_to_success: 4.9
+  aggregate saved to: outputs/beers_text_default/aggregate.json

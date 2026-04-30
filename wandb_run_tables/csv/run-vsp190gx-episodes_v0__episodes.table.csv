@@ -1,0 +1,39 @@
+source_artifact,source_collection,source_version,run_id,success,equation_correct,finish_called,termination_reason,total_steps,steps_to_success,final_equation,state_coverage_ratio,redundancy_penalty,variable_isolation_score,discovery_efficiency,error_message
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,0,True,True,True,finish_success,3,3.0,Y = A + B + C,0.6667,0.0,0.0,0.333333,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,1,True,True,True,finish_success,2,2.0,Y = A + B + C,0.5,0.0,0.0,0.5,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,2,True,True,True,finish_success,3,3.0,Y = A + B + C,0.6667,0.0,0.0,0.333333,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,3,True,True,True,finish_success,2,2.0,Y = A + B + C,0.5,0.0,0.0,0.5,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,4,True,True,True,finish_success,3,3.0,Y = A + B + C,0.6667,0.0,0.0,0.333333,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,5,True,True,True,finish_success,6,6.0,Y = A + B + C,0.5,0.0,0.0,0.166667,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,6,True,True,True,finish_success,3,3.0,Y = A + B + C,0.6667,0.0,0.0,0.333333,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,7,True,True,True,finish_success,6,6.0,Y = A + B + C,0.6667,0.0,0.0,0.166667,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,8,True,True,True,finish_success,3,3.0,Y = A + B + C,0.6667,0.0,0.0,0.333333,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,9,True,True,True,finish_success,2,2.0,Y = A + B + C,0.5,0.0,0.0,0.5,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,10,True,True,True,finish_success,4,4.0,Y = A + B + C,0.75,0.0,0.0,0.25,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,11,True,True,True,finish_success,4,4.0,Y = A + B + C,0.75,0.25,0.0,0.25,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,12,True,True,True,finish_success,3,3.0,Y = A + B + C,0.6667,0.0,0.0,0.333333,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,13,True,True,True,finish_success,2,2.0,Y = A + B + C,0.5,0.0,0.0,0.5,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,14,True,True,True,finish_success,4,4.0,Y = A + B + C,0.75,0.0,0.0,0.25,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,15,True,True,True,finish_success,4,4.0,Y = A + B + C,0.75,0.0,0.0,0.25,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,16,True,True,True,finish_success,4,4.0,Y = A + B + C,0.75,0.0,0.0,0.25,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,17,True,True,True,finish_success,4,4.0,Y = A + B + C,0.75,0.0,0.0,0.25,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,18,True,True,True,finish_success,4,4.0,Y = A + B + C,0.75,0.0,0.0,0.25,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,19,True,True,True,finish_success,3,3.0,Y = A + B + C,0.6667,0.0,0.0,0.333333,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,20,True,True,True,finish_success,2,2.0,Y = A + B + C,0.5,0.0,0.0,0.5,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,21,True,True,True,finish_success,2,2.0,Y = A + B + C,0.5,0.0,0.0,0.5,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,22,False,False,False,parse_error,3,,,1.0,0.0,0.0,0.0,"model output is not valid JSON: {
+  ""reasoning"": ""From Step 0: A=10, B=20, C=30 -> Y=60. From Step 1: A=20, B=30, C=30 -> Y=80. From Step 2: A=10, B=30, C=30 -> Y=70. Comparing Step 0 and Step 2: A changed from 10 to 10 (no change), B changed from 20 to 30 (+10), C stayed 30, and Y changed from 60 to 70 (+10). This confirms coefficient +1 for B. Comparing Step 1 and Step 2: A changed from 20 to 10 (-10), B stayed 30, C stayed 30, and Y changed from 80 to 70 (-10). This confirms coefficient +1 for A. So far Y = A + B + C. Let's verify with C. Current state is A=10, B=30, C=30, Y=70. If Y = A + B + C, then 10+30+30=70, which matches. I will now change C to test its coefficient. I will increase C by 10 to 40. If coefficient is +1, Y should become 80.""
+  ""step_type"": ""action"",
+  ""action"": {
+    ""action_type"": ""increase"",
+    ""variable"": ""C""
+  },
+  ""final_equation"": null
+}"
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,23,True,True,True,finish_success,4,4.0,Y = A + B + C,0.75,0.0,0.0,0.25,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,24,True,True,True,finish_success,2,2.0,Y = A + B + C,0.5,0.0,0.0,0.5,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,25,True,True,True,finish_success,5,5.0,Y = A + B + C,0.8,0.0,0.0,0.2,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,26,True,True,True,finish_success,2,2.0,Y = A + B + C,0.5,0.0,0.0,0.5,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,27,True,True,True,finish_success,2,2.0,Y = A + B + C,0.5,0.0,0.0,0.5,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,28,True,True,True,finish_success,4,4.0,Y = A + B + C,0.75,0.25,0.0,0.25,
+leyao-li-epfl/scientific-exploration/run-vsp190gx-episodes:v0,run-vsp190gx-episodes,v0,29,True,True,True,finish_success,2,2.0,Y = A + B + C,0.5,0.0,0.0,0.5,

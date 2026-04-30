@@ -1,0 +1,21 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "I observe initial values A=10, B=20, C=30, Y=60. The sum A+B+C = 60, which equals Y. I will test this hypothesis by increasing A and observing if Y changes accordingly.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "finish",
+    "reasoning": "The initial observation showed A=10, B=20, C=30, Y=60 (Sum=60). After increasing A by 10 to 20, Y increased by 10 to 70. This confirms Y = A + B + C. The current state is A=20, B=20, C=30, Y=70, which fits the equation. I will finish and submit the equation.",
+    "parsed_action": null,
+    "final_equation": "Y = A + B + C",
+    "done": true
+  }
+]

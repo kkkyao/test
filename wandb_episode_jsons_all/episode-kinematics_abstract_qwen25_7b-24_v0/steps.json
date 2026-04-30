@@ -1,0 +1,43 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Start by increasing A to observe if Y changes.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Increase A to see if Y changes when A is increased.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "Y increases by 10 when A increases by 10. Now, I will check if changing B affects Y.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "finish",
+    "reasoning": "Y increases by 10 when B increases from 5 to 10. This suggests Y is directly proportional to B. Given the initial state, we can infer the relationship between Y and B.",
+    "parsed_action": null,
+    "final_equation": "Y = 4B",
+    "done": true
+  }
+]

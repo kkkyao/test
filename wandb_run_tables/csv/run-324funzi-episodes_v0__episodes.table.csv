@@ -1,0 +1,81 @@
+source_artifact,source_collection,source_version,run_id,success,equation_correct,finish_called,termination_reason,total_steps,steps_to_success,final_equation,state_coverage_ratio,redundancy_penalty,variable_isolation_score,discovery_efficiency,error_message
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,0,False,False,True,finish_wrong,8,,Y2 = 0.1 * 2.5^B,0.375,0.5,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,1,False,False,True,finish_wrong,8,,Y2 = 0.01 * log(A) + 0.2,0.625,0.5,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,2,False,False,False,parse_error,7,,,0.7143,0.5714,0.0,0.0,"model output is not valid JSON: {
+  ""reasoning"": ""I have observed that Y2 remains constant at 1.5 regardless of changes in A and B. This suggests that Y2 might be independent of both A and B. I will now test the effect of changing C to determine if it influences Y2."",
+  ""hypothesis"": ""Y2 might be independent of A and B."",
+  ""step_type"": ""action"",
+  ""action"": {
+    ""action_type"": ""increase C"",
+    ""variable"": ""C"",
+    ""value"": None
+  },
+  ""final_equation"": null
+}"
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,3,False,False,False,parse_error,5,,,0.6,0.4,0.0,0.0,"model output is not valid JSON: {
+  ""reasoning"": ""I have observed that Y2 is inversely proportional to B. To determine the constant of proportionality, I will set B to 1 and observe Y2. If Y2 is equal to the initial value of B (which was 2), then the constant k is 2."",
+  ""hypothesis"": ""Y2 = 2/B"",
+  ""step_type"": ""action"",
+  ""action"": {
+    ""action_type"": ""increase B"",
+    ""variable"": ""B"",
+    ""value"": None
+  },
+  ""final_equation"": null
+}"
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,4,False,False,True,finish_wrong,12,,Y2 = 0.01 * A + 1.0,0.75,0.75,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,5,False,False,False,parse_error,13,,,0.1538,0.5385,0.0,0.0,"model output is not valid JSON: {
+  ""reasoning"": ""I have observed that changing A and B individually does not affect Y2. Given that the combination of A and B might influence Y2, I will test if there is a threshold effect by increasing A to its maximum possible value (120.0) while keeping B constant to see if Y2 changes."",
+  ""hypothesis"": ""The combination of A and B might influence Y2, possibly with a threshold effect."",
+  ""step_type"": ""action"",
+  ""action"": {
+    ""action_type"": ""increase A"",
+    ""variable"": ""A"",
+    ""value"": None
+  },
+  ""final_equation"": null
+}"
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,6,False,False,True,finish_wrong,5,,Y2 = B / 2,0.8,0.6,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,7,False,False,True,finish_wrong,8,,"Y2 = 1.5 if B >= 3.0; otherwise, Y2 < 1.5",0.375,0.375,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,8,False,False,True,finish_wrong,6,,Y2 = 0.0 * A + 0.7,0.8333,0.5,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,9,False,False,True,finish_wrong,13,,Y2 = 0.015 * A,0.4615,0.6154,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,10,False,False,True,finish_wrong,6,,"Y2 = min(1.8, A / 100)",0.6667,0.3333,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,11,False,False,True,finish_wrong,7,,Y2 = k / B,0.5714,0.2857,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,12,False,False,True,finish_wrong,5,,Y2 = 1.65,0.4,0.0,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,13,False,False,True,finish_wrong,6,,Y2 = A / 100,0.8333,0.6667,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,14,False,False,True,finish_wrong,11,,Y2 = 2.6 - 0.016A,0.4545,0.4545,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,15,False,False,True,finish_wrong,3,,Y2 = k * A,0.6667,0.0,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,16,False,False,True,finish_wrong,5,,Y2 = B / 2,0.6,0.0,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,17,False,False,True,finish_wrong,14,,Y2 = 0.01 * A - 1.9,0.6429,0.6429,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,18,False,False,False,parse_error,8,,,0.375,0.375,0.0,0.0,"model output is not valid JSON: {
+  ""reasoning"": ""Y2 has not changed despite changes in B and C, indicating they do not affect Y2. The relationship between Y2 and A seems linear, but I need to test if Y2 is directly proportional to A by doubling A."",
+  ""hypothesis"": ""Y2 is directly proportional to A."",
+  ""step_type"": ""action"",
+  ""action"": {
+    ""action_type"": ""increase A"",
+    ""variable"": ""A"",
+    ""value"": None
+  },
+  ""final_equation"": null
+}"
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,19,False,False,True,finish_wrong,6,,Y2 = 0.5 * B + 0.0,0.8333,0.6667,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,20,False,False,True,finish_wrong,4,,Y2 = 1.8,0.75,0.25,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,21,False,False,False,parse_error,2,,,1.0,0.5,0.0,0.0,model output JSON must contain 'step_type'
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,22,False,False,True,finish_wrong,4,,Y2 = 1.65,0.5,0.0,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,23,False,False,False,parse_error,8,,,0.5,0.25,0.0,0.0,"model output is not valid JSON: {
+  ""reasoning"": ""I have observed that Y2 increases with increasing A and decreases with increasing B. The effect of A on Y2 is more significant. My hypothesis is that Y2 = k * A - c * B, where k and c are constants. To finalize the equation, I need to determine the values of k and c."",
+  ""hypothesis"": ""Y2 is positively correlated with A and negatively correlated with B, with A having a stronger effect."",
+  ""step_type"": ""action"",
+  ""action"": {
+    ""action_type"": ""increase A"",
+    ""variable"": ""A"",
+    ""value"": None
+  },
+  ""final_equation"": null
+}"
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,24,False,False,False,parse_error,1,,,1.0,0.0,0.0,0.0,model output JSON must contain 'step_type'
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,25,False,False,False,parse_error,1,,,1.0,0.0,0.0,0.0,model output JSON must contain 'step_type'
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,26,False,False,True,finish_wrong,6,,Y2 = 0.5 * (B - 3) + 1,0.3333,0.5,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,27,False,False,True,finish_wrong,5,,Y2 = A / 100,0.6,0.0,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,28,False,False,True,finish_wrong,7,,Y2 = A / 100,0.7143,0.5714,0.0,0.0,
+leyao-li-epfl/scientific-exploration/run-324funzi-episodes:v0,run-324funzi-episodes,v0,29,False,False,True,finish_wrong,28,,Y2 = 0.5 * B,0.1429,0.7857,0.0,0.0,

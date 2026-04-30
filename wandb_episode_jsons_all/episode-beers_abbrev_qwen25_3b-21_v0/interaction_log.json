@@ -1,0 +1,916 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "prompt": "You are a scientific explorer interacting with an unknown environment. You must respond with exactly one valid JSON object.\n\nYour goal is to discover the equation that determines A from the other variables in the environment.\nExplore the environment step by step through interaction.\nUse the current observation and previous history when deciding your next step.\nPut any reasoning inside the JSON reasoning field only.\nStop only when you have gathered enough evidence from interaction to state a final equation supported by the observations.\nYou may take up to 100 steps in total.\n\nAllowed step types:\n- action: take exactly one action to change the environment\n- finish: stop exploring and submit your final equation\n\nRules:\n- Return exactly one valid JSON object.\n- Do not output prose, markdown fences, bullet points, or any text outside the JSON object.\n- reasoning must be a non-empty string on every step.\n- step_type must be exactly 'action' or 'finish'.\n- When step_type is 'action', action must be one valid action object from Available actions; final_equation must be null.\n- When step_type is 'finish', action must be null; final_equation must be a non-empty equation string.\n- Do not invent new action_type values, variables, or fields.\n\nCurrent observation:\nCurrent state:\nepsilon = 1.0\nc = 2.0\nl = 1.0\nA = 2.0\nT = 0.01\n\nVariables:\nepsilon, c, l, A, T\n\nAvailable actions:\n- increase epsilon\n- decrease epsilon\n- increase c\n- decrease c\n- increase l\n- decrease l\n\nHistory:\nNone\n\nOutput format:\nYour answer must follow one of the JSON templates below.\nFor an action step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"variable_name\"\n  },\n  \"final_equation\": null\n}\nFor a finish step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"finish\",\n  \"action\": null,\n  \"final_equation\": \"equation string\"\n}",
+    "raw_model_output": "{\n  \"reasoning\": \"The initial observation shows A = 2.0, but it is unclear if this is a constant or influenced by other variables. Increasing or decreasing epsilon, c, or l might help determine the relationship.\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"epsilon\"\n  },\n  \"final_equation\": null\n}",
+    "reasoning": "The initial observation shows A = 2.0, but it is unclear if this is a constant or influenced by other variables. Increasing or decreasing epsilon, c, or l might help determine the relationship.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "epsilon"
+    },
+    "final_equation": null,
+    "observation_before": {
+      "mode": "text",
+      "visible_state": {
+        "epsilon": 1.0,
+        "c": 2.0,
+        "l": 1.0,
+        "A": 2.0,
+        "T": 0.01
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "increase",
+          "variable": "c"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "c"
+        },
+        {
+          "action_type": "increase",
+          "variable": "l"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "l"
+        }
+      ],
+      "text": "Current state:\nepsilon = 1.0\nc = 2.0\nl = 1.0\nA = 2.0\nT = 0.01\n\nVariables:\nepsilon, c, l, A, T\n\nAvailable actions:\n- increase epsilon\n- decrease epsilon\n- increase c\n- decrease c\n- increase l\n- decrease l",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "A",
+        "target_variable_internal": "absorbance",
+        "naming_mode": "abstract",
+        "metadata_level": "minimal",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "molar_absorptivity": "epsilon",
+          "concentration": "c",
+          "path_length": "l",
+          "transmittance": "T",
+          "absorbance": "A"
+        }
+      }
+    },
+    "observation_after": {
+      "mode": "text",
+      "visible_state": {
+        "epsilon": 2.0,
+        "c": 2.0,
+        "l": 1.0,
+        "A": 4.0,
+        "T": 0.0001
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "increase",
+          "variable": "c"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "c"
+        },
+        {
+          "action_type": "increase",
+          "variable": "l"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "l"
+        }
+      ],
+      "text": "Current state:\nepsilon = 2.0\nc = 2.0\nl = 1.0\nA = 4.0\nT = 0.0001\n\nVariables:\nepsilon, c, l, A, T\n\nAvailable actions:\n- increase epsilon\n- decrease epsilon\n- increase c\n- decrease c\n- increase l\n- decrease l",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "A",
+        "target_variable_internal": "absorbance",
+        "naming_mode": "abstract",
+        "metadata_level": "minimal",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "molar_absorptivity": "epsilon",
+          "concentration": "c",
+          "path_length": "l",
+          "transmittance": "T",
+          "absorbance": "A"
+        }
+      }
+    },
+    "state_before": {
+      "molar_absorptivity": 1.0,
+      "concentration": 2.0,
+      "path_length": 1.0,
+      "absorbance": 2.0,
+      "transmittance": 0.01
+    },
+    "state_after": {
+      "molar_absorptivity": 2.0,
+      "concentration": 2.0,
+      "path_length": 1.0,
+      "absorbance": 4.0,
+      "transmittance": 0.0001
+    },
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "prompt": "You are a scientific explorer interacting with an unknown environment. You must respond with exactly one valid JSON object.\n\nYour goal is to discover the equation that determines A from the other variables in the environment.\nExplore the environment step by step through interaction.\nUse the current observation and previous history when deciding your next step.\nPut any reasoning inside the JSON reasoning field only.\nStop only when you have gathered enough evidence from interaction to state a final equation supported by the observations.\nYou may take up to 100 steps in total.\n\nAllowed step types:\n- action: take exactly one action to change the environment\n- finish: stop exploring and submit your final equation\n\nRules:\n- Return exactly one valid JSON object.\n- Do not output prose, markdown fences, bullet points, or any text outside the JSON object.\n- reasoning must be a non-empty string on every step.\n- step_type must be exactly 'action' or 'finish'.\n- When step_type is 'action', action must be one valid action object from Available actions; final_equation must be null.\n- When step_type is 'finish', action must be null; final_equation must be a non-empty equation string.\n- Do not invent new action_type values, variables, or fields.\n\nCurrent observation:\nCurrent state:\nepsilon = 2.0\nc = 2.0\nl = 1.0\nA = 4.0\nT = 0.0001\n\nVariables:\nepsilon, c, l, A, T\n\nAvailable actions:\n- increase epsilon\n- decrease epsilon\n- increase c\n- decrease c\n- increase l\n- decrease l\n\nHistory:\nStep 0:\nstep_type: action\nreasoning: The initial observation shows A = 2.0, but it is unclear if this is a constant or influenced by other variables. Increasing or decreasing epsilon, c, or l might help determine the relationship.\naction: increase epsilon\nstate before: {'epsilon': 1.0, 'c': 2.0, 'l': 1.0, 'A': 2.0, 'T': 0.01}\nstate after: {'epsilon': 2.0, 'c': 2.0, 'l': 1.0, 'A': 4.0, 'T': 0.0001}\n\nOutput format:\nYour answer must follow one of the JSON templates below.\nFor an action step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"variable_name\"\n  },\n  \"final_equation\": null\n}\nFor a finish step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"finish\",\n  \"action\": null,\n  \"final_equation\": \"equation string\"\n}",
+    "raw_model_output": "{\n  \"reasoning\": \"increasing epsilon to see if it affects A while keeping c and l constant.\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"epsilon\"\n  },\n  \"final_equation\": null\n}",
+    "reasoning": "increasing epsilon to see if it affects A while keeping c and l constant.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "epsilon"
+    },
+    "final_equation": null,
+    "observation_before": {
+      "mode": "text",
+      "visible_state": {
+        "epsilon": 2.0,
+        "c": 2.0,
+        "l": 1.0,
+        "A": 4.0,
+        "T": 0.0001
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "increase",
+          "variable": "c"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "c"
+        },
+        {
+          "action_type": "increase",
+          "variable": "l"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "l"
+        }
+      ],
+      "text": "Current state:\nepsilon = 2.0\nc = 2.0\nl = 1.0\nA = 4.0\nT = 0.0001\n\nVariables:\nepsilon, c, l, A, T\n\nAvailable actions:\n- increase epsilon\n- decrease epsilon\n- increase c\n- decrease c\n- increase l\n- decrease l",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "A",
+        "target_variable_internal": "absorbance",
+        "naming_mode": "abstract",
+        "metadata_level": "minimal",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "molar_absorptivity": "epsilon",
+          "concentration": "c",
+          "path_length": "l",
+          "transmittance": "T",
+          "absorbance": "A"
+        }
+      }
+    },
+    "observation_after": {
+      "mode": "text",
+      "visible_state": {
+        "epsilon": 3.0,
+        "c": 2.0,
+        "l": 1.0,
+        "A": 6.0,
+        "T": 1e-06
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "increase",
+          "variable": "c"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "c"
+        },
+        {
+          "action_type": "increase",
+          "variable": "l"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "l"
+        }
+      ],
+      "text": "Current state:\nepsilon = 3.0\nc = 2.0\nl = 1.0\nA = 6.0\nT = 1e-06\n\nVariables:\nepsilon, c, l, A, T\n\nAvailable actions:\n- increase epsilon\n- decrease epsilon\n- increase c\n- decrease c\n- increase l\n- decrease l",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "A",
+        "target_variable_internal": "absorbance",
+        "naming_mode": "abstract",
+        "metadata_level": "minimal",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "molar_absorptivity": "epsilon",
+          "concentration": "c",
+          "path_length": "l",
+          "transmittance": "T",
+          "absorbance": "A"
+        }
+      }
+    },
+    "state_before": {
+      "molar_absorptivity": 2.0,
+      "concentration": 2.0,
+      "path_length": 1.0,
+      "absorbance": 4.0,
+      "transmittance": 0.0001
+    },
+    "state_after": {
+      "molar_absorptivity": 3.0,
+      "concentration": 2.0,
+      "path_length": 1.0,
+      "absorbance": 6.0,
+      "transmittance": 1e-06
+    },
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "prompt": "You are a scientific explorer interacting with an unknown environment. You must respond with exactly one valid JSON object.\n\nYour goal is to discover the equation that determines A from the other variables in the environment.\nExplore the environment step by step through interaction.\nUse the current observation and previous history when deciding your next step.\nPut any reasoning inside the JSON reasoning field only.\nStop only when you have gathered enough evidence from interaction to state a final equation supported by the observations.\nYou may take up to 100 steps in total.\n\nAllowed step types:\n- action: take exactly one action to change the environment\n- finish: stop exploring and submit your final equation\n\nRules:\n- Return exactly one valid JSON object.\n- Do not output prose, markdown fences, bullet points, or any text outside the JSON object.\n- reasoning must be a non-empty string on every step.\n- step_type must be exactly 'action' or 'finish'.\n- When step_type is 'action', action must be one valid action object from Available actions; final_equation must be null.\n- When step_type is 'finish', action must be null; final_equation must be a non-empty equation string.\n- Do not invent new action_type values, variables, or fields.\n\nCurrent observation:\nCurrent state:\nepsilon = 3.0\nc = 2.0\nl = 1.0\nA = 6.0\nT = 1e-06\n\nVariables:\nepsilon, c, l, A, T\n\nAvailable actions:\n- increase epsilon\n- decrease epsilon\n- increase c\n- decrease c\n- increase l\n- decrease l\n\nHistory:\nStep 0:\nstep_type: action\nreasoning: The initial observation shows A = 2.0, but it is unclear if this is a constant or influenced by other variables. Increasing or decreasing epsilon, c, or l might help determine the relationship.\naction: increase epsilon\nstate before: {'epsilon': 1.0, 'c': 2.0, 'l': 1.0, 'A': 2.0, 'T': 0.01}\nstate after: {'epsilon': 2.0, 'c': 2.0, 'l': 1.0, 'A': 4.0, 'T': 0.0001}\n\nStep 1:\nstep_type: action\nreasoning: increasing epsilon to see if it affects A while keeping c and l constant.\naction: increase epsilon\nstate before: {'epsilon': 2.0, 'c': 2.0, 'l': 1.0, 'A': 4.0, 'T': 0.0001}\nstate after: {'epsilon': 3.0, 'c': 2.0, 'l': 1.0, 'A': 6.0, 'T': 1e-06}\n\nOutput format:\nYour answer must follow one of the JSON templates below.\nFor an action step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"variable_name\"\n  },\n  \"final_equation\": null\n}\nFor a finish step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"finish\",\n  \"action\": null,\n  \"final_equation\": \"equation string\"\n}",
+    "raw_model_output": "{\n  \"reasoning\": \"Observations show that increasing epsilon leads to a proportional increase in A, suggesting a potential linear relationship.\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"c\"\n  },\n  \"final_equation\": null\n}",
+    "reasoning": "Observations show that increasing epsilon leads to a proportional increase in A, suggesting a potential linear relationship.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "c"
+    },
+    "final_equation": null,
+    "observation_before": {
+      "mode": "text",
+      "visible_state": {
+        "epsilon": 3.0,
+        "c": 2.0,
+        "l": 1.0,
+        "A": 6.0,
+        "T": 1e-06
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "increase",
+          "variable": "c"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "c"
+        },
+        {
+          "action_type": "increase",
+          "variable": "l"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "l"
+        }
+      ],
+      "text": "Current state:\nepsilon = 3.0\nc = 2.0\nl = 1.0\nA = 6.0\nT = 1e-06\n\nVariables:\nepsilon, c, l, A, T\n\nAvailable actions:\n- increase epsilon\n- decrease epsilon\n- increase c\n- decrease c\n- increase l\n- decrease l",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "A",
+        "target_variable_internal": "absorbance",
+        "naming_mode": "abstract",
+        "metadata_level": "minimal",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "molar_absorptivity": "epsilon",
+          "concentration": "c",
+          "path_length": "l",
+          "transmittance": "T",
+          "absorbance": "A"
+        }
+      }
+    },
+    "observation_after": {
+      "mode": "text",
+      "visible_state": {
+        "epsilon": 3.0,
+        "c": 3.0,
+        "l": 1.0,
+        "A": 9.0,
+        "T": 1e-09
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "increase",
+          "variable": "c"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "c"
+        },
+        {
+          "action_type": "increase",
+          "variable": "l"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "l"
+        }
+      ],
+      "text": "Current state:\nepsilon = 3.0\nc = 3.0\nl = 1.0\nA = 9.0\nT = 1e-09\n\nVariables:\nepsilon, c, l, A, T\n\nAvailable actions:\n- increase epsilon\n- decrease epsilon\n- increase c\n- decrease c\n- increase l\n- decrease l",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "A",
+        "target_variable_internal": "absorbance",
+        "naming_mode": "abstract",
+        "metadata_level": "minimal",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "molar_absorptivity": "epsilon",
+          "concentration": "c",
+          "path_length": "l",
+          "transmittance": "T",
+          "absorbance": "A"
+        }
+      }
+    },
+    "state_before": {
+      "molar_absorptivity": 3.0,
+      "concentration": 2.0,
+      "path_length": 1.0,
+      "absorbance": 6.0,
+      "transmittance": 1e-06
+    },
+    "state_after": {
+      "molar_absorptivity": 3.0,
+      "concentration": 3.0,
+      "path_length": 1.0,
+      "absorbance": 9.0,
+      "transmittance": 1e-09
+    },
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "prompt": "You are a scientific explorer interacting with an unknown environment. You must respond with exactly one valid JSON object.\n\nYour goal is to discover the equation that determines A from the other variables in the environment.\nExplore the environment step by step through interaction.\nUse the current observation and previous history when deciding your next step.\nPut any reasoning inside the JSON reasoning field only.\nStop only when you have gathered enough evidence from interaction to state a final equation supported by the observations.\nYou may take up to 100 steps in total.\n\nAllowed step types:\n- action: take exactly one action to change the environment\n- finish: stop exploring and submit your final equation\n\nRules:\n- Return exactly one valid JSON object.\n- Do not output prose, markdown fences, bullet points, or any text outside the JSON object.\n- reasoning must be a non-empty string on every step.\n- step_type must be exactly 'action' or 'finish'.\n- When step_type is 'action', action must be one valid action object from Available actions; final_equation must be null.\n- When step_type is 'finish', action must be null; final_equation must be a non-empty equation string.\n- Do not invent new action_type values, variables, or fields.\n\nCurrent observation:\nCurrent state:\nepsilon = 3.0\nc = 3.0\nl = 1.0\nA = 9.0\nT = 1e-09\n\nVariables:\nepsilon, c, l, A, T\n\nAvailable actions:\n- increase epsilon\n- decrease epsilon\n- increase c\n- decrease c\n- increase l\n- decrease l\n\nHistory:\nStep 0:\nstep_type: action\nreasoning: The initial observation shows A = 2.0, but it is unclear if this is a constant or influenced by other variables. Increasing or decreasing epsilon, c, or l might help determine the relationship.\naction: increase epsilon\nstate before: {'epsilon': 1.0, 'c': 2.0, 'l': 1.0, 'A': 2.0, 'T': 0.01}\nstate after: {'epsilon': 2.0, 'c': 2.0, 'l': 1.0, 'A': 4.0, 'T': 0.0001}\n\nStep 1:\nstep_type: action\nreasoning: increasing epsilon to see if it affects A while keeping c and l constant.\naction: increase epsilon\nstate before: {'epsilon': 2.0, 'c': 2.0, 'l': 1.0, 'A': 4.0, 'T': 0.0001}\nstate after: {'epsilon': 3.0, 'c': 2.0, 'l': 1.0, 'A': 6.0, 'T': 1e-06}\n\nStep 2:\nstep_type: action\nreasoning: Observations show that increasing epsilon leads to a proportional increase in A, suggesting a potential linear relationship.\naction: increase c\nstate before: {'epsilon': 3.0, 'c': 2.0, 'l': 1.0, 'A': 6.0, 'T': 1e-06}\nstate after: {'epsilon': 3.0, 'c': 3.0, 'l': 1.0, 'A': 9.0, 'T': 1e-09}\n\nOutput format:\nYour answer must follow one of the JSON templates below.\nFor an action step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"variable_name\"\n  },\n  \"final_equation\": null\n}\nFor a finish step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"finish\",\n  \"action\": null,\n  \"final_equation\": \"equation string\"\n}",
+    "raw_model_output": "{\n  \"reasoning\": \"Observing the pattern, A increases as epsilon and c increase proportionally while l remains constant.\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"l\"\n  },\n  \"final_equation\": null\n}",
+    "reasoning": "Observing the pattern, A increases as epsilon and c increase proportionally while l remains constant.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "l"
+    },
+    "final_equation": null,
+    "observation_before": {
+      "mode": "text",
+      "visible_state": {
+        "epsilon": 3.0,
+        "c": 3.0,
+        "l": 1.0,
+        "A": 9.0,
+        "T": 1e-09
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "increase",
+          "variable": "c"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "c"
+        },
+        {
+          "action_type": "increase",
+          "variable": "l"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "l"
+        }
+      ],
+      "text": "Current state:\nepsilon = 3.0\nc = 3.0\nl = 1.0\nA = 9.0\nT = 1e-09\n\nVariables:\nepsilon, c, l, A, T\n\nAvailable actions:\n- increase epsilon\n- decrease epsilon\n- increase c\n- decrease c\n- increase l\n- decrease l",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "A",
+        "target_variable_internal": "absorbance",
+        "naming_mode": "abstract",
+        "metadata_level": "minimal",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "molar_absorptivity": "epsilon",
+          "concentration": "c",
+          "path_length": "l",
+          "transmittance": "T",
+          "absorbance": "A"
+        }
+      }
+    },
+    "observation_after": {
+      "mode": "text",
+      "visible_state": {
+        "epsilon": 3.0,
+        "c": 3.0,
+        "l": 2.0,
+        "A": 18.0,
+        "T": 1e-18
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "increase",
+          "variable": "c"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "c"
+        },
+        {
+          "action_type": "increase",
+          "variable": "l"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "l"
+        }
+      ],
+      "text": "Current state:\nepsilon = 3.0\nc = 3.0\nl = 2.0\nA = 18.0\nT = 1e-18\n\nVariables:\nepsilon, c, l, A, T\n\nAvailable actions:\n- increase epsilon\n- decrease epsilon\n- increase c\n- decrease c\n- increase l\n- decrease l",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "A",
+        "target_variable_internal": "absorbance",
+        "naming_mode": "abstract",
+        "metadata_level": "minimal",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "molar_absorptivity": "epsilon",
+          "concentration": "c",
+          "path_length": "l",
+          "transmittance": "T",
+          "absorbance": "A"
+        }
+      }
+    },
+    "state_before": {
+      "molar_absorptivity": 3.0,
+      "concentration": 3.0,
+      "path_length": 1.0,
+      "absorbance": 9.0,
+      "transmittance": 1e-09
+    },
+    "state_after": {
+      "molar_absorptivity": 3.0,
+      "concentration": 3.0,
+      "path_length": 2.0,
+      "absorbance": 18.0,
+      "transmittance": 1e-18
+    },
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "prompt": "You are a scientific explorer interacting with an unknown environment. You must respond with exactly one valid JSON object.\n\nYour goal is to discover the equation that determines A from the other variables in the environment.\nExplore the environment step by step through interaction.\nUse the current observation and previous history when deciding your next step.\nPut any reasoning inside the JSON reasoning field only.\nStop only when you have gathered enough evidence from interaction to state a final equation supported by the observations.\nYou may take up to 100 steps in total.\n\nAllowed step types:\n- action: take exactly one action to change the environment\n- finish: stop exploring and submit your final equation\n\nRules:\n- Return exactly one valid JSON object.\n- Do not output prose, markdown fences, bullet points, or any text outside the JSON object.\n- reasoning must be a non-empty string on every step.\n- step_type must be exactly 'action' or 'finish'.\n- When step_type is 'action', action must be one valid action object from Available actions; final_equation must be null.\n- When step_type is 'finish', action must be null; final_equation must be a non-empty equation string.\n- Do not invent new action_type values, variables, or fields.\n\nCurrent observation:\nCurrent state:\nepsilon = 3.0\nc = 3.0\nl = 2.0\nA = 18.0\nT = 1e-18\n\nVariables:\nepsilon, c, l, A, T\n\nAvailable actions:\n- increase epsilon\n- decrease epsilon\n- increase c\n- decrease c\n- increase l\n- decrease l\n\nHistory:\nStep 0:\nstep_type: action\nreasoning: The initial observation shows A = 2.0, but it is unclear if this is a constant or influenced by other variables. Increasing or decreasing epsilon, c, or l might help determine the relationship.\naction: increase epsilon\nstate before: {'epsilon': 1.0, 'c': 2.0, 'l': 1.0, 'A': 2.0, 'T': 0.01}\nstate after: {'epsilon': 2.0, 'c': 2.0, 'l': 1.0, 'A': 4.0, 'T': 0.0001}\n\nStep 1:\nstep_type: action\nreasoning: increasing epsilon to see if it affects A while keeping c and l constant.\naction: increase epsilon\nstate before: {'epsilon': 2.0, 'c': 2.0, 'l': 1.0, 'A': 4.0, 'T': 0.0001}\nstate after: {'epsilon': 3.0, 'c': 2.0, 'l': 1.0, 'A': 6.0, 'T': 1e-06}\n\nStep 2:\nstep_type: action\nreasoning: Observations show that increasing epsilon leads to a proportional increase in A, suggesting a potential linear relationship.\naction: increase c\nstate before: {'epsilon': 3.0, 'c': 2.0, 'l': 1.0, 'A': 6.0, 'T': 1e-06}\nstate after: {'epsilon': 3.0, 'c': 3.0, 'l': 1.0, 'A': 9.0, 'T': 1e-09}\n\nStep 3:\nstep_type: action\nreasoning: Observing the pattern, A increases as epsilon and c increase proportionally while l remains constant.\naction: increase l\nstate before: {'epsilon': 3.0, 'c': 3.0, 'l': 1.0, 'A': 9.0, 'T': 1e-09}\nstate after: {'epsilon': 3.0, 'c': 3.0, 'l': 2.0, 'A': 18.0, 'T': 1e-18}\n\nOutput format:\nYour answer must follow one of the JSON templates below.\nFor an action step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"variable_name\"\n  },\n  \"final_equation\": null\n}\nFor a finish step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"finish\",\n  \"action\": null,\n  \"final_equation\": \"equation string\"\n}",
+    "raw_model_output": "{\n  \"reasoning\": \"Observing the trend, A seems to be directly proportional to both epsilon and c while l remains constant.\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"l\"\n  },\n  \"final_equation\": null\n}",
+    "reasoning": "Observing the trend, A seems to be directly proportional to both epsilon and c while l remains constant.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "l"
+    },
+    "final_equation": null,
+    "observation_before": {
+      "mode": "text",
+      "visible_state": {
+        "epsilon": 3.0,
+        "c": 3.0,
+        "l": 2.0,
+        "A": 18.0,
+        "T": 1e-18
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "increase",
+          "variable": "c"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "c"
+        },
+        {
+          "action_type": "increase",
+          "variable": "l"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "l"
+        }
+      ],
+      "text": "Current state:\nepsilon = 3.0\nc = 3.0\nl = 2.0\nA = 18.0\nT = 1e-18\n\nVariables:\nepsilon, c, l, A, T\n\nAvailable actions:\n- increase epsilon\n- decrease epsilon\n- increase c\n- decrease c\n- increase l\n- decrease l",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "A",
+        "target_variable_internal": "absorbance",
+        "naming_mode": "abstract",
+        "metadata_level": "minimal",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "molar_absorptivity": "epsilon",
+          "concentration": "c",
+          "path_length": "l",
+          "transmittance": "T",
+          "absorbance": "A"
+        }
+      }
+    },
+    "observation_after": {
+      "mode": "text",
+      "visible_state": {
+        "epsilon": 3.0,
+        "c": 3.0,
+        "l": 3.0,
+        "A": 27.0,
+        "T": 1e-27
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "increase",
+          "variable": "c"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "c"
+        },
+        {
+          "action_type": "increase",
+          "variable": "l"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "l"
+        }
+      ],
+      "text": "Current state:\nepsilon = 3.0\nc = 3.0\nl = 3.0\nA = 27.0\nT = 1e-27\n\nVariables:\nepsilon, c, l, A, T\n\nAvailable actions:\n- increase epsilon\n- decrease epsilon\n- increase c\n- decrease c\n- increase l\n- decrease l",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "A",
+        "target_variable_internal": "absorbance",
+        "naming_mode": "abstract",
+        "metadata_level": "minimal",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "molar_absorptivity": "epsilon",
+          "concentration": "c",
+          "path_length": "l",
+          "transmittance": "T",
+          "absorbance": "A"
+        }
+      }
+    },
+    "state_before": {
+      "molar_absorptivity": 3.0,
+      "concentration": 3.0,
+      "path_length": 2.0,
+      "absorbance": 18.0,
+      "transmittance": 1e-18
+    },
+    "state_after": {
+      "molar_absorptivity": 3.0,
+      "concentration": 3.0,
+      "path_length": 3.0,
+      "absorbance": 27.0,
+      "transmittance": 1e-27
+    },
+    "done": false
+  },
+  {
+    "step_id": 5,
+    "step_type": "action",
+    "prompt": "You are a scientific explorer interacting with an unknown environment. You must respond with exactly one valid JSON object.\n\nYour goal is to discover the equation that determines A from the other variables in the environment.\nExplore the environment step by step through interaction.\nUse the current observation and previous history when deciding your next step.\nPut any reasoning inside the JSON reasoning field only.\nStop only when you have gathered enough evidence from interaction to state a final equation supported by the observations.\nYou may take up to 100 steps in total.\n\nAllowed step types:\n- action: take exactly one action to change the environment\n- finish: stop exploring and submit your final equation\n\nRules:\n- Return exactly one valid JSON object.\n- Do not output prose, markdown fences, bullet points, or any text outside the JSON object.\n- reasoning must be a non-empty string on every step.\n- step_type must be exactly 'action' or 'finish'.\n- When step_type is 'action', action must be one valid action object from Available actions; final_equation must be null.\n- When step_type is 'finish', action must be null; final_equation must be a non-empty equation string.\n- Do not invent new action_type values, variables, or fields.\n\nCurrent observation:\nCurrent state:\nepsilon = 3.0\nc = 3.0\nl = 3.0\nA = 27.0\nT = 1e-27\n\nVariables:\nepsilon, c, l, A, T\n\nAvailable actions:\n- increase epsilon\n- decrease epsilon\n- increase c\n- decrease c\n- increase l\n- decrease l\n\nHistory:\nStep 0:\nstep_type: action\nreasoning: The initial observation shows A = 2.0, but it is unclear if this is a constant or influenced by other variables. Increasing or decreasing epsilon, c, or l might help determine the relationship.\naction: increase epsilon\nstate before: {'epsilon': 1.0, 'c': 2.0, 'l': 1.0, 'A': 2.0, 'T': 0.01}\nstate after: {'epsilon': 2.0, 'c': 2.0, 'l': 1.0, 'A': 4.0, 'T': 0.0001}\n\nStep 1:\nstep_type: action\nreasoning: increasing epsilon to see if it affects A while keeping c and l constant.\naction: increase epsilon\nstate before: {'epsilon': 2.0, 'c': 2.0, 'l': 1.0, 'A': 4.0, 'T': 0.0001}\nstate after: {'epsilon': 3.0, 'c': 2.0, 'l': 1.0, 'A': 6.0, 'T': 1e-06}\n\nStep 2:\nstep_type: action\nreasoning: Observations show that increasing epsilon leads to a proportional increase in A, suggesting a potential linear relationship.\naction: increase c\nstate before: {'epsilon': 3.0, 'c': 2.0, 'l': 1.0, 'A': 6.0, 'T': 1e-06}\nstate after: {'epsilon': 3.0, 'c': 3.0, 'l': 1.0, 'A': 9.0, 'T': 1e-09}\n\nStep 3:\nstep_type: action\nreasoning: Observing the pattern, A increases as epsilon and c increase proportionally while l remains constant.\naction: increase l\nstate before: {'epsilon': 3.0, 'c': 3.0, 'l': 1.0, 'A': 9.0, 'T': 1e-09}\nstate after: {'epsilon': 3.0, 'c': 3.0, 'l': 2.0, 'A': 18.0, 'T': 1e-18}\n\nStep 4:\nstep_type: action\nreasoning: Observing the trend, A seems to be directly proportional to both epsilon and c while l remains constant.\naction: increase l\nstate before: {'epsilon': 3.0, 'c': 3.0, 'l': 2.0, 'A': 18.0, 'T': 1e-18}\nstate after: {'epsilon': 3.0, 'c': 3.0, 'l': 3.0, 'A': 27.0, 'T': 1e-27}\n\nOutput format:\nYour answer must follow one of the JSON templates below.\nFor an action step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"variable_name\"\n  },\n  \"final_equation\": null\n}\nFor a finish step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"finish\",\n  \"action\": null,\n  \"final_equation\": \"equation string\"\n}",
+    "raw_model_output": "{\n  \"reasoning\": \"Observations suggest that A is directly proportional to the product of epsilon and c while l remains constant.\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"l\"\n  },\n  \"final_equation\": null\n}",
+    "reasoning": "Observations suggest that A is directly proportional to the product of epsilon and c while l remains constant.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "l"
+    },
+    "final_equation": null,
+    "observation_before": {
+      "mode": "text",
+      "visible_state": {
+        "epsilon": 3.0,
+        "c": 3.0,
+        "l": 3.0,
+        "A": 27.0,
+        "T": 1e-27
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "increase",
+          "variable": "c"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "c"
+        },
+        {
+          "action_type": "increase",
+          "variable": "l"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "l"
+        }
+      ],
+      "text": "Current state:\nepsilon = 3.0\nc = 3.0\nl = 3.0\nA = 27.0\nT = 1e-27\n\nVariables:\nepsilon, c, l, A, T\n\nAvailable actions:\n- increase epsilon\n- decrease epsilon\n- increase c\n- decrease c\n- increase l\n- decrease l",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "A",
+        "target_variable_internal": "absorbance",
+        "naming_mode": "abstract",
+        "metadata_level": "minimal",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "molar_absorptivity": "epsilon",
+          "concentration": "c",
+          "path_length": "l",
+          "transmittance": "T",
+          "absorbance": "A"
+        }
+      }
+    },
+    "observation_after": {
+      "mode": "text",
+      "visible_state": {
+        "epsilon": 3.0,
+        "c": 3.0,
+        "l": 4.0,
+        "A": 36.0,
+        "T": 1e-36
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "increase",
+          "variable": "c"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "c"
+        },
+        {
+          "action_type": "increase",
+          "variable": "l"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "l"
+        }
+      ],
+      "text": "Current state:\nepsilon = 3.0\nc = 3.0\nl = 4.0\nA = 36.0\nT = 1e-36\n\nVariables:\nepsilon, c, l, A, T\n\nAvailable actions:\n- increase epsilon\n- decrease epsilon\n- increase c\n- decrease c\n- increase l\n- decrease l",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "A",
+        "target_variable_internal": "absorbance",
+        "naming_mode": "abstract",
+        "metadata_level": "minimal",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "molar_absorptivity": "epsilon",
+          "concentration": "c",
+          "path_length": "l",
+          "transmittance": "T",
+          "absorbance": "A"
+        }
+      }
+    },
+    "state_before": {
+      "molar_absorptivity": 3.0,
+      "concentration": 3.0,
+      "path_length": 3.0,
+      "absorbance": 27.0,
+      "transmittance": 1e-27
+    },
+    "state_after": {
+      "molar_absorptivity": 3.0,
+      "concentration": 3.0,
+      "path_length": 4.0,
+      "absorbance": 36.0,
+      "transmittance": 1e-36
+    },
+    "done": false
+  },
+  {
+    "step_id": 6,
+    "step_type": "finish",
+    "prompt": "You are a scientific explorer interacting with an unknown environment. You must respond with exactly one valid JSON object.\n\nYour goal is to discover the equation that determines A from the other variables in the environment.\nExplore the environment step by step through interaction.\nUse the current observation and previous history when deciding your next step.\nPut any reasoning inside the JSON reasoning field only.\nStop only when you have gathered enough evidence from interaction to state a final equation supported by the observations.\nYou may take up to 100 steps in total.\n\nAllowed step types:\n- action: take exactly one action to change the environment\n- finish: stop exploring and submit your final equation\n\nRules:\n- Return exactly one valid JSON object.\n- Do not output prose, markdown fences, bullet points, or any text outside the JSON object.\n- reasoning must be a non-empty string on every step.\n- step_type must be exactly 'action' or 'finish'.\n- When step_type is 'action', action must be one valid action object from Available actions; final_equation must be null.\n- When step_type is 'finish', action must be null; final_equation must be a non-empty equation string.\n- Do not invent new action_type values, variables, or fields.\n\nCurrent observation:\nCurrent state:\nepsilon = 3.0\nc = 3.0\nl = 4.0\nA = 36.0\nT = 1e-36\n\nVariables:\nepsilon, c, l, A, T\n\nAvailable actions:\n- increase epsilon\n- decrease epsilon\n- increase c\n- decrease c\n- increase l\n- decrease l\n\nHistory:\nStep 0:\nstep_type: action\nreasoning: The initial observation shows A = 2.0, but it is unclear if this is a constant or influenced by other variables. Increasing or decreasing epsilon, c, or l might help determine the relationship.\naction: increase epsilon\nstate before: {'epsilon': 1.0, 'c': 2.0, 'l': 1.0, 'A': 2.0, 'T': 0.01}\nstate after: {'epsilon': 2.0, 'c': 2.0, 'l': 1.0, 'A': 4.0, 'T': 0.0001}\n\nStep 1:\nstep_type: action\nreasoning: increasing epsilon to see if it affects A while keeping c and l constant.\naction: increase epsilon\nstate before: {'epsilon': 2.0, 'c': 2.0, 'l': 1.0, 'A': 4.0, 'T': 0.0001}\nstate after: {'epsilon': 3.0, 'c': 2.0, 'l': 1.0, 'A': 6.0, 'T': 1e-06}\n\nStep 2:\nstep_type: action\nreasoning: Observations show that increasing epsilon leads to a proportional increase in A, suggesting a potential linear relationship.\naction: increase c\nstate before: {'epsilon': 3.0, 'c': 2.0, 'l': 1.0, 'A': 6.0, 'T': 1e-06}\nstate after: {'epsilon': 3.0, 'c': 3.0, 'l': 1.0, 'A': 9.0, 'T': 1e-09}\n\nStep 3:\nstep_type: action\nreasoning: Observing the pattern, A increases as epsilon and c increase proportionally while l remains constant.\naction: increase l\nstate before: {'epsilon': 3.0, 'c': 3.0, 'l': 1.0, 'A': 9.0, 'T': 1e-09}\nstate after: {'epsilon': 3.0, 'c': 3.0, 'l': 2.0, 'A': 18.0, 'T': 1e-18}\n\nStep 4:\nstep_type: action\nreasoning: Observing the trend, A seems to be directly proportional to both epsilon and c while l remains constant.\naction: increase l\nstate before: {'epsilon': 3.0, 'c': 3.0, 'l': 2.0, 'A': 18.0, 'T': 1e-18}\nstate after: {'epsilon': 3.0, 'c': 3.0, 'l': 3.0, 'A': 27.0, 'T': 1e-27}\n\nStep 5:\nstep_type: action\nreasoning: Observations suggest that A is directly proportional to the product of epsilon and c while l remains constant.\naction: increase l\nstate before: {'epsilon': 3.0, 'c': 3.0, 'l': 3.0, 'A': 27.0, 'T': 1e-27}\nstate after: {'epsilon': 3.0, 'c': 3.0, 'l': 4.0, 'A': 36.0, 'T': 1e-36}\n\nOutput format:\nYour answer must follow one of the JSON templates below.\nFor an action step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"variable_name\"\n  },\n  \"final_equation\": null\n}\nFor a finish step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"finish\",\n  \"action\": null,\n  \"final_equation\": \"equation string\"\n}",
+    "raw_model_output": "{\n  \"reasoning\": \"Observations indicate that A is directly proportional to the product of epsilon and c while l remains constant.\",\n  \"step_type\": \"finish\",\n  \"action\": null,\n  \"final_equation\": \"A = k * epsilon * c\"\n}",
+    "reasoning": "Observations indicate that A is directly proportional to the product of epsilon and c while l remains constant.",
+    "parsed_action": null,
+    "final_equation": "A = k * epsilon * c",
+    "observation_before": {
+      "mode": "text",
+      "visible_state": {
+        "epsilon": 3.0,
+        "c": 3.0,
+        "l": 4.0,
+        "A": 36.0,
+        "T": 1e-36
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "increase",
+          "variable": "c"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "c"
+        },
+        {
+          "action_type": "increase",
+          "variable": "l"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "l"
+        }
+      ],
+      "text": "Current state:\nepsilon = 3.0\nc = 3.0\nl = 4.0\nA = 36.0\nT = 1e-36\n\nVariables:\nepsilon, c, l, A, T\n\nAvailable actions:\n- increase epsilon\n- decrease epsilon\n- increase c\n- decrease c\n- increase l\n- decrease l",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "A",
+        "target_variable_internal": "absorbance",
+        "naming_mode": "abstract",
+        "metadata_level": "minimal",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "molar_absorptivity": "epsilon",
+          "concentration": "c",
+          "path_length": "l",
+          "transmittance": "T",
+          "absorbance": "A"
+        }
+      }
+    },
+    "observation_after": {
+      "mode": "text",
+      "visible_state": {
+        "epsilon": 3.0,
+        "c": 3.0,
+        "l": 4.0,
+        "A": 36.0,
+        "T": 1e-36
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "epsilon"
+        },
+        {
+          "action_type": "increase",
+          "variable": "c"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "c"
+        },
+        {
+          "action_type": "increase",
+          "variable": "l"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "l"
+        }
+      ],
+      "text": "Current state:\nepsilon = 3.0\nc = 3.0\nl = 4.0\nA = 36.0\nT = 1e-36\n\nVariables:\nepsilon, c, l, A, T\n\nAvailable actions:\n- increase epsilon\n- decrease epsilon\n- increase c\n- decrease c\n- increase l\n- decrease l",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "A",
+        "target_variable_internal": "absorbance",
+        "naming_mode": "abstract",
+        "metadata_level": "minimal",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "molar_absorptivity": "epsilon",
+          "concentration": "c",
+          "path_length": "l",
+          "transmittance": "T",
+          "absorbance": "A"
+        }
+      }
+    },
+    "state_before": {
+      "molar_absorptivity": 3.0,
+      "concentration": 3.0,
+      "path_length": 4.0,
+      "absorbance": 36.0,
+      "transmittance": 1e-36
+    },
+    "state_after": {
+      "molar_absorptivity": 3.0,
+      "concentration": 3.0,
+      "path_length": 4.0,
+      "absorbance": 36.0,
+      "transmittance": 1e-36
+    },
+    "done": true
+  }
+]

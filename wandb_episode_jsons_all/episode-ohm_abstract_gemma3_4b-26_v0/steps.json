@@ -1,0 +1,43 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "I observe a simple relationship between A, B, and Y. Let's try increasing A to see if it affects Y in a predictable way.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "I observed that when A increased from 2.0 to 3.0, Y also increased from 20.0 to 30.0, while B remained constant. This suggests a linear relationship between A and Y. Let's increase B to see if it impacts Y.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "I observed that when A was increased to 3.0 and B was increased to 20.0, Y became 60.0. This suggests that Y is directly proportional to B. Let's further increase B to confirm this relationship.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "finish",
+    "reasoning": "I have observed that increasing A increases Y, and increasing B increases Y. When A is 3 and B is 30, Y is 90. It seems like Y = 3 * B. Let's confirm this.",
+    "parsed_action": null,
+    "final_equation": "Y = 3 * B",
+    "done": true
+  }
+]

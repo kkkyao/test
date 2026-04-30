@@ -1,0 +1,99 @@
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights: 100%|██████████| 291/291 [01:24<00:00,  3.43it/s]
+
+--- Run 1/30 ---
+  success=False  steps=59  reason=finish_wrong
+
+--- Run 2/30 ---
+  success=False  steps=49  reason=finish_wrong
+
+--- Run 3/30 ---
+  success=False  steps=37  reason=finish_wrong
+
+--- Run 4/30 ---
+  success=False  steps=9  reason=finish_wrong
+
+--- Run 5/30 ---
+  success=False  steps=19  reason=finish_wrong
+
+--- Run 6/30 ---
+  success=True  steps=14  reason=finish_success
+
+--- Run 7/30 ---
+  success=False  steps=5  reason=parse_error
+
+--- Run 8/30 ---
+  success=False  steps=100  reason=max_steps
+
+--- Run 9/30 ---
+  success=False  steps=55  reason=finish_wrong
+
+--- Run 10/30 ---
+  success=False  steps=28  reason=finish_wrong
+
+--- Run 11/30 ---
+  success=False  steps=24  reason=finish_wrong
+
+--- Run 12/30 ---
+  success=False  steps=100  reason=max_steps
+
+--- Run 13/30 ---
+  success=False  steps=43  reason=finish_wrong
+
+--- Run 14/30 ---
+  success=False  steps=42  reason=finish_wrong
+
+--- Run 15/30 ---
+  success=False  steps=46  reason=finish_wrong
+
+--- Run 16/30 ---
+  success=False  steps=21  reason=finish_wrong
+
+--- Run 17/30 ---
+  success=False  steps=16  reason=finish_wrong
+
+--- Run 18/30 ---
+  success=False  steps=91  reason=finish_wrong
+
+--- Run 19/30 ---
+  success=False  steps=29  reason=finish_wrong
+
+--- Run 20/30 ---
+  success=False  steps=56  reason=finish_wrong
+
+--- Run 21/30 ---
+  success=False  steps=31  reason=finish_wrong
+
+--- Run 22/30 ---
+  success=False  steps=40  reason=finish_wrong
+
+--- Run 23/30 ---
+  success=False  steps=11  reason=finish_wrong
+
+--- Run 24/30 ---
+  success=False  steps=17  reason=finish_wrong
+
+--- Run 25/30 ---
+  success=False  steps=100  reason=max_steps
+
+--- Run 26/30 ---
+  success=False  steps=19  reason=finish_wrong
+
+--- Run 27/30 ---
+  success=False  steps=33  reason=finish_wrong
+
+--- Run 28/30 ---
+  success=False  steps=25  reason=finish_wrong
+
+--- Run 29/30 ---
+  success=False  steps=32  reason=finish_wrong
+
+--- Run 30/30 ---
+  success=False  steps=68  reason=finish_wrong
+
+=== Experiment complete ===
+  success_rate: 3.33%
+  finish_rate:  86.67%
+  mean_steps:   40.6
+  mean_steps_to_success: 14.0
+  aggregate saved to: outputs/beers_text_default/aggregate.json

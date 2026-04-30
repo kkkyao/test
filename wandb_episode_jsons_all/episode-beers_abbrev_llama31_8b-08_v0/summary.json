@@ -1,0 +1,29 @@
+{
+  "final_equation": "A = c * epsilon * l",
+  "finish_reached": true,
+  "finish_step_id": 41,
+  "num_steps": 42,
+  "parse_error": null,
+  "evaluation": {
+    "success": true,
+    "finish_called": true,
+    "valid_finish": true,
+    "equation_correct": true,
+    "equation_submitted": true,
+    "steps_to_success": 42,
+    "termination_reason": "finish_success",
+    "final_equation": "A = c * epsilon * l",
+    "error_message": null,
+    "total_steps": 42,
+    "unique_states": 30,
+    "unique_actions": 6,
+    "repeated_actions": 35,
+    "loop_count": 35,
+    "state_coverage_ratio": 0.7143,
+    "redundancy_penalty": 0.8333,
+    "variable_isolation_score": 0.0,
+    "controlled_experiments_ratio": 0.0,
+    "exploration_breadth_score": 0.7143,
+    "discovery_efficiency": 0.02381
+  }
+}

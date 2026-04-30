@@ -1,0 +1,113 @@
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Fetching 2 files: 100%|██████████| 2/2 [00:00<00:00, 2684.35it/s]
+[transformers] The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+Loading weights: 100%|██████████| 426/426 [00:31<00:00, 13.32it/s]
+
+=== Experiment setup ===
+Config:          configs/config.yaml
+Env override:    configs/env_beers_abbrev.yaml
+Model override:  configs/model_qwen35_4b.yaml
+Run name:        beers_abbrev_qwen35_4b
+Output dir:      outputs/beers_abbrev_qwen35_4b
+Target variable: absorbance
+Naming mode:     abstract
+Action mode:     increase_decrease
+N runs:          30
+
+--- Run 1/30 ---
+  success=False  steps=4  reason=finish_wrong
+
+--- Run 2/30 ---
+  success=True  steps=5  reason=finish_success
+
+--- Run 3/30 ---
+  success=True  steps=5  reason=finish_success
+
+--- Run 4/30 ---
+  success=True  steps=6  reason=finish_success
+
+--- Run 5/30 ---
+  success=True  steps=4  reason=finish_success
+
+--- Run 6/30 ---
+  success=False  steps=3  reason=parse_error
+
+--- Run 7/30 ---
+  success=True  steps=7  reason=finish_success
+
+--- Run 8/30 ---
+  success=True  steps=6  reason=finish_success
+
+--- Run 9/30 ---
+  success=True  steps=10  reason=finish_success
+
+--- Run 10/30 ---
+  success=False  steps=4  reason=finish_wrong
+
+--- Run 11/30 ---
+  success=True  steps=5  reason=finish_success
+
+--- Run 12/30 ---
+  success=False  steps=6  reason=finish_wrong
+
+--- Run 13/30 ---
+  success=True  steps=7  reason=finish_success
+
+--- Run 14/30 ---
+  success=False  steps=3  reason=finish_wrong
+
+--- Run 15/30 ---
+  success=True  steps=4  reason=finish_success
+
+--- Run 16/30 ---
+  success=False  steps=3  reason=parse_error
+
+--- Run 17/30 ---
+  success=False  steps=3  reason=parse_error
+
+--- Run 18/30 ---
+  success=False  steps=2  reason=parse_error
+
+--- Run 19/30 ---
+  success=True  steps=5  reason=finish_success
+
+--- Run 20/30 ---
+  success=False  steps=2  reason=parse_error
+
+--- Run 21/30 ---
+  success=False  steps=1  reason=parse_error
+
+--- Run 22/30 ---
+  success=True  steps=7  reason=finish_success
+
+--- Run 23/30 ---
+  success=False  steps=7  reason=finish_wrong
+
+--- Run 24/30 ---
+  success=False  steps=6  reason=parse_error
+
+--- Run 25/30 ---
+  success=False  steps=4  reason=finish_wrong
+
+--- Run 26/30 ---
+  success=False  steps=3  reason=finish_wrong
+
+--- Run 27/30 ---
+  success=True  steps=6  reason=finish_success
+
+--- Run 28/30 ---
+  success=True  steps=7  reason=finish_success
+
+--- Run 29/30 ---
+  success=True  steps=7  reason=finish_success
+
+--- Run 30/30 ---
+  success=True  steps=5  reason=finish_success
+
+=== Experiment complete ===
+  success_rate: 53.33%
+  finish_rate:  76.67%
+  mean_steps:   4.9
+  mean_steps_to_success: 6.0
+  aggregate saved to: outputs/beers_abbrev_qwen35_4b/aggregate.json
+  episode files saved under: outputs/beers_abbrev_qwen35_4b/run_XX/

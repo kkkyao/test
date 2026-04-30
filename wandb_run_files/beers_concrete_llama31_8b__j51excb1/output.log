@@ -1,0 +1,111 @@
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights: 100%|██████████| 291/291 [00:57<00:00,  5.03it/s]
+
+=== Experiment setup ===
+Config:          configs/config.yaml
+Env override:    configs/env_beers_concrete.yaml
+Model override:  configs/model_llama31_8b.yaml
+Run name:        beers_concrete_llama31_8b
+Output dir:      outputs/beers_concrete_llama31_8b
+Target variable: absorbance
+Naming mode:     concrete
+Action mode:     increase_decrease
+N runs:          30
+
+--- Run 1/30 ---
+  success=False  steps=35  reason=finish_wrong
+
+--- Run 2/30 ---
+  success=False  steps=31  reason=finish_wrong
+
+--- Run 3/30 ---
+  success=True  steps=8  reason=finish_success
+
+--- Run 4/30 ---
+  success=False  steps=28  reason=finish_wrong
+
+--- Run 5/30 ---
+  success=False  steps=21  reason=finish_wrong
+
+--- Run 6/30 ---
+  success=False  steps=24  reason=finish_wrong
+
+--- Run 7/30 ---
+  success=True  steps=31  reason=finish_success
+
+--- Run 8/30 ---
+  success=True  steps=16  reason=finish_success
+
+--- Run 9/30 ---
+  success=False  steps=15  reason=finish_wrong
+
+--- Run 10/30 ---
+  success=False  steps=38  reason=finish_wrong
+
+--- Run 11/30 ---
+  success=False  steps=74  reason=finish_wrong
+
+--- Run 12/30 ---
+  success=False  steps=15  reason=finish_wrong
+
+--- Run 13/30 ---
+  success=False  steps=16  reason=finish_wrong
+
+--- Run 14/30 ---
+  success=False  steps=30  reason=finish_wrong
+
+--- Run 15/30 ---
+  success=False  steps=32  reason=finish_wrong
+
+--- Run 16/30 ---
+  success=False  steps=33  reason=finish_wrong
+
+--- Run 17/30 ---
+  success=True  steps=39  reason=finish_success
+
+--- Run 18/30 ---
+  success=False  steps=7  reason=finish_wrong
+
+--- Run 19/30 ---
+  success=True  steps=7  reason=finish_success
+
+--- Run 20/30 ---
+  success=False  steps=0  reason=parse_error
+
+--- Run 21/30 ---
+  success=True  steps=17  reason=finish_success
+
+--- Run 22/30 ---
+  success=False  steps=21  reason=finish_wrong
+
+--- Run 23/30 ---
+  success=False  steps=16  reason=finish_wrong
+
+--- Run 24/30 ---
+  success=False  steps=7  reason=finish_wrong
+
+--- Run 25/30 ---
+  success=False  steps=14  reason=finish_wrong
+
+--- Run 26/30 ---
+  success=False  steps=26  reason=finish_wrong
+
+--- Run 27/30 ---
+  success=False  steps=23  reason=finish_wrong
+
+--- Run 28/30 ---
+  success=False  steps=7  reason=finish_wrong
+
+--- Run 29/30 ---
+  success=False  steps=50  reason=finish_wrong
+
+--- Run 30/30 ---
+  success=False  steps=29  reason=finish_wrong
+
+=== Experiment complete ===
+  success_rate: 20.00%
+  finish_rate:  96.67%
+  mean_steps:   23.7
+  mean_steps_to_success: 19.7
+  aggregate saved to: outputs/beers_concrete_llama31_8b/aggregate.json
+  episode files saved under: outputs/beers_concrete_llama31_8b/run_XX/

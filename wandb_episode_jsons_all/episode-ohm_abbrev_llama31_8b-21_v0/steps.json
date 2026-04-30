@@ -1,0 +1,692 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Start exploring, observe initial state, and determine a plan to gather information.",
+    "parsed_action": {
+      "action_type": "decrease I",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Decrease I to observe its effect on V and R, then increase R to see how it affects V.",
+    "parsed_action": {
+      "action_type": "decrease I",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "Observe the effect of decreasing I on V and R.",
+    "parsed_action": {
+      "action_type": "decrease I",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "Observe the effect of decreasing I on V and R, then increase R to see how it affects V.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "reasoning": "Start exploring, observe initial state, and determine a plan to gather information.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 5,
+    "step_type": "action",
+    "reasoning": "Try to increase R to observe its effect on V and I.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 6,
+    "step_type": "action",
+    "reasoning": "Observe the effect of increasing R on V and I, then decrease I to see how it affects V.",
+    "parsed_action": {
+      "action_type": "decrease I",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 7,
+    "step_type": "action",
+    "reasoning": "Observe the effect of decreasing I on V and R.",
+    "parsed_action": {
+      "action_type": "decrease I",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 8,
+    "step_type": "action",
+    "reasoning": "Observe the effect of increasing I on V and R to gather more data.",
+    "parsed_action": {
+      "action_type": "increase I",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 9,
+    "step_type": "action",
+    "reasoning": "Observe the effect of increasing I on V and R, then decrease I to see how it affects V.",
+    "parsed_action": {
+      "action_type": "increase I",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 10,
+    "step_type": "action",
+    "reasoning": "Increase R to observe its effect on V and I, then decrease I to see how it affects V and R.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 11,
+    "step_type": "action",
+    "reasoning": "I need to increase R and decrease I to gather more data and understand the relationship between I, R, and V.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 12,
+    "step_type": "action",
+    "reasoning": "Since the current state is V = 40.0 when I = 2.0 and R = 20.0, and the previous state was V = 20.0 when I = 2.0 and R = 10.0, it seems that V is directly proportional to R.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 13,
+    "step_type": "action",
+    "reasoning": "Since the current state is V = 40.0 when I = 2.0 and R = 20.0, and the previous state was V = 20.0 when I = 2.0 and R = 10.0, it seems that V is directly proportional to R. Let's try to determine the proportionality constant.",
+    "parsed_action": {
+      "action_type": "increase I",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 14,
+    "step_type": "action",
+    "reasoning": "Since the current state is V = 40.0 when I = 2.0 and R = 20.0, and the previous state was V = 20.0 when I = 2.0 and R = 10.0, it seems that V is directly proportional to R. Let's try to determine the proportionality constant.",
+    "parsed_action": {
+      "action_type": "increase I",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 15,
+    "step_type": "action",
+    "reasoning": "I need to gather more data to confirm the proportionality between V and R.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 16,
+    "step_type": "action",
+    "reasoning": "Since V is directly proportional to R, let's use the formula V = kR, where k is the proportionality constant. We can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 17,
+    "step_type": "action",
+    "reasoning": "Since V is directly proportional to R, let's use the formula V = kR, where k is the proportionality constant. We can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 18,
+    "step_type": "action",
+    "reasoning": "V is directly proportional to R, so I'll try to determine the proportionality constant k by changing R and observing the effect on V.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 19,
+    "step_type": "action",
+    "reasoning": "Determine the proportionality constant k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 20,
+    "step_type": "action",
+    "reasoning": "Determine the proportionality constant k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 21,
+    "step_type": "action",
+    "reasoning": "Determine the proportionality constant k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 22,
+    "step_type": "action",
+    "reasoning": "Determine the proportionality constant k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 23,
+    "step_type": "action",
+    "reasoning": "Determine the proportionality constant k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 24,
+    "step_type": "action",
+    "reasoning": "Since V is directly proportional to R, let's use the formula V = kR, where k is the proportionality constant. We can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 25,
+    "step_type": "action",
+    "reasoning": "Since V is directly proportional to R, let's use the formula V = kR, where k is the proportionality constant. We can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 26,
+    "step_type": "action",
+    "reasoning": "Determine the proportionality constant k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 27,
+    "step_type": "action",
+    "reasoning": "Determine the proportionality constant k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 28,
+    "step_type": "action",
+    "reasoning": "V is directly proportional to R, so let's use the formula V = kR, where k is the proportionality constant. We can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 29,
+    "step_type": "action",
+    "reasoning": "V is directly proportional to R, so let's use the formula V = kR, where k is the proportionality constant. We can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 30,
+    "step_type": "action",
+    "reasoning": "Since V is directly proportional to R, let's use the formula V = kR, where k is the proportionality constant. We can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 31,
+    "step_type": "action",
+    "reasoning": "Determine the proportionality constant k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 32,
+    "step_type": "action",
+    "reasoning": "Since V is directly proportional to R, let's use the formula V = kR, where k is the proportionality constant. We can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 33,
+    "step_type": "action",
+    "reasoning": "Since V is directly proportional to R, let's use the formula V = kR, where k is the proportionality constant. We can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 34,
+    "step_type": "action",
+    "reasoning": "Since V is directly proportional to R, let's use the formula V = kR, where k is the proportionality constant. We can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 35,
+    "step_type": "action",
+    "reasoning": "I have observed that V is directly proportional to R, so I'll use the formula V = kR, where k is the proportionality constant. I can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 36,
+    "step_type": "action",
+    "reasoning": "V is directly proportional to R, so I'll use the formula V = kR, where k is the proportionality constant. I can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 37,
+    "step_type": "action",
+    "reasoning": "Since V is directly proportional to R, let's use the formula V = kR, where k is the proportionality constant. We can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 38,
+    "step_type": "action",
+    "reasoning": "Since V is directly proportional to R, let's use the formula V = kR, where k is the proportionality constant. We can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 39,
+    "step_type": "action",
+    "reasoning": "Since V is directly proportional to R, let's use the formula V = kR, where k is the proportionality constant. We can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 40,
+    "step_type": "action",
+    "reasoning": "Since V is directly proportional to R, let's use the formula V = kR, where k is the proportionality constant. We can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 41,
+    "step_type": "action",
+    "reasoning": "I have observed that V is directly proportional to R, so I'll use the formula V = kR, where k is the proportionality constant. I can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 42,
+    "step_type": "action",
+    "reasoning": "Since V is directly proportional to R, let's use the formula V = kR, where k is the proportionality constant. We can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 43,
+    "step_type": "action",
+    "reasoning": "I have observed that V is directly proportional to R, so I'll use the formula V = kR, where k is the proportionality constant. I can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 44,
+    "step_type": "action",
+    "reasoning": "Determine the proportionality constant k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 45,
+    "step_type": "action",
+    "reasoning": "Since V is directly proportional to R, let's use the formula V = kR, where k is the proportionality constant. We can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 46,
+    "step_type": "action",
+    "reasoning": "V is directly proportional to R, so I'll use the formula V = kR, where k is the proportionality constant. I can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 47,
+    "step_type": "action",
+    "reasoning": "I have observed that V is directly proportional to R, so I'll use the formula V = kR, where k is the proportionality constant. I can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 48,
+    "step_type": "action",
+    "reasoning": "Since V is directly proportional to R, let's use the formula V = kR, where k is the proportionality constant. We can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 49,
+    "step_type": "action",
+    "reasoning": "I have observed that V is directly proportional to R, so I'll use the formula V = kR, where k is the proportionality constant. I can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 50,
+    "step_type": "action",
+    "reasoning": "Determine the proportionality constant k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 51,
+    "step_type": "action",
+    "reasoning": "Since V is directly proportional to R, let's use the formula V = kR, where k is the proportionality constant. We can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 52,
+    "step_type": "action",
+    "reasoning": "I have observed that V is directly proportional to R, so I'll use the formula V = kR, where k is the proportionality constant. I can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 53,
+    "step_type": "action",
+    "reasoning": "Since V is directly proportional to R, let's use the formula V = kR, where k is the proportionality constant. We can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 54,
+    "step_type": "action",
+    "reasoning": "Since V is directly proportional to R, let's use the formula V = kR, where k is the proportionality constant. We can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 55,
+    "step_type": "action",
+    "reasoning": "Determine the proportionality constant k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 56,
+    "step_type": "action",
+    "reasoning": "V is directly proportional to R, so I'll use the formula V = kR, where k is the proportionality constant. We can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 57,
+    "step_type": "action",
+    "reasoning": "Determine the proportionality constant k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 58,
+    "step_type": "action",
+    "reasoning": "V is directly proportional to R, so I'll use the formula V = kR, where k is the proportionality constant. I can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 59,
+    "step_type": "action",
+    "reasoning": "Since V is directly proportional to R, let's use the formula V = kR, where k is the proportionality constant. We can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 60,
+    "step_type": "action",
+    "reasoning": "Determine the proportionality constant k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 61,
+    "step_type": "action",
+    "reasoning": "V is directly proportional to R, so I'll use the formula V = kR, where k is the proportionality constant. I can determine k by dividing V by R in the initial state.",
+    "parsed_action": {
+      "action_type": "increase R",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 62,
+    "step_type": "finish",
+    "reasoning": "V is directly proportional to R, so I'll use the formula V = kR, where k is the proportionality constant. We can determine k by dividing V by R in the initial state.",
+    "parsed_action": null,
+    "final_equation": "V = 2R",
+    "done": true
+  }
+]

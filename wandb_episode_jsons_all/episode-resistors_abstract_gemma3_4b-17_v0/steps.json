@@ -1,0 +1,54 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "I observe that Y is equal to A + B. Let's test if increasing A by 1 and B by 1 results in a corresponding change in Y.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "I have observed that Y is equal to A + B. I want to test if this is the underlying relationship. Let's increase A and B to see if Y increases linearly.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "I have observed that Y = A + B. I want to confirm this relationship with different values of A and B.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "I have observed that Y is equal to A + B. Let's confirm this relationship with a different set of values.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "finish",
+    "reasoning": "I have observed a clear linear relationship between A, B, and Y. Y is equal to A + B. I will confirm this relationship with the given initial values.",
+    "parsed_action": null,
+    "final_equation": "Y = A + B",
+    "done": true
+  }
+]

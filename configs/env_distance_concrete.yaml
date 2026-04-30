@@ -2,7 +2,7 @@ environment:
   target_variable: total_distance
 
   variables:
-    d1:
+    distance_1:
       manipulable: true
       initial_value: 10
       step_size: 10
@@ -10,7 +10,7 @@ environment:
       max_value: null
       description: first segment distance in metres
 
-    d2:
+    distance_2:
       manipulable: true
       initial_value: 20
       step_size: 10
@@ -18,7 +18,7 @@ environment:
       max_value: null
       description: second segment distance in metres
 
-    d3:
+    distance_3:
       manipulable: true
       initial_value: 30
       step_size: 10
@@ -31,15 +31,15 @@ environment:
       description: total distance in metres
 
   equations:
-    total_distance: "d1 + d2 + d3"
+    total_distance: "distance_1 + distance_2 + distance_3"
 
 representation:
   naming_mode: concrete
   metadata_level: rich
   name_mapping:
-    d1: d1
-    d2: d2
-    d3: d3
+    distance_1: distance_1
+    distance_2: distance_2
+    distance_3: distance_3
     total_distance: total_distance
 
 actions:
@@ -47,9 +47,9 @@ actions:
 
 evaluation:
   variable_mapping:
-    d1: d1
-    d2: d2
-    d3: d3
+    distance_1: distance_1
+    distance_2: distance_2
+    distance_3: distance_3
     total_distance: total_distance
 
 noise:

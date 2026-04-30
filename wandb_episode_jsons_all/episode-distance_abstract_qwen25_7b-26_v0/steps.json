@@ -1,0 +1,32 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Initial observation without changes.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Initial observation without changes.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "finish",
+    "reasoning": "Y increases linearly with A when B and C are held constant.",
+    "parsed_action": null,
+    "final_equation": "Y = 2 * A + 40",
+    "done": true
+  }
+]

@@ -1,0 +1,65 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Start by increasing A to observe if Y changes in relation to A.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Start by increasing A to observe if Y changes in relation to A.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "Y has increased by 10 when A was increased from 20 to 30, suggesting a linear relationship between A and Y.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "Y decreases by 10 when A decreases from 30 to 20, confirming the linear relationship.",
+    "parsed_action": {
+      "action_type": "increase B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "reasoning": "No change in Y when B is increased suggests B does not affect Y.",
+    "parsed_action": {
+      "action_type": "increase C",
+      "variable": "C"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 5,
+    "step_type": "finish",
+    "reasoning": "No change in Y when C is increased suggests C does not affect Y either. From previous steps, we observed a linear relationship between A and Y. Since B and C do not influence Y, the equation is likely Y = A + constant.",
+    "parsed_action": null,
+    "final_equation": "Y = A + 50",
+    "done": true
+  }
+]

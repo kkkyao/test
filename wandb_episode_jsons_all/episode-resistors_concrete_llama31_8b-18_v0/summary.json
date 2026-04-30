@@ -1,0 +1,29 @@
+{
+  "final_equation": "total_resistance = R1 + R2",
+  "finish_reached": true,
+  "finish_step_id": 32,
+  "num_steps": 33,
+  "parse_error": null,
+  "evaluation": {
+    "success": true,
+    "finish_called": true,
+    "valid_finish": true,
+    "equation_correct": true,
+    "equation_submitted": true,
+    "steps_to_success": 33,
+    "termination_reason": "finish_success",
+    "final_equation": "total_resistance = R1 + R2",
+    "error_message": null,
+    "total_steps": 33,
+    "unique_states": 30,
+    "unique_actions": 4,
+    "repeated_actions": 28,
+    "loop_count": 28,
+    "state_coverage_ratio": 0.9091,
+    "redundancy_penalty": 0.8485,
+    "variable_isolation_score": 1.0,
+    "controlled_experiments_ratio": 1.0,
+    "exploration_breadth_score": 0.9091,
+    "discovery_efficiency": 0.030303
+  }
+}

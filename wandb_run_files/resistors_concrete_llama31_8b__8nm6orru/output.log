@@ -1,0 +1,70 @@
+config.json: 100%|████████████████████████████████████████████████████████████████████| 855/855 [00:00<00:00, 3.27MB/s]
+tokenizer_config.json: 55.4kB [00:00, 46.6MB/s]
+tokenizer.json: 9.09MB [00:00, 21.1MB/s]
+special_tokens_map.json: 100%|████████████████████████████████████████████████████████| 296/296 [00:00<00:00, 1.56MB/s]
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+model.safetensors.index.json: 23.9kB [00:00, 40.9MB/s]
+Fetching 4 files: 100%|██████████████████████████████████████████████████████████████████| 4/4 [00:35<00:00,  8.79s/it]
+Download complete: 100%|███████████████████████████████████████████████████████████| 16.1G/16.1G [00:35<00:00, 457MB/s]
+Loading weights: 100%|███████████████████████████████████████████████████████████████| 291/291 [00:44<00:00,  6.58it/s]
+generation_config.json: 100%|██████████████████████████████████████████████████████████| 184/184 [00:00<00:00, 709kB/s]
+
+--- Run 1/30 ---
+  success=False  steps=15  reason=finish_wrong
+
+--- Run 2/30 ---
+  success=False  steps=30  reason=max_steps
+
+--- Run 3/30 ---
+  success=False  steps=12  reason=finish_wrong
+
+--- Run 4/30 ---
+  success=True  steps=21  reason=finish_success
+
+--- Run 5/30 ---
+  success=False  steps=28  reason=finish_wrong
+
+--- Run 6/30 ---
+  success=True  steps=8  reason=finish_success
+
+--- Run 7/30 ---
+  success=False  steps=30  reason=max_steps
+
+--- Run 8/30 ---
+  success=False  steps=30  reason=max_steps
+
+--- Run 9/30 ---
+Traceback (most recent call last):
+  File "/results/yao314652/home/project/run_experiment.py", line 258, in <module>
+    main(
+  File "/results/yao314652/home/project/run_experiment.py", line 163, in main
+    result      = runner.run_episode()
+                  ^^^^^^^^^^^^^^^^^^^^
+  File "/results/yao314652/home/project/src/runners/runner.py", line 74, in run_episode
+    agent_step, raw_output = self.agent.act(prompt)
+                             ^^^^^^^^^^^^^^^^^^^^^^
+  File "/results/yao314652/home/project/src/agents/agent.py", line 41, in act
+    raw_output = self._generate(prompt)
+                 ^^^^^^^^^^^^^^^^^^^^^^
+  File "/results/yao314652/home/project/src/agents/agent.py", line 46, in _generate
+    raw_output = self.model_callable(prompt)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/results/yao314652/home/project/run_episode.py", line 130, in hf_qwen_model
+    outputs = model.generate(
+              ^^^^^^^^^^^^^^^
+  File "/results/yao314652/home/project/.venv/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/results/yao314652/home/project/.venv/lib/python3.11/site-packages/transformers/generation/utils.py", line 2543, in generate
+    result = decoding_method(
+             ^^^^^^^^^^^^^^^^
+  File "/results/yao314652/home/project/.venv/lib/python3.11/site-packages/transformers/generation/utils.py", line 2765, in _sample
+    next_token_scores = logits_processor(input_ids, next_token_logits)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/results/yao314652/home/project/.venv/lib/python3.11/site-packages/transformers/generation/logits_process.py", line 96, in __call__
+    scores = processor(input_ids, scores)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/results/yao314652/home/project/.venv/lib/python3.11/site-packages/transformers/generation/logits_process.py", line 528, in __call__
+    sorted_logits, sorted_indices = torch.sort(scores, descending=False)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

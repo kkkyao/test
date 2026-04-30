@@ -1,0 +1,197 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Start with a variable that seems most connected to the current state, x. Let's increase x0 to see if it affects the current state.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "x0"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Start with a variable that seems most connected to the current state, x. Let's increase v to see if it affects the current state.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "v"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "Start with a variable that seems most connected to the current state, t. Let's decrease t to see if it affects the current state.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "t"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "Now that x has returned to its original value, it's likely that x0 is not the cause of the change in x. Let's try to find a relationship between v and x.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "v"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "reasoning": "x is changing in relation to v, so let's try to see if t has an effect on the relationship.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "t"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 5,
+    "step_type": "action",
+    "reasoning": "x is changing in relation to v, and t seems to have an effect on the relationship. Let's try to find the relationship between v and t.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "v"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 6,
+    "step_type": "action",
+    "reasoning": "Now that x has returned to its original value when v is 0, it's likely that the relationship is linear. Let's try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "v"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 7,
+    "step_type": "action",
+    "reasoning": "x is changing in relation to v and t, and the relationship is likely linear. Let's try to find the slope of the line.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "t"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 8,
+    "step_type": "action",
+    "reasoning": "Now that x has changed in relation to both v and t, let's try to find the relationship between v and t.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "t"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 9,
+    "step_type": "action",
+    "reasoning": "Try to find the relationship between v and t.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "t"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 10,
+    "step_type": "action",
+    "reasoning": "Try to find the relationship between t and x, given that v is constant.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "t"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 11,
+    "step_type": "action",
+    "reasoning": "Try to find the relationship between t and x, given that v is constant and x0 is constant.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "t"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 12,
+    "step_type": "action",
+    "reasoning": "Try to find the relationship between t and x, given that v is constant and x0 is constant.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "t"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 13,
+    "step_type": "action",
+    "reasoning": "Try to find the relationship between t and x, given that v is constant and x0 is constant.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "t"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 14,
+    "step_type": "action",
+    "reasoning": "Try to find the relationship between t and x, given that v is constant and x0 is constant.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "t"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 15,
+    "step_type": "action",
+    "reasoning": "Try to find the relationship between t and x, given that v is constant and x0 is constant.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "t"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 16,
+    "step_type": "action",
+    "reasoning": "Try to find the relationship between t and x, given that v is constant and x0 is constant.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "t"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 17,
+    "step_type": "finish",
+    "reasoning": "Since the relationship between t and x is linear and v is constant, we can use the equation x = x0 + vt.",
+    "parsed_action": null,
+    "final_equation": "x = x0 + vt",
+    "done": true
+  }
+]

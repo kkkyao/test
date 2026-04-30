@@ -14,7 +14,6 @@ prompt:
     action: "take exactly one action to change the environment"
     finish: "stop exploring and submit your final equation"
 
-  # FIX: 去掉了原来关于 value 字段的两条规则（由 parser 在代码层强制，不靠 prompt 说教）
   rules:
     - "Return exactly one valid JSON object."
     - "Do not output prose, markdown fences, bullet points, or any text outside the JSON object."
@@ -26,7 +25,6 @@ prompt:
 
   output_format_header: "Your answer must follow one of the JSON templates below."
 
-  # FIX: 按 action_mode 拆分为两个独立模板，prompt_builder 根据当前 mode 只取其一
   output_format_action_increase_decrease: |
     For an action step:
     {
@@ -60,6 +58,24 @@ prompt:
       "action": null,
       "final_equation": "equation string"
     }
+
+  # ── Forced-finish prompt ────────────────────────────────────────────────────
+  # Used by PromptBuilder.build_final_prompt() when max_steps is reached or a
+  # parse_error occurred during the episode.  The model is asked to produce a
+  # plain-text equation (no JSON required).  Only {target_variable} and
+  # {variable_list} are substituted at runtime.
+  forced_finish_template: |
+    You have finished your exploration steps.
+    Based on everything you observed, write the equation for {target_variable}.
+
+    Rules:
+    - Write only the equation on a single line.
+    - Use only the variables you observed: {variable_list}.
+    - Use only +, -, *, / operators. Do not add numeric coefficients.
+    - Format: {target_variable} = <expression>
+    - Do not write anything else — no JSON, no explanation, no markdown.
+
+    Equation:
 
   section_headers:
     step_types: "Allowed step types:"

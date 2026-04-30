@@ -26,7 +26,7 @@ class PromptBuilder:
         prompt_config: Dict[str, Any],
         target_variable: str,
         max_steps: int,
-        action_mode: str,                    # FIX: 新增，用于选择对应的 output format 模板
+        action_mode: str,
         include_history: bool = True,
         history_window: Optional[int] = None,
     ) -> None:
@@ -53,7 +53,6 @@ class PromptBuilder:
         self.include_history = include_history
         self.history_window = history_window
 
-        # FIX: 检查 action_mode 对应的模板 key 是否存在
         self._require_keys(
             self._cfg,
             [
@@ -67,6 +66,7 @@ class PromptBuilder:
                 "output_format_finish",
                 "section_headers",
                 "history_labels",
+                "forced_finish_template",          # required for forced-finish flow
             ],
         )
         self._require_keys(
@@ -120,7 +120,7 @@ class PromptBuilder:
         for step_type, description in self._cfg["step_type_descriptions"].items():
             sections.append(f"- {step_type}: {description}")
 
-        # 4. Rules（与 action_mode 无关；value 格式约束由 parser 在代码层强制）
+        # 4. Rules
         sections.append("")
         sections.append(self._cfg["section_headers"]["rules"])
         for rule in self._cfg["rules"]:
@@ -139,12 +139,59 @@ class PromptBuilder:
         else:
             sections.append(self._cfg["history_labels"]["empty"])
 
-        # 7. Output format: FIX: 只展示当前 action_mode 对应的模板 + finish 模板
+        # 7. Output format
         sections.append("")
         sections.append(self._cfg["section_headers"]["output_format"])
         sections.append(self._cfg["output_format_header"])
         sections.append(self._cfg[f"output_format_action_{self.action_mode}"].rstrip())
         sections.append(self._cfg["output_format_finish"].rstrip())
+
+        return "\n".join(sections)
+
+    def build_final_prompt(
+        self,
+        observation: Observation,
+        history: Optional[List[Dict[str, Any]]] = None,
+    ) -> str:
+        """
+        Build a plain-text prompt used when the episode ends without a
+        voluntary finish (max_steps reached or parse_error mid-episode).
+
+        The model is asked to write a single equation line — NO JSON.
+        This is intentionally simpler than build_prompt() so that even
+        weaker models can produce a parseable result.
+
+        The prompt includes:
+          - the condensed history so the model has its observations
+          - the forced_finish_template from config (plain-text instruction)
+        """
+        if not isinstance(observation, Observation):
+            raise ValueError("observation must be an Observation instance")
+
+        history = history or []
+        if not isinstance(history, list):
+            raise ValueError("history must be a list")
+
+        display_target = observation.metadata.get(
+            "target_variable", self.target_variable
+        )
+
+        # Variable names the model has been shown (display names)
+        variable_list = ", ".join(observation.visible_state.keys())
+
+        history_text = self._format_history(history)
+
+        template: str = self._cfg["forced_finish_template"]
+
+        sections: List[str] = [
+            self._cfg["section_headers"]["history"],
+            history_text,
+            "",
+            template.format(
+                target_variable=display_target,
+                variable_list=variable_list,
+            ).strip(),
+        ]
 
         return "\n".join(sections)
 
@@ -155,10 +202,6 @@ class PromptBuilder:
     def _format_history(self, history: List[Dict[str, Any]]) -> str:
         """
         Convert history dicts into a compact, labelled text block.
-
-        For action steps: show step_type, reasoning, action, state before/after.
-        final_equation is not shown — finish always ends the episode immediately
-        so no subsequent step ever reads it from history.
         """
         if not history:
             return self._cfg["history_labels"]["empty"]
@@ -218,19 +261,15 @@ class PromptBuilder:
 
     @staticmethod
     def _format_action(action: Any) -> str:
-        """Render a parsed action dict into a readable string."""
         if not isinstance(action, dict):
             return str(action)
-
         action_type = action.get("action_type", "?")
         variable    = action.get("variable", "?")
         value       = action.get("value")
-
         if action_type == "set" and value is not None:
             return f"set {variable} to {value}"
         if action_type in {"increase", "decrease"}:
             return f"{action_type} {variable}"
-
         return str(action)
 
     @staticmethod

@@ -1,0 +1,46 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Initial observation shows a relationship between I, R, and V. However, the relationship is not clear yet. Let's increase R to observe if it affects V.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "The current observation shows a constant relationship between I, R, and V, where V is exactly twice R. Let's check if this relationship holds for different values of I.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "The current observation shows a constant relationship between I, R, and V, where V is exactly twice R. Let's check if this relationship holds for different values of R.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "R"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "The current observation shows a constant relationship between I, R, and V, where V is exactly twice R. To confirm this relationship, let's check if V remains constant when I is changed.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  }
+]

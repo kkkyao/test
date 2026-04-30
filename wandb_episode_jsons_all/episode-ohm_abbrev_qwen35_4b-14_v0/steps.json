@@ -1,0 +1,43 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "I start with I=2.0, R=10.0, V=20.0. I notice that V = 2 * I * R (2 * 2 * 10 = 40) is not correct. Let's check V = I * R. 2 * 10 = 20. This matches. To confirm, I will increase I by 1 to make I=3.0. If the relationship is V = I * R, then V should become 30.0.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "The current state is I=3.0, R=10.0, V=30.0. Based on the previous step where I=2.0, R=10.0, V=20.0, the relationship V = I * R held (2*10=20, 3*10=30). To confirm this linear relationship with respect to I, I will increase I further. If V = I * R, increasing I to 4.0 should result in V = 40.0.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "The current state is I=4.0, R=10.0, V=40.0. Previous steps confirmed V = I * R (2*10=20, 3*10=30, 4*10=40). To further validate this relationship, I will increase I to 5.0. If V = I * R holds, V should become 50.0.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "I"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "finish",
+    "reasoning": "The current state is I=5.0, R=10.0, V=50.0. Previous steps (I=2, V=20; I=3, V=30; I=4, V=40) consistently showed V = I * R. Now with I=5 and R=10, V=50 confirms V = 5 * 10 = 50. The relationship V = I * R is robustly established across all tested values. I have gathered sufficient evidence to conclude the equation.",
+    "parsed_action": null,
+    "final_equation": "V = I * R",
+    "done": true
+  }
+]

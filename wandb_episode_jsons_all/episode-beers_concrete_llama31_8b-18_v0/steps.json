@@ -1,0 +1,76 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Start with the basics, let's increase the concentration to see how it affects absorbance.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Let's observe how changing molar_absorptivity affects absorbance.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "molar_absorptivity"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "We observed a direct relationship between concentration and absorbance, now let's change the path_length to see how it affects absorbance.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "path_length"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "Let's observe how changing the concentration affects absorbance again.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "reasoning": "We observed a direct relationship between concentration and absorbance, now let's change the molar_absorptivity to see how it affects absorbance.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "molar_absorptivity"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 5,
+    "step_type": "action",
+    "reasoning": "We observed a direct relationship between concentration and absorbance, and between molar_absorptivity and absorbance. Let's now change the path_length to see how it affects absorbance.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "path_length"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 6,
+    "step_type": "finish",
+    "reasoning": "We have observed direct relationships between concentration, molar_absorptivity, and path_length with absorbance. We can now formulate an equation based on these observations.",
+    "parsed_action": null,
+    "final_equation": "absorbance = molar_absorptivity * concentration * path_length",
+    "done": true
+  }
+]

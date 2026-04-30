@@ -1,0 +1,252 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Start by changing a variable to observe its effect on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Start by changing concentration to observe its effect on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "To determine the relationship between concentration and absorbance, let's decrease concentration.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "To determine the relationship between path length and absorbance, let's increase path length.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "path_length"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "reasoning": "To further understand the relationship between concentration and absorbance, let's decrease concentration and observe the effect on absorbance.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 5,
+    "step_type": "action",
+    "reasoning": "Let's decrease the molar absorptivity to see how it affects absorbance",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "molar_absorptivity"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 6,
+    "step_type": "action",
+    "reasoning": "Observe the effect of increasing molar absorptivity on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "molar_absorptivity"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 7,
+    "step_type": "action",
+    "reasoning": "Increase molar absorptivity to see its effect on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "molar_absorptivity"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 8,
+    "step_type": "action",
+    "reasoning": "Increase concentration to observe its effect on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 9,
+    "step_type": "action",
+    "reasoning": "Increase concentration to see its effect on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 10,
+    "step_type": "action",
+    "reasoning": "Observe the effect of increasing path length on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "path_length"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 11,
+    "step_type": "action",
+    "reasoning": "Now that I have observed the effect of increasing concentration on absorbance, let's decrease path length to see its effect on absorbance.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "path_length"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 12,
+    "step_type": "action",
+    "reasoning": "Observe the relationship between molar absorptivity and absorbance by increasing molar absorptivity",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "molar_absorptivity"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 13,
+    "step_type": "action",
+    "reasoning": "Now that I have observed the effect of increasing molar absorptivity on absorbance, I will increase the path length to observe its effect on absorbance.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "path_length"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 14,
+    "step_type": "action",
+    "reasoning": "Increase concentration to observe its effect on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 15,
+    "step_type": "action",
+    "reasoning": "Observe the effect of increasing concentration on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 16,
+    "step_type": "action",
+    "reasoning": "Observe the relationship between concentration and absorbance by increasing concentration",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 17,
+    "step_type": "action",
+    "reasoning": "Observe the effect of decreasing concentration on absorbance",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 18,
+    "step_type": "action",
+    "reasoning": "Observe the relationship between concentration and absorbance by decreasing concentration",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 19,
+    "step_type": "action",
+    "reasoning": "Observe the effect of increasing path length on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "path_length"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 20,
+    "step_type": "action",
+    "reasoning": "Now that I have observed the effect of increasing concentration on absorbance, let's increase path length to observe its effect on absorbance.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "path_length"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 21,
+    "step_type": "action",
+    "reasoning": "Observe the effect of increasing concentration on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 22,
+    "step_type": "finish",
+    "reasoning": "The relationship between absorbance and the variables is linear, so I will use Beer's Law to determine the equation.",
+    "parsed_action": null,
+    "final_equation": "A = \\(\\epsilon \\cdot c \\cdot l\\)",
+    "done": true
+  }
+]

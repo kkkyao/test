@@ -1,0 +1,29 @@
+{
+  "final_equation": "voltage = current * resistance",
+  "finish_reached": true,
+  "finish_step_id": 21,
+  "num_steps": 22,
+  "parse_error": null,
+  "evaluation": {
+    "success": true,
+    "finish_called": true,
+    "valid_finish": true,
+    "equation_correct": true,
+    "equation_submitted": true,
+    "steps_to_success": 22,
+    "termination_reason": "finish_success",
+    "final_equation": "voltage = current * resistance",
+    "error_message": null,
+    "total_steps": 22,
+    "unique_states": 11,
+    "unique_actions": 8,
+    "repeated_actions": 13,
+    "loop_count": 13,
+    "state_coverage_ratio": 0.5,
+    "redundancy_penalty": 0.5909,
+    "variable_isolation_score": 0.7143,
+    "controlled_experiments_ratio": 0.7143,
+    "exploration_breadth_score": 0.5,
+    "discovery_efficiency": 0.045455
+  }
+}

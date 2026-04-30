@@ -1,0 +1,21 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "I have initial values A=10, B=20, C=30, Y=60. I suspect Y might be a linear combination of A, B, and C. Let's test if Y = A + B + C. 10+20+30=60, which matches Y. To confirm, I will increase A by 10 to 20 and see if Y increases by 10 to 70.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "finish",
+    "reasoning": "The initial state was A=10, B=20, C=30, Y=60. After increasing A by 10 to 20, Y increased by 10 to 70. This confirms the relationship Y = A + B + C. The current state matches this equation (20+20+30=70). I have sufficient evidence to conclude the equation.",
+    "parsed_action": null,
+    "final_equation": "Y = A + B + C",
+    "done": true
+  }
+]

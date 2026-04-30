@@ -1,0 +1,54 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "I'll start by increasing A to see if it impacts Y. A simple incremental change is a good starting point.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Increasing A again might reveal a pattern. Let's increase it further.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "B remains constant, and increasing A leads to a direct increase in Y. It appears Y is linearly proportional to A. Let's increase B to see how it affects the relationship.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "B is constant, and increasing A increases Y. I observed that when A was 30, Y was 40. I will now increase A again to see if the relationship holds.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "finish",
+    "reasoning": "I've observed that increasing A consistently increases Y. The current values are A = 40, B = 10, and Y = 50.  Since B is constant and A is directly related to Y, I believe I've discovered the equation. The relationship appears to be Y = 2.5 * A.",
+    "parsed_action": null,
+    "final_equation": "Y = 2.5 * A",
+    "done": true
+  }
+]

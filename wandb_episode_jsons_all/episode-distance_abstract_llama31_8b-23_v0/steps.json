@@ -1,0 +1,197 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Start by changing variable A to see its effect on Y.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Start by changing variable A to see its effect on Y.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "Start by changing variable B to see its effect on Y.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "Increase B to see its effect on Y.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "reasoning": "Start by changing variable C to see its effect on Y.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "C"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 5,
+    "step_type": "action",
+    "reasoning": "Decrease C to see its effect on Y.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "C"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 6,
+    "step_type": "action",
+    "reasoning": "Increase C to see its effect on Y.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "C"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 7,
+    "step_type": "action",
+    "reasoning": "Increase A to see its effect on Y after previous decrease.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 8,
+    "step_type": "action",
+    "reasoning": "Notice the change in Y when A is increased and then decreased, and when C is increased and then decreased. It seems that Y is affected by A and C, but not B. The change in Y is consistent with a linear relationship with A and C.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 9,
+    "step_type": "action",
+    "reasoning": "Y seems to be a linear combination of A and C, so try to see if Y increases when both A and C are increased.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 10,
+    "step_type": "action",
+    "reasoning": "Increase C to see its effect on Y.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "C"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 11,
+    "step_type": "action",
+    "reasoning": "Y seems to be a linear combination of A and C, so try to see if Y increases when both A and C are increased.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "C"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 12,
+    "step_type": "action",
+    "reasoning": "Increase A to see its effect on Y.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 13,
+    "step_type": "action",
+    "reasoning": "Increase B to see its effect on Y after previous increase.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 14,
+    "step_type": "action",
+    "reasoning": "Increase A to see its effect on Y.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 15,
+    "step_type": "action",
+    "reasoning": "Try to increase A and C to see if Y increases.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "C"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 16,
+    "step_type": "action",
+    "reasoning": "Notice that the last few steps show that increasing A and C both increase Y, but the change in Y is the same as the sum of the changes in A and C.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "C"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 17,
+    "step_type": "finish",
+    "reasoning": "Since Y increases by the same amount as A and C individually and together, and doesn't change with B, it seems that Y = A + C.",
+    "parsed_action": null,
+    "final_equation": "Y = A + C",
+    "done": true
+  }
+]

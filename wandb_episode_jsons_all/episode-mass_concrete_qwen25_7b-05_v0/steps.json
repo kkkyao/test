@@ -1,0 +1,24 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Initial observation suggests a linear relationship between mass, density, volume, and a scaling constant. Increasing density will help verify if mass is directly proportional to density.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "density"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Increasing density further to see if the mass changes proportionally.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "density"
+    },
+    "final_equation": null,
+    "done": false
+  }
+]

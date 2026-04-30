@@ -1,0 +1,98 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Start with basic actions to see how variables change",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Start with basic actions to see how variables change",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "Start with basic actions to see how variables change",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "Increase A and B to see the change in Y",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "C"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "reasoning": "Check the effect of increasing C on Y",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "C"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 5,
+    "step_type": "action",
+    "reasoning": "Since Y increased by 10 when C was increased by 1 from 3 to 4, and it was 50 at that point, and Y increased by 10 when C was increased by 1 from 2 to 3, and it was 40 at that point, and it increased by 10 each time C was increased by 1, it seems Y is directly proportional to C.",
+    "parsed_action": {
+      "action_type": "decrease B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 6,
+    "step_type": "action",
+    "reasoning": "Try to decrease C to see if Y decreases proportionally",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "C"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 7,
+    "step_type": "action",
+    "reasoning": "Try to increase A and see if Y changes proportionally with C",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 8,
+    "step_type": "finish",
+    "reasoning": "Since Y increased by 10 when C was increased by 1 from 3 to 4, and it was 50 at that point, and Y increased by 10 when C was increased by 1 from 2 to 3, and it was 40 at that point, and it increased by 10 each time C was increased by 1, it seems Y is directly proportional to C. Since Y is 60 when C is 3, the equation seems to be Y = 20C.",
+    "parsed_action": null,
+    "final_equation": "Y = 20C",
+    "done": true
+  }
+]

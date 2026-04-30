@@ -1,0 +1,263 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Start with a baseline observation and explore the effect of changing variables",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Start with a baseline observation and explore the effect of changing variables",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "Observe the initial state and determine the effect of changing concentration",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "Observe the effect of changing molar absorptivity on absorbance",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "molar_absorptivity"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "reasoning": "Observe the effect of changing path_length on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "path_length"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 5,
+    "step_type": "action",
+    "reasoning": "Increase concentration to observe its effect on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 6,
+    "step_type": "action",
+    "reasoning": "Increase concentration to observe its effect on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 7,
+    "step_type": "action",
+    "reasoning": "Determine the effect of molar absorptivity on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "molar_absorptivity"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 8,
+    "step_type": "action",
+    "reasoning": "Observe the effect of changing concentration and path_length on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "path_length"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 9,
+    "step_type": "action",
+    "reasoning": "Increase concentration to observe its effect on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 10,
+    "step_type": "action",
+    "reasoning": "Observe the effect of changing path_length on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "path_length"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 11,
+    "step_type": "action",
+    "reasoning": "Increase concentration to observe its effect on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 12,
+    "step_type": "action",
+    "reasoning": "Increase concentration to observe its effect on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 13,
+    "step_type": "action",
+    "reasoning": "Observe the effect of changing concentration on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 14,
+    "step_type": "action",
+    "reasoning": "Observe the effect of changing concentration on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 15,
+    "step_type": "action",
+    "reasoning": "The relationship between absorbance and the variables is linear, so the equation should be in the form of absorbance = k * concentration * path_length * molar_absorptivity.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "molar_absorptivity"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 16,
+    "step_type": "action",
+    "reasoning": "Increase concentration to observe its effect on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 17,
+    "step_type": "action",
+    "reasoning": "The relationship between absorbance and the variables is linear, so the equation should be in the form of absorbance = k * concentration * path_length * molar_absorptivity.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 18,
+    "step_type": "action",
+    "reasoning": "The relationship between absorbance and the variables is linear, so the equation should be in the form of absorbance = k * concentration * path_length * molar_absorptivity.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 19,
+    "step_type": "action",
+    "reasoning": "Increase concentration to observe its effect on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 20,
+    "step_type": "action",
+    "reasoning": "Observe the effect of changing molar absorptivity on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "concentration"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 21,
+    "step_type": "action",
+    "reasoning": "Observe the effect of changing molar absorptivity on absorbance",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "molar_absorptivity"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 22,
+    "step_type": "action",
+    "reasoning": "The relationship between absorbance and the variables is linear, so the equation should be in the form of absorbance = k * concentration * path_length * molar_absorptivity.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "molar_absorptivity"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 23,
+    "step_type": "finish",
+    "reasoning": "The relationship between absorbance and the variables is linear, so the equation should be in the form of absorbance = k * concentration * path_length * molar_absorptivity.",
+    "parsed_action": null,
+    "final_equation": "absorbance = concentration * path_length * molar_absorptivity * k",
+    "done": true
+  }
+]

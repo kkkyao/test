@@ -1,0 +1,29 @@
+{
+  "final_equation": "Y = 2A - 3B + 10",
+  "finish_reached": true,
+  "finish_step_id": 31,
+  "num_steps": 32,
+  "parse_error": null,
+  "evaluation": {
+    "success": false,
+    "finish_called": true,
+    "valid_finish": true,
+    "equation_correct": false,
+    "equation_submitted": true,
+    "steps_to_success": null,
+    "termination_reason": "finish_wrong",
+    "final_equation": "Y = 2A - 3B + 10",
+    "error_message": null,
+    "total_steps": 32,
+    "unique_states": 15,
+    "unique_actions": 8,
+    "repeated_actions": 23,
+    "loop_count": 23,
+    "state_coverage_ratio": 0.4688,
+    "redundancy_penalty": 0.7188,
+    "variable_isolation_score": 0.0,
+    "controlled_experiments_ratio": 0.0,
+    "exploration_breadth_score": 0.4688,
+    "discovery_efficiency": 0.0
+  }
+}

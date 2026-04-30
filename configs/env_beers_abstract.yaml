@@ -45,8 +45,8 @@ representation:
     molar_absorptivity: A
     concentration: B
     path_length: C
-    transmittance: Y1
-    absorbance: Y2
+    transmittance: T   # secondary observable output
+    absorbance: Y      # primary target variable (renamed from Y2)
 
 actions:
   action_mode: increase_decrease
@@ -56,8 +56,8 @@ evaluation:
     A: molar_absorptivity
     B: concentration
     C: path_length
-    Y1: transmittance
-    Y2: absorbance
+    T: transmittance   # kept in sync with name_mapping above
+    Y: absorbance      # kept in sync with name_mapping above
 
 noise:
   enabled: false

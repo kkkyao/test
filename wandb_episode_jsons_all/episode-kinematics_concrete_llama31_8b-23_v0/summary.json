@@ -1,0 +1,29 @@
+{
+  "final_equation": "position = initial_position + velocity * time",
+  "finish_reached": true,
+  "finish_step_id": 26,
+  "num_steps": 27,
+  "parse_error": null,
+  "evaluation": {
+    "success": true,
+    "finish_called": true,
+    "valid_finish": true,
+    "equation_correct": true,
+    "equation_submitted": true,
+    "steps_to_success": 27,
+    "termination_reason": "finish_success",
+    "final_equation": "position = initial_position + velocity * time",
+    "error_message": null,
+    "total_steps": 27,
+    "unique_states": 19,
+    "unique_actions": 7,
+    "repeated_actions": 19,
+    "loop_count": 19,
+    "state_coverage_ratio": 0.7037,
+    "redundancy_penalty": 0.7037,
+    "variable_isolation_score": 0.7308,
+    "controlled_experiments_ratio": 0.7308,
+    "exploration_breadth_score": 0.7037,
+    "discovery_efficiency": 0.037037
+  }
+}

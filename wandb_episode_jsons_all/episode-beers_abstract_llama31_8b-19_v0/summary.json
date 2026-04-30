@@ -1,0 +1,29 @@
+{
+  "final_equation": "Y2 = 2^A",
+  "finish_reached": true,
+  "finish_step_id": 21,
+  "num_steps": 22,
+  "parse_error": null,
+  "evaluation": {
+    "success": false,
+    "finish_called": true,
+    "valid_finish": true,
+    "equation_correct": false,
+    "equation_submitted": true,
+    "steps_to_success": null,
+    "termination_reason": "finish_wrong",
+    "final_equation": "Y2 = 2^A",
+    "error_message": null,
+    "total_steps": 22,
+    "unique_states": 5,
+    "unique_actions": 8,
+    "repeated_actions": 13,
+    "loop_count": 13,
+    "state_coverage_ratio": 0.2273,
+    "redundancy_penalty": 0.5909,
+    "variable_isolation_score": 0.0,
+    "controlled_experiments_ratio": 0.0,
+    "exploration_breadth_score": 0.2273,
+    "discovery_efficiency": 0.0
+  }
+}

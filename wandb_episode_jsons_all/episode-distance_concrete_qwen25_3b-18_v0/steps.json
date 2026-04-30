@@ -1,0 +1,21 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "The current total_distance is the sum of d1, d2, and d3. By manipulating these variables, we can derive the relationship between them.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "d1"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "finish",
+    "reasoning": "The initial total_distance is 70 meters, which is the sum of d1, d2, and d3. After increasing d1, the total_distance became 70 meters again, indicating that the sum of d1, d2, and d3 remains constant.",
+    "parsed_action": null,
+    "final_equation": "total_distance = d1 + d2 + d3",
+    "done": true
+  }
+]

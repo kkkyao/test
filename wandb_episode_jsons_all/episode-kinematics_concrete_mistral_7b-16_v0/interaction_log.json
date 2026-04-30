@@ -1,0 +1,877 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "prompt": "You are a scientific explorer interacting with an unknown environment. You must respond with exactly one valid JSON object.\n\nYour goal is to discover the equation that determines position from the other variables in the environment.\nExplore the environment step by step through interaction.\nUse the current observation and previous history when deciding your next step.\nPut any reasoning inside the JSON reasoning field only.\nStop only when you have gathered enough evidence from interaction to state a final equation supported by the observations.\nYou may take up to 100 steps in total.\n\nAllowed step types:\n- action: take exactly one action to change the environment\n- finish: stop exploring and submit your final equation\n\nRules:\n- Return exactly one valid JSON object.\n- Do not output prose, markdown fences, bullet points, or any text outside the JSON object.\n- reasoning must be a non-empty string on every step.\n- step_type must be exactly 'action' or 'finish'.\n- When step_type is 'action', action must be one valid action object from Available actions; final_equation must be null.\n- When step_type is 'finish', action must be null; final_equation must be a non-empty equation string.\n- Do not invent new action_type values, variables, or fields.\n\nCurrent observation:\nCurrent state:\ninitial_position = 0.0\nvelocity = 5.0\ntime = 2.0\nposition = 10.0\n\nVariable descriptions:\ninitial_position: initial position of the object in metres\nvelocity: constant velocity of the object in metres per second\ntime: elapsed time in seconds\nposition: current position of the object in metres\n\nAvailable actions:\n- increase initial_position\n- decrease initial_position\n- increase velocity\n- decrease velocity\n- increase time\n- decrease time\n\nHistory:\nNone\n\nOutput format:\nYour answer must follow one of the JSON templates below.\nFor an action step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"variable_name\"\n  },\n  \"final_equation\": null\n}\nFor a finish step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"finish\",\n  \"action\": null,\n  \"final_equation\": \"equation string\"\n}",
+    "raw_model_output": "{\n  \"reasoning\": \"Given the provided observation, we can observe that the position is changing over time with a constant velocity. However, we don't have enough information to determine the exact equation yet. Let's first try to isolate the velocity variable.\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"decrease\",\n    \"variable\": \"velocity\"\n  },\n  \"final_equation\": null\n}",
+    "reasoning": "Given the provided observation, we can observe that the position is changing over time with a constant velocity. However, we don't have enough information to determine the exact equation yet. Let's first try to isolate the velocity variable.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "velocity"
+    },
+    "final_equation": null,
+    "observation_before": {
+      "mode": "text",
+      "visible_state": {
+        "initial_position": 0.0,
+        "velocity": 5.0,
+        "time": 2.0,
+        "position": 10.0
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "increase",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "increase",
+          "variable": "time"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "time"
+        }
+      ],
+      "text": "Current state:\ninitial_position = 0.0\nvelocity = 5.0\ntime = 2.0\nposition = 10.0\n\nVariable descriptions:\ninitial_position: initial position of the object in metres\nvelocity: constant velocity of the object in metres per second\ntime: elapsed time in seconds\nposition: current position of the object in metres\n\nAvailable actions:\n- increase initial_position\n- decrease initial_position\n- increase velocity\n- decrease velocity\n- increase time\n- decrease time",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "position",
+        "target_variable_internal": "position",
+        "naming_mode": "concrete",
+        "metadata_level": "rich",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "initial_position": "initial_position",
+          "velocity": "velocity",
+          "time": "time",
+          "position": "position"
+        }
+      }
+    },
+    "observation_after": {
+      "mode": "text",
+      "visible_state": {
+        "initial_position": 0.0,
+        "velocity": 0.0,
+        "time": 2.0,
+        "position": 0.0
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "increase",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "increase",
+          "variable": "time"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "time"
+        }
+      ],
+      "text": "Current state:\ninitial_position = 0.0\nvelocity = 0.0\ntime = 2.0\nposition = 0.0\n\nVariable descriptions:\ninitial_position: initial position of the object in metres\nvelocity: constant velocity of the object in metres per second\ntime: elapsed time in seconds\nposition: current position of the object in metres\n\nAvailable actions:\n- increase initial_position\n- decrease initial_position\n- increase velocity\n- decrease velocity\n- increase time\n- decrease time",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "position",
+        "target_variable_internal": "position",
+        "naming_mode": "concrete",
+        "metadata_level": "rich",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "initial_position": "initial_position",
+          "velocity": "velocity",
+          "time": "time",
+          "position": "position"
+        }
+      }
+    },
+    "state_before": {
+      "initial_position": 0.0,
+      "velocity": 5.0,
+      "time": 2.0,
+      "position": 10.0
+    },
+    "state_after": {
+      "initial_position": 0.0,
+      "velocity": 0.0,
+      "time": 2.0,
+      "position": 0.0
+    },
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "prompt": "You are a scientific explorer interacting with an unknown environment. You must respond with exactly one valid JSON object.\n\nYour goal is to discover the equation that determines position from the other variables in the environment.\nExplore the environment step by step through interaction.\nUse the current observation and previous history when deciding your next step.\nPut any reasoning inside the JSON reasoning field only.\nStop only when you have gathered enough evidence from interaction to state a final equation supported by the observations.\nYou may take up to 100 steps in total.\n\nAllowed step types:\n- action: take exactly one action to change the environment\n- finish: stop exploring and submit your final equation\n\nRules:\n- Return exactly one valid JSON object.\n- Do not output prose, markdown fences, bullet points, or any text outside the JSON object.\n- reasoning must be a non-empty string on every step.\n- step_type must be exactly 'action' or 'finish'.\n- When step_type is 'action', action must be one valid action object from Available actions; final_equation must be null.\n- When step_type is 'finish', action must be null; final_equation must be a non-empty equation string.\n- Do not invent new action_type values, variables, or fields.\n\nCurrent observation:\nCurrent state:\ninitial_position = 0.0\nvelocity = 0.0\ntime = 2.0\nposition = 0.0\n\nVariable descriptions:\ninitial_position: initial position of the object in metres\nvelocity: constant velocity of the object in metres per second\ntime: elapsed time in seconds\nposition: current position of the object in metres\n\nAvailable actions:\n- increase initial_position\n- decrease initial_position\n- increase velocity\n- decrease velocity\n- increase time\n- decrease time\n\nHistory:\nStep 0:\nstep_type: action\nreasoning: Given the provided observation, we can observe that the position is changing over time with a constant velocity. However, we don't have enough information to determine the exact equation yet. Let's first try to isolate the velocity variable.\naction: decrease velocity\nstate before: {'initial_position': 0.0, 'velocity': 5.0, 'time': 2.0, 'position': 10.0}\nstate after: {'initial_position': 0.0, 'velocity': 0.0, 'time': 2.0, 'position': 0.0}\n\nOutput format:\nYour answer must follow one of the JSON templates below.\nFor an action step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"variable_name\"\n  },\n  \"final_equation\": null\n}\nFor a finish step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"finish\",\n  \"action\": null,\n  \"final_equation\": \"equation string\"\n}",
+    "raw_model_output": "{\n  \"reasoning\": \"Now that the velocity is zero, let's observe the position after changing the time to see if it follows a linear relationship.\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"time\"\n  },\n  \"final_equation\": null\n}",
+    "reasoning": "Now that the velocity is zero, let's observe the position after changing the time to see if it follows a linear relationship.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "time"
+    },
+    "final_equation": null,
+    "observation_before": {
+      "mode": "text",
+      "visible_state": {
+        "initial_position": 0.0,
+        "velocity": 0.0,
+        "time": 2.0,
+        "position": 0.0
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "increase",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "increase",
+          "variable": "time"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "time"
+        }
+      ],
+      "text": "Current state:\ninitial_position = 0.0\nvelocity = 0.0\ntime = 2.0\nposition = 0.0\n\nVariable descriptions:\ninitial_position: initial position of the object in metres\nvelocity: constant velocity of the object in metres per second\ntime: elapsed time in seconds\nposition: current position of the object in metres\n\nAvailable actions:\n- increase initial_position\n- decrease initial_position\n- increase velocity\n- decrease velocity\n- increase time\n- decrease time",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "position",
+        "target_variable_internal": "position",
+        "naming_mode": "concrete",
+        "metadata_level": "rich",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "initial_position": "initial_position",
+          "velocity": "velocity",
+          "time": "time",
+          "position": "position"
+        }
+      }
+    },
+    "observation_after": {
+      "mode": "text",
+      "visible_state": {
+        "initial_position": 0.0,
+        "velocity": 0.0,
+        "time": 3.0,
+        "position": 0.0
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "increase",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "increase",
+          "variable": "time"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "time"
+        }
+      ],
+      "text": "Current state:\ninitial_position = 0.0\nvelocity = 0.0\ntime = 3.0\nposition = 0.0\n\nVariable descriptions:\ninitial_position: initial position of the object in metres\nvelocity: constant velocity of the object in metres per second\ntime: elapsed time in seconds\nposition: current position of the object in metres\n\nAvailable actions:\n- increase initial_position\n- decrease initial_position\n- increase velocity\n- decrease velocity\n- increase time\n- decrease time",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "position",
+        "target_variable_internal": "position",
+        "naming_mode": "concrete",
+        "metadata_level": "rich",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "initial_position": "initial_position",
+          "velocity": "velocity",
+          "time": "time",
+          "position": "position"
+        }
+      }
+    },
+    "state_before": {
+      "initial_position": 0.0,
+      "velocity": 0.0,
+      "time": 2.0,
+      "position": 0.0
+    },
+    "state_after": {
+      "initial_position": 0.0,
+      "velocity": 0.0,
+      "time": 3.0,
+      "position": 0.0
+    },
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "prompt": "You are a scientific explorer interacting with an unknown environment. You must respond with exactly one valid JSON object.\n\nYour goal is to discover the equation that determines position from the other variables in the environment.\nExplore the environment step by step through interaction.\nUse the current observation and previous history when deciding your next step.\nPut any reasoning inside the JSON reasoning field only.\nStop only when you have gathered enough evidence from interaction to state a final equation supported by the observations.\nYou may take up to 100 steps in total.\n\nAllowed step types:\n- action: take exactly one action to change the environment\n- finish: stop exploring and submit your final equation\n\nRules:\n- Return exactly one valid JSON object.\n- Do not output prose, markdown fences, bullet points, or any text outside the JSON object.\n- reasoning must be a non-empty string on every step.\n- step_type must be exactly 'action' or 'finish'.\n- When step_type is 'action', action must be one valid action object from Available actions; final_equation must be null.\n- When step_type is 'finish', action must be null; final_equation must be a non-empty equation string.\n- Do not invent new action_type values, variables, or fields.\n\nCurrent observation:\nCurrent state:\ninitial_position = 0.0\nvelocity = 0.0\ntime = 3.0\nposition = 0.0\n\nVariable descriptions:\ninitial_position: initial position of the object in metres\nvelocity: constant velocity of the object in metres per second\ntime: elapsed time in seconds\nposition: current position of the object in metres\n\nAvailable actions:\n- increase initial_position\n- decrease initial_position\n- increase velocity\n- decrease velocity\n- increase time\n- decrease time\n\nHistory:\nStep 0:\nstep_type: action\nreasoning: Given the provided observation, we can observe that the position is changing over time with a constant velocity. However, we don't have enough information to determine the exact equation yet. Let's first try to isolate the velocity variable.\naction: decrease velocity\nstate before: {'initial_position': 0.0, 'velocity': 5.0, 'time': 2.0, 'position': 10.0}\nstate after: {'initial_position': 0.0, 'velocity': 0.0, 'time': 2.0, 'position': 0.0}\n\nStep 1:\nstep_type: action\nreasoning: Now that the velocity is zero, let's observe the position after changing the time to see if it follows a linear relationship.\naction: increase time\nstate before: {'initial_position': 0.0, 'velocity': 0.0, 'time': 2.0, 'position': 0.0}\nstate after: {'initial_position': 0.0, 'velocity': 0.0, 'time': 3.0, 'position': 0.0}\n\nOutput format:\nYour answer must follow one of the JSON templates below.\nFor an action step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"variable_name\"\n  },\n  \"final_equation\": null\n}\nFor a finish step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"finish\",\n  \"action\": null,\n  \"final_equation\": \"equation string\"\n}",
+    "raw_model_output": "{\n  \"reasoning\": \"We have observed that the position does not change when the velocity is zero, indicating a linear relationship between position and time. Now let's confirm the relationship by changing the initial position and observing the new position after a fixed time.\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"initial_position\"\n  },\n  \"final_equation\": null\n}",
+    "reasoning": "We have observed that the position does not change when the velocity is zero, indicating a linear relationship between position and time. Now let's confirm the relationship by changing the initial position and observing the new position after a fixed time.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "initial_position"
+    },
+    "final_equation": null,
+    "observation_before": {
+      "mode": "text",
+      "visible_state": {
+        "initial_position": 0.0,
+        "velocity": 0.0,
+        "time": 3.0,
+        "position": 0.0
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "increase",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "increase",
+          "variable": "time"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "time"
+        }
+      ],
+      "text": "Current state:\ninitial_position = 0.0\nvelocity = 0.0\ntime = 3.0\nposition = 0.0\n\nVariable descriptions:\ninitial_position: initial position of the object in metres\nvelocity: constant velocity of the object in metres per second\ntime: elapsed time in seconds\nposition: current position of the object in metres\n\nAvailable actions:\n- increase initial_position\n- decrease initial_position\n- increase velocity\n- decrease velocity\n- increase time\n- decrease time",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "position",
+        "target_variable_internal": "position",
+        "naming_mode": "concrete",
+        "metadata_level": "rich",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "initial_position": "initial_position",
+          "velocity": "velocity",
+          "time": "time",
+          "position": "position"
+        }
+      }
+    },
+    "observation_after": {
+      "mode": "text",
+      "visible_state": {
+        "initial_position": 10.0,
+        "velocity": 0.0,
+        "time": 3.0,
+        "position": 10.0
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "increase",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "increase",
+          "variable": "time"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "time"
+        }
+      ],
+      "text": "Current state:\ninitial_position = 10.0\nvelocity = 0.0\ntime = 3.0\nposition = 10.0\n\nVariable descriptions:\ninitial_position: initial position of the object in metres\nvelocity: constant velocity of the object in metres per second\ntime: elapsed time in seconds\nposition: current position of the object in metres\n\nAvailable actions:\n- increase initial_position\n- decrease initial_position\n- increase velocity\n- decrease velocity\n- increase time\n- decrease time",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "position",
+        "target_variable_internal": "position",
+        "naming_mode": "concrete",
+        "metadata_level": "rich",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "initial_position": "initial_position",
+          "velocity": "velocity",
+          "time": "time",
+          "position": "position"
+        }
+      }
+    },
+    "state_before": {
+      "initial_position": 0.0,
+      "velocity": 0.0,
+      "time": 3.0,
+      "position": 0.0
+    },
+    "state_after": {
+      "initial_position": 10.0,
+      "velocity": 0.0,
+      "time": 3.0,
+      "position": 10.0
+    },
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "prompt": "You are a scientific explorer interacting with an unknown environment. You must respond with exactly one valid JSON object.\n\nYour goal is to discover the equation that determines position from the other variables in the environment.\nExplore the environment step by step through interaction.\nUse the current observation and previous history when deciding your next step.\nPut any reasoning inside the JSON reasoning field only.\nStop only when you have gathered enough evidence from interaction to state a final equation supported by the observations.\nYou may take up to 100 steps in total.\n\nAllowed step types:\n- action: take exactly one action to change the environment\n- finish: stop exploring and submit your final equation\n\nRules:\n- Return exactly one valid JSON object.\n- Do not output prose, markdown fences, bullet points, or any text outside the JSON object.\n- reasoning must be a non-empty string on every step.\n- step_type must be exactly 'action' or 'finish'.\n- When step_type is 'action', action must be one valid action object from Available actions; final_equation must be null.\n- When step_type is 'finish', action must be null; final_equation must be a non-empty equation string.\n- Do not invent new action_type values, variables, or fields.\n\nCurrent observation:\nCurrent state:\ninitial_position = 10.0\nvelocity = 0.0\ntime = 3.0\nposition = 10.0\n\nVariable descriptions:\ninitial_position: initial position of the object in metres\nvelocity: constant velocity of the object in metres per second\ntime: elapsed time in seconds\nposition: current position of the object in metres\n\nAvailable actions:\n- increase initial_position\n- decrease initial_position\n- increase velocity\n- decrease velocity\n- increase time\n- decrease time\n\nHistory:\nStep 0:\nstep_type: action\nreasoning: Given the provided observation, we can observe that the position is changing over time with a constant velocity. However, we don't have enough information to determine the exact equation yet. Let's first try to isolate the velocity variable.\naction: decrease velocity\nstate before: {'initial_position': 0.0, 'velocity': 5.0, 'time': 2.0, 'position': 10.0}\nstate after: {'initial_position': 0.0, 'velocity': 0.0, 'time': 2.0, 'position': 0.0}\n\nStep 1:\nstep_type: action\nreasoning: Now that the velocity is zero, let's observe the position after changing the time to see if it follows a linear relationship.\naction: increase time\nstate before: {'initial_position': 0.0, 'velocity': 0.0, 'time': 2.0, 'position': 0.0}\nstate after: {'initial_position': 0.0, 'velocity': 0.0, 'time': 3.0, 'position': 0.0}\n\nStep 2:\nstep_type: action\nreasoning: We have observed that the position does not change when the velocity is zero, indicating a linear relationship between position and time. Now let's confirm the relationship by changing the initial position and observing the new position after a fixed time.\naction: increase initial_position\nstate before: {'initial_position': 0.0, 'velocity': 0.0, 'time': 3.0, 'position': 0.0}\nstate after: {'initial_position': 10.0, 'velocity': 0.0, 'time': 3.0, 'position': 10.0}\n\nOutput format:\nYour answer must follow one of the JSON templates below.\nFor an action step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"variable_name\"\n  },\n  \"final_equation\": null\n}\nFor a finish step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"finish\",\n  \"action\": null,\n  \"final_equation\": \"equation string\"\n}",
+    "raw_model_output": "{\n  \"reasoning\": \"We have observed that the position is directly proportional to the time when the velocity is zero. Let's now verify this relationship for different velocities.\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"velocity\"\n  },\n  \"final_equation\": null\n}",
+    "reasoning": "We have observed that the position is directly proportional to the time when the velocity is zero. Let's now verify this relationship for different velocities.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "velocity"
+    },
+    "final_equation": null,
+    "observation_before": {
+      "mode": "text",
+      "visible_state": {
+        "initial_position": 10.0,
+        "velocity": 0.0,
+        "time": 3.0,
+        "position": 10.0
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "increase",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "increase",
+          "variable": "time"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "time"
+        }
+      ],
+      "text": "Current state:\ninitial_position = 10.0\nvelocity = 0.0\ntime = 3.0\nposition = 10.0\n\nVariable descriptions:\ninitial_position: initial position of the object in metres\nvelocity: constant velocity of the object in metres per second\ntime: elapsed time in seconds\nposition: current position of the object in metres\n\nAvailable actions:\n- increase initial_position\n- decrease initial_position\n- increase velocity\n- decrease velocity\n- increase time\n- decrease time",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "position",
+        "target_variable_internal": "position",
+        "naming_mode": "concrete",
+        "metadata_level": "rich",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "initial_position": "initial_position",
+          "velocity": "velocity",
+          "time": "time",
+          "position": "position"
+        }
+      }
+    },
+    "observation_after": {
+      "mode": "text",
+      "visible_state": {
+        "initial_position": 10.0,
+        "velocity": 5.0,
+        "time": 3.0,
+        "position": 25.0
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "increase",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "increase",
+          "variable": "time"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "time"
+        }
+      ],
+      "text": "Current state:\ninitial_position = 10.0\nvelocity = 5.0\ntime = 3.0\nposition = 25.0\n\nVariable descriptions:\ninitial_position: initial position of the object in metres\nvelocity: constant velocity of the object in metres per second\ntime: elapsed time in seconds\nposition: current position of the object in metres\n\nAvailable actions:\n- increase initial_position\n- decrease initial_position\n- increase velocity\n- decrease velocity\n- increase time\n- decrease time",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "position",
+        "target_variable_internal": "position",
+        "naming_mode": "concrete",
+        "metadata_level": "rich",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "initial_position": "initial_position",
+          "velocity": "velocity",
+          "time": "time",
+          "position": "position"
+        }
+      }
+    },
+    "state_before": {
+      "initial_position": 10.0,
+      "velocity": 0.0,
+      "time": 3.0,
+      "position": 10.0
+    },
+    "state_after": {
+      "initial_position": 10.0,
+      "velocity": 5.0,
+      "time": 3.0,
+      "position": 25.0
+    },
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "prompt": "You are a scientific explorer interacting with an unknown environment. You must respond with exactly one valid JSON object.\n\nYour goal is to discover the equation that determines position from the other variables in the environment.\nExplore the environment step by step through interaction.\nUse the current observation and previous history when deciding your next step.\nPut any reasoning inside the JSON reasoning field only.\nStop only when you have gathered enough evidence from interaction to state a final equation supported by the observations.\nYou may take up to 100 steps in total.\n\nAllowed step types:\n- action: take exactly one action to change the environment\n- finish: stop exploring and submit your final equation\n\nRules:\n- Return exactly one valid JSON object.\n- Do not output prose, markdown fences, bullet points, or any text outside the JSON object.\n- reasoning must be a non-empty string on every step.\n- step_type must be exactly 'action' or 'finish'.\n- When step_type is 'action', action must be one valid action object from Available actions; final_equation must be null.\n- When step_type is 'finish', action must be null; final_equation must be a non-empty equation string.\n- Do not invent new action_type values, variables, or fields.\n\nCurrent observation:\nCurrent state:\ninitial_position = 10.0\nvelocity = 5.0\ntime = 3.0\nposition = 25.0\n\nVariable descriptions:\ninitial_position: initial position of the object in metres\nvelocity: constant velocity of the object in metres per second\ntime: elapsed time in seconds\nposition: current position of the object in metres\n\nAvailable actions:\n- increase initial_position\n- decrease initial_position\n- increase velocity\n- decrease velocity\n- increase time\n- decrease time\n\nHistory:\nStep 0:\nstep_type: action\nreasoning: Given the provided observation, we can observe that the position is changing over time with a constant velocity. However, we don't have enough information to determine the exact equation yet. Let's first try to isolate the velocity variable.\naction: decrease velocity\nstate before: {'initial_position': 0.0, 'velocity': 5.0, 'time': 2.0, 'position': 10.0}\nstate after: {'initial_position': 0.0, 'velocity': 0.0, 'time': 2.0, 'position': 0.0}\n\nStep 1:\nstep_type: action\nreasoning: Now that the velocity is zero, let's observe the position after changing the time to see if it follows a linear relationship.\naction: increase time\nstate before: {'initial_position': 0.0, 'velocity': 0.0, 'time': 2.0, 'position': 0.0}\nstate after: {'initial_position': 0.0, 'velocity': 0.0, 'time': 3.0, 'position': 0.0}\n\nStep 2:\nstep_type: action\nreasoning: We have observed that the position does not change when the velocity is zero, indicating a linear relationship between position and time. Now let's confirm the relationship by changing the initial position and observing the new position after a fixed time.\naction: increase initial_position\nstate before: {'initial_position': 0.0, 'velocity': 0.0, 'time': 3.0, 'position': 0.0}\nstate after: {'initial_position': 10.0, 'velocity': 0.0, 'time': 3.0, 'position': 10.0}\n\nStep 3:\nstep_type: action\nreasoning: We have observed that the position is directly proportional to the time when the velocity is zero. Let's now verify this relationship for different velocities.\naction: increase velocity\nstate before: {'initial_position': 10.0, 'velocity': 0.0, 'time': 3.0, 'position': 10.0}\nstate after: {'initial_position': 10.0, 'velocity': 5.0, 'time': 3.0, 'position': 25.0}\n\nOutput format:\nYour answer must follow one of the JSON templates below.\nFor an action step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"variable_name\"\n  },\n  \"final_equation\": null\n}\nFor a finish step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"finish\",\n  \"action\": null,\n  \"final_equation\": \"equation string\"\n}",
+    "raw_model_output": "{\n  \"reasoning\": \"We have observed that the position is directly proportional to the time when the velocity is zero and directly proportional to the velocity for a fixed time. Therefore, we can assume that the position is a linear function of both time and velocity. Let's confirm this by verifying the relationship for different initial positions.\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"initial_position\"\n  },\n  \"final_equation\": null\n}",
+    "reasoning": "We have observed that the position is directly proportional to the time when the velocity is zero and directly proportional to the velocity for a fixed time. Therefore, we can assume that the position is a linear function of both time and velocity. Let's confirm this by verifying the relationship for different initial positions.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "initial_position"
+    },
+    "final_equation": null,
+    "observation_before": {
+      "mode": "text",
+      "visible_state": {
+        "initial_position": 10.0,
+        "velocity": 5.0,
+        "time": 3.0,
+        "position": 25.0
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "increase",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "increase",
+          "variable": "time"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "time"
+        }
+      ],
+      "text": "Current state:\ninitial_position = 10.0\nvelocity = 5.0\ntime = 3.0\nposition = 25.0\n\nVariable descriptions:\ninitial_position: initial position of the object in metres\nvelocity: constant velocity of the object in metres per second\ntime: elapsed time in seconds\nposition: current position of the object in metres\n\nAvailable actions:\n- increase initial_position\n- decrease initial_position\n- increase velocity\n- decrease velocity\n- increase time\n- decrease time",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "position",
+        "target_variable_internal": "position",
+        "naming_mode": "concrete",
+        "metadata_level": "rich",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "initial_position": "initial_position",
+          "velocity": "velocity",
+          "time": "time",
+          "position": "position"
+        }
+      }
+    },
+    "observation_after": {
+      "mode": "text",
+      "visible_state": {
+        "initial_position": 20.0,
+        "velocity": 5.0,
+        "time": 3.0,
+        "position": 35.0
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "increase",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "increase",
+          "variable": "time"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "time"
+        }
+      ],
+      "text": "Current state:\ninitial_position = 20.0\nvelocity = 5.0\ntime = 3.0\nposition = 35.0\n\nVariable descriptions:\ninitial_position: initial position of the object in metres\nvelocity: constant velocity of the object in metres per second\ntime: elapsed time in seconds\nposition: current position of the object in metres\n\nAvailable actions:\n- increase initial_position\n- decrease initial_position\n- increase velocity\n- decrease velocity\n- increase time\n- decrease time",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "position",
+        "target_variable_internal": "position",
+        "naming_mode": "concrete",
+        "metadata_level": "rich",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "initial_position": "initial_position",
+          "velocity": "velocity",
+          "time": "time",
+          "position": "position"
+        }
+      }
+    },
+    "state_before": {
+      "initial_position": 10.0,
+      "velocity": 5.0,
+      "time": 3.0,
+      "position": 25.0
+    },
+    "state_after": {
+      "initial_position": 20.0,
+      "velocity": 5.0,
+      "time": 3.0,
+      "position": 35.0
+    },
+    "done": false
+  },
+  {
+    "step_id": 5,
+    "step_type": "action",
+    "prompt": "You are a scientific explorer interacting with an unknown environment. You must respond with exactly one valid JSON object.\n\nYour goal is to discover the equation that determines position from the other variables in the environment.\nExplore the environment step by step through interaction.\nUse the current observation and previous history when deciding your next step.\nPut any reasoning inside the JSON reasoning field only.\nStop only when you have gathered enough evidence from interaction to state a final equation supported by the observations.\nYou may take up to 100 steps in total.\n\nAllowed step types:\n- action: take exactly one action to change the environment\n- finish: stop exploring and submit your final equation\n\nRules:\n- Return exactly one valid JSON object.\n- Do not output prose, markdown fences, bullet points, or any text outside the JSON object.\n- reasoning must be a non-empty string on every step.\n- step_type must be exactly 'action' or 'finish'.\n- When step_type is 'action', action must be one valid action object from Available actions; final_equation must be null.\n- When step_type is 'finish', action must be null; final_equation must be a non-empty equation string.\n- Do not invent new action_type values, variables, or fields.\n\nCurrent observation:\nCurrent state:\ninitial_position = 20.0\nvelocity = 5.0\ntime = 3.0\nposition = 35.0\n\nVariable descriptions:\ninitial_position: initial position of the object in metres\nvelocity: constant velocity of the object in metres per second\ntime: elapsed time in seconds\nposition: current position of the object in metres\n\nAvailable actions:\n- increase initial_position\n- decrease initial_position\n- increase velocity\n- decrease velocity\n- increase time\n- decrease time\n\nHistory:\nStep 0:\nstep_type: action\nreasoning: Given the provided observation, we can observe that the position is changing over time with a constant velocity. However, we don't have enough information to determine the exact equation yet. Let's first try to isolate the velocity variable.\naction: decrease velocity\nstate before: {'initial_position': 0.0, 'velocity': 5.0, 'time': 2.0, 'position': 10.0}\nstate after: {'initial_position': 0.0, 'velocity': 0.0, 'time': 2.0, 'position': 0.0}\n\nStep 1:\nstep_type: action\nreasoning: Now that the velocity is zero, let's observe the position after changing the time to see if it follows a linear relationship.\naction: increase time\nstate before: {'initial_position': 0.0, 'velocity': 0.0, 'time': 2.0, 'position': 0.0}\nstate after: {'initial_position': 0.0, 'velocity': 0.0, 'time': 3.0, 'position': 0.0}\n\nStep 2:\nstep_type: action\nreasoning: We have observed that the position does not change when the velocity is zero, indicating a linear relationship between position and time. Now let's confirm the relationship by changing the initial position and observing the new position after a fixed time.\naction: increase initial_position\nstate before: {'initial_position': 0.0, 'velocity': 0.0, 'time': 3.0, 'position': 0.0}\nstate after: {'initial_position': 10.0, 'velocity': 0.0, 'time': 3.0, 'position': 10.0}\n\nStep 3:\nstep_type: action\nreasoning: We have observed that the position is directly proportional to the time when the velocity is zero. Let's now verify this relationship for different velocities.\naction: increase velocity\nstate before: {'initial_position': 10.0, 'velocity': 0.0, 'time': 3.0, 'position': 10.0}\nstate after: {'initial_position': 10.0, 'velocity': 5.0, 'time': 3.0, 'position': 25.0}\n\nStep 4:\nstep_type: action\nreasoning: We have observed that the position is directly proportional to the time when the velocity is zero and directly proportional to the velocity for a fixed time. Therefore, we can assume that the position is a linear function of both time and velocity. Let's confirm this by verifying the relationship for different initial positions.\naction: increase initial_position\nstate before: {'initial_position': 10.0, 'velocity': 5.0, 'time': 3.0, 'position': 25.0}\nstate after: {'initial_position': 20.0, 'velocity': 5.0, 'time': 3.0, 'position': 35.0}\n\nOutput format:\nYour answer must follow one of the JSON templates below.\nFor an action step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"variable_name\"\n  },\n  \"final_equation\": null\n}\nFor a finish step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"finish\",\n  \"action\": null,\n  \"final_equation\": \"equation string\"\n}",
+    "raw_model_output": "{\n  \"reasoning\": \"We have confirmed that position is a linear function of both time and velocity. Now, let's isolate time to obtain the final equation.\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"decrease\",\n    \"variable\": \"time\"\n  },\n  \"final_equation\": null\n}",
+    "reasoning": "We have confirmed that position is a linear function of both time and velocity. Now, let's isolate time to obtain the final equation.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "time"
+    },
+    "final_equation": null,
+    "observation_before": {
+      "mode": "text",
+      "visible_state": {
+        "initial_position": 20.0,
+        "velocity": 5.0,
+        "time": 3.0,
+        "position": 35.0
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "increase",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "increase",
+          "variable": "time"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "time"
+        }
+      ],
+      "text": "Current state:\ninitial_position = 20.0\nvelocity = 5.0\ntime = 3.0\nposition = 35.0\n\nVariable descriptions:\ninitial_position: initial position of the object in metres\nvelocity: constant velocity of the object in metres per second\ntime: elapsed time in seconds\nposition: current position of the object in metres\n\nAvailable actions:\n- increase initial_position\n- decrease initial_position\n- increase velocity\n- decrease velocity\n- increase time\n- decrease time",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "position",
+        "target_variable_internal": "position",
+        "naming_mode": "concrete",
+        "metadata_level": "rich",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "initial_position": "initial_position",
+          "velocity": "velocity",
+          "time": "time",
+          "position": "position"
+        }
+      }
+    },
+    "observation_after": {
+      "mode": "text",
+      "visible_state": {
+        "initial_position": 20.0,
+        "velocity": 5.0,
+        "time": 2.0,
+        "position": 30.0
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "increase",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "increase",
+          "variable": "time"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "time"
+        }
+      ],
+      "text": "Current state:\ninitial_position = 20.0\nvelocity = 5.0\ntime = 2.0\nposition = 30.0\n\nVariable descriptions:\ninitial_position: initial position of the object in metres\nvelocity: constant velocity of the object in metres per second\ntime: elapsed time in seconds\nposition: current position of the object in metres\n\nAvailable actions:\n- increase initial_position\n- decrease initial_position\n- increase velocity\n- decrease velocity\n- increase time\n- decrease time",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "position",
+        "target_variable_internal": "position",
+        "naming_mode": "concrete",
+        "metadata_level": "rich",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "initial_position": "initial_position",
+          "velocity": "velocity",
+          "time": "time",
+          "position": "position"
+        }
+      }
+    },
+    "state_before": {
+      "initial_position": 20.0,
+      "velocity": 5.0,
+      "time": 3.0,
+      "position": 35.0
+    },
+    "state_after": {
+      "initial_position": 20.0,
+      "velocity": 5.0,
+      "time": 2.0,
+      "position": 30.0
+    },
+    "done": false
+  },
+  {
+    "step_id": 6,
+    "step_type": "action",
+    "prompt": "You are a scientific explorer interacting with an unknown environment. You must respond with exactly one valid JSON object.\n\nYour goal is to discover the equation that determines position from the other variables in the environment.\nExplore the environment step by step through interaction.\nUse the current observation and previous history when deciding your next step.\nPut any reasoning inside the JSON reasoning field only.\nStop only when you have gathered enough evidence from interaction to state a final equation supported by the observations.\nYou may take up to 100 steps in total.\n\nAllowed step types:\n- action: take exactly one action to change the environment\n- finish: stop exploring and submit your final equation\n\nRules:\n- Return exactly one valid JSON object.\n- Do not output prose, markdown fences, bullet points, or any text outside the JSON object.\n- reasoning must be a non-empty string on every step.\n- step_type must be exactly 'action' or 'finish'.\n- When step_type is 'action', action must be one valid action object from Available actions; final_equation must be null.\n- When step_type is 'finish', action must be null; final_equation must be a non-empty equation string.\n- Do not invent new action_type values, variables, or fields.\n\nCurrent observation:\nCurrent state:\ninitial_position = 20.0\nvelocity = 5.0\ntime = 2.0\nposition = 30.0\n\nVariable descriptions:\ninitial_position: initial position of the object in metres\nvelocity: constant velocity of the object in metres per second\ntime: elapsed time in seconds\nposition: current position of the object in metres\n\nAvailable actions:\n- increase initial_position\n- decrease initial_position\n- increase velocity\n- decrease velocity\n- increase time\n- decrease time\n\nHistory:\nStep 0:\nstep_type: action\nreasoning: Given the provided observation, we can observe that the position is changing over time with a constant velocity. However, we don't have enough information to determine the exact equation yet. Let's first try to isolate the velocity variable.\naction: decrease velocity\nstate before: {'initial_position': 0.0, 'velocity': 5.0, 'time': 2.0, 'position': 10.0}\nstate after: {'initial_position': 0.0, 'velocity': 0.0, 'time': 2.0, 'position': 0.0}\n\nStep 1:\nstep_type: action\nreasoning: Now that the velocity is zero, let's observe the position after changing the time to see if it follows a linear relationship.\naction: increase time\nstate before: {'initial_position': 0.0, 'velocity': 0.0, 'time': 2.0, 'position': 0.0}\nstate after: {'initial_position': 0.0, 'velocity': 0.0, 'time': 3.0, 'position': 0.0}\n\nStep 2:\nstep_type: action\nreasoning: We have observed that the position does not change when the velocity is zero, indicating a linear relationship between position and time. Now let's confirm the relationship by changing the initial position and observing the new position after a fixed time.\naction: increase initial_position\nstate before: {'initial_position': 0.0, 'velocity': 0.0, 'time': 3.0, 'position': 0.0}\nstate after: {'initial_position': 10.0, 'velocity': 0.0, 'time': 3.0, 'position': 10.0}\n\nStep 3:\nstep_type: action\nreasoning: We have observed that the position is directly proportional to the time when the velocity is zero. Let's now verify this relationship for different velocities.\naction: increase velocity\nstate before: {'initial_position': 10.0, 'velocity': 0.0, 'time': 3.0, 'position': 10.0}\nstate after: {'initial_position': 10.0, 'velocity': 5.0, 'time': 3.0, 'position': 25.0}\n\nStep 4:\nstep_type: action\nreasoning: We have observed that the position is directly proportional to the time when the velocity is zero and directly proportional to the velocity for a fixed time. Therefore, we can assume that the position is a linear function of both time and velocity. Let's confirm this by verifying the relationship for different initial positions.\naction: increase initial_position\nstate before: {'initial_position': 10.0, 'velocity': 5.0, 'time': 3.0, 'position': 25.0}\nstate after: {'initial_position': 20.0, 'velocity': 5.0, 'time': 3.0, 'position': 35.0}\n\nStep 5:\nstep_type: action\nreasoning: We have confirmed that position is a linear function of both time and velocity. Now, let's isolate time to obtain the final equation.\naction: decrease time\nstate before: {'initial_position': 20.0, 'velocity': 5.0, 'time': 3.0, 'position': 35.0}\nstate after: {'initial_position': 20.0, 'velocity': 5.0, 'time': 2.0, 'position': 30.0}\n\nOutput format:\nYour answer must follow one of the JSON templates below.\nFor an action step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"increase\",\n    \"variable\": \"variable_name\"\n  },\n  \"final_equation\": null\n}\nFor a finish step:\n{\n  \"reasoning\": \"brief string\",\n  \"step_type\": \"finish\",\n  \"action\": null,\n  \"final_equation\": \"equation string\"\n}",
+    "raw_model_output": "{\n  \"reasoning\": \"We have observed a linear relationship between position, time, and velocity. Now, let's isolate the time variable to obtain the final equation.\",\n  \"step_type\": \"action\",\n  \"action\": {\n    \"action_type\": \"decrease\",\n    \"variable\": \"time\"\n  },\n  \"final_equation\": null\n}",
+    "reasoning": "We have observed a linear relationship between position, time, and velocity. Now, let's isolate the time variable to obtain the final equation.",
+    "parsed_action": {
+      "action_type": "decrease",
+      "variable": "time"
+    },
+    "final_equation": null,
+    "observation_before": {
+      "mode": "text",
+      "visible_state": {
+        "initial_position": 20.0,
+        "velocity": 5.0,
+        "time": 2.0,
+        "position": 30.0
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "increase",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "increase",
+          "variable": "time"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "time"
+        }
+      ],
+      "text": "Current state:\ninitial_position = 20.0\nvelocity = 5.0\ntime = 2.0\nposition = 30.0\n\nVariable descriptions:\ninitial_position: initial position of the object in metres\nvelocity: constant velocity of the object in metres per second\ntime: elapsed time in seconds\nposition: current position of the object in metres\n\nAvailable actions:\n- increase initial_position\n- decrease initial_position\n- increase velocity\n- decrease velocity\n- increase time\n- decrease time",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "position",
+        "target_variable_internal": "position",
+        "naming_mode": "concrete",
+        "metadata_level": "rich",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "initial_position": "initial_position",
+          "velocity": "velocity",
+          "time": "time",
+          "position": "position"
+        }
+      }
+    },
+    "observation_after": {
+      "mode": "text",
+      "visible_state": {
+        "initial_position": 20.0,
+        "velocity": 5.0,
+        "time": 1.0,
+        "position": 25.0
+      },
+      "available_actions": [
+        {
+          "action_type": "increase",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "initial_position"
+        },
+        {
+          "action_type": "increase",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "velocity"
+        },
+        {
+          "action_type": "increase",
+          "variable": "time"
+        },
+        {
+          "action_type": "decrease",
+          "variable": "time"
+        }
+      ],
+      "text": "Current state:\ninitial_position = 20.0\nvelocity = 5.0\ntime = 1.0\nposition = 25.0\n\nVariable descriptions:\ninitial_position: initial position of the object in metres\nvelocity: constant velocity of the object in metres per second\ntime: elapsed time in seconds\nposition: current position of the object in metres\n\nAvailable actions:\n- increase initial_position\n- decrease initial_position\n- increase velocity\n- decrease velocity\n- increase time\n- decrease time",
+      "image_path": null,
+      "metadata": {
+        "target_variable": "position",
+        "target_variable_internal": "position",
+        "naming_mode": "concrete",
+        "metadata_level": "rich",
+        "action_mode": "increase_decrease",
+        "name_mapping": {
+          "initial_position": "initial_position",
+          "velocity": "velocity",
+          "time": "time",
+          "position": "position"
+        }
+      }
+    },
+    "state_before": {
+      "initial_position": 20.0,
+      "velocity": 5.0,
+      "time": 2.0,
+      "position": 30.0
+    },
+    "state_after": {
+      "initial_position": 20.0,
+      "velocity": 5.0,
+      "time": 1.0,
+      "position": 25.0
+    },
+    "done": false
+  }
+]

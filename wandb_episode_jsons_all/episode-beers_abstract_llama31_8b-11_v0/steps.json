@@ -1,0 +1,65 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Start with a baseline observation and choose a variable to modify to see if it affects Y2.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Start with a baseline observation and choose a variable to modify to see if it affects Y2.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "Increase A to see if it affects Y2, then increase B to see if it affects Y2.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "action",
+    "reasoning": "Y2 increases when A is increased, now let's see if B has an effect",
+    "parsed_action": {
+      "action_type": "decrease B",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 4,
+    "step_type": "action",
+    "reasoning": "Y2 increases when A is increased, but does not change when B is decreased, so A must be the determining factor.",
+    "parsed_action": {
+      "action_type": "decrease A",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 5,
+    "step_type": "finish",
+    "reasoning": "A increases Y2 linearly, so the equation is Y2 = k * A",
+    "parsed_action": null,
+    "final_equation": "Y2 = k * A",
+    "done": true
+  }
+]

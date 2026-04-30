@@ -1,0 +1,43 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Start by increasing A to observe if Y changes.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Start by increasing A to observe if Y changes.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "Y increases by 10 when A increases by 10. This suggests a linear relationship between A and Y.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "finish",
+    "reasoning": "Y increases by 10 when B increases by 5, suggesting a linear relationship. Since A and B both affect Y linearly, we can infer the equation.",
+    "parsed_action": null,
+    "final_equation": "Y = 2 * A + 2 * B",
+    "done": true
+  }
+]

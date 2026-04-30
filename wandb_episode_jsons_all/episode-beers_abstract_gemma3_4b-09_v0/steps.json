@@ -1,0 +1,43 @@
+[
+  {
+    "step_id": 0,
+    "step_type": "action",
+    "reasoning": "Let's try increasing A to see how it affects Y2. A simple linear relationship seems plausible.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "A"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 1,
+    "step_type": "action",
+    "reasoning": "Increasing A resulted in Y2 increasing. Let's try increasing B to see if that has a similar effect.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "B"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 2,
+    "step_type": "action",
+    "reasoning": "B was increased to 3.0 and Y2 increased to 6.0. A and C were constant. Let's try increasing C to see its effect.",
+    "parsed_action": {
+      "action_type": "increase",
+      "variable": "C"
+    },
+    "final_equation": null,
+    "done": false
+  },
+  {
+    "step_id": 3,
+    "step_type": "finish",
+    "reasoning": "We have found that increasing A increases Y2, increasing B increases Y2, and increasing C increases Y2. The current state is Y2 = 12.0, A = 2.0, B = 3.0, C = 2.0, and Y1 = 1e-12.  It appears that Y2 is proportional to A and B, and possibly C. Let's try to formulate an equation.",
+    "parsed_action": null,
+    "final_equation": "Y2 = 2 * A * B + C",
+    "done": true
+  }
+]

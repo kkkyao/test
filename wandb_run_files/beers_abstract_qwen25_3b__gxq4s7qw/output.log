@@ -1,0 +1,111 @@
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights: 100%|██████████| 434/434 [00:33<00:00, 12.96it/s]
+
+=== Experiment setup ===
+Config:          configs/config.yaml
+Env override:    configs/env_beers_abstract.yaml
+Model override:  configs/model_qwen25_3b.yaml
+Run name:        beers_abstract_qwen25_3b
+Output dir:      outputs/beers_abstract_qwen25_3b
+Target variable: absorbance
+Naming mode:     abstract
+Action mode:     increase_decrease
+N runs:          30
+
+--- Run 1/30 ---
+  success=False  steps=5  reason=finish_wrong
+
+--- Run 2/30 ---
+  success=False  steps=0  reason=parse_error
+
+--- Run 3/30 ---
+  success=False  steps=1  reason=finish_wrong
+
+--- Run 4/30 ---
+  success=False  steps=1  reason=finish_wrong
+
+--- Run 5/30 ---
+  success=False  steps=6  reason=finish_wrong
+
+--- Run 6/30 ---
+  success=False  steps=1  reason=finish_wrong
+
+--- Run 7/30 ---
+  success=False  steps=1  reason=finish_wrong
+
+--- Run 8/30 ---
+  success=False  steps=1  reason=finish_wrong
+
+--- Run 9/30 ---
+  success=False  steps=1  reason=finish_wrong
+
+--- Run 10/30 ---
+  success=False  steps=1  reason=finish_wrong
+
+--- Run 11/30 ---
+  success=False  steps=1  reason=finish_wrong
+
+--- Run 12/30 ---
+  success=False  steps=5  reason=finish_wrong
+
+--- Run 13/30 ---
+  success=False  steps=6  reason=finish_wrong
+
+--- Run 14/30 ---
+  success=False  steps=5  reason=finish_wrong
+
+--- Run 15/30 ---
+  success=False  steps=6  reason=finish_wrong
+
+--- Run 16/30 ---
+  success=False  steps=3  reason=finish_wrong
+
+--- Run 17/30 ---
+  success=False  steps=3  reason=finish_wrong
+
+--- Run 18/30 ---
+  success=False  steps=6  reason=finish_wrong
+
+--- Run 19/30 ---
+  success=False  steps=7  reason=finish_wrong
+
+--- Run 20/30 ---
+  success=False  steps=1  reason=finish_wrong
+
+--- Run 21/30 ---
+  success=False  steps=6  reason=finish_wrong
+
+--- Run 22/30 ---
+  success=True  steps=6  reason=finish_success
+
+--- Run 23/30 ---
+  success=False  steps=5  reason=finish_wrong
+
+--- Run 24/30 ---
+  success=False  steps=1  reason=finish_wrong
+
+--- Run 25/30 ---
+  success=False  steps=6  reason=finish_wrong
+
+--- Run 26/30 ---
+  success=False  steps=5  reason=finish_wrong
+
+--- Run 27/30 ---
+  success=False  steps=4  reason=finish_wrong
+
+--- Run 28/30 ---
+  success=False  steps=6  reason=finish_wrong
+
+--- Run 29/30 ---
+  success=False  steps=1  reason=finish_wrong
+
+--- Run 30/30 ---
+  success=False  steps=1  reason=finish_wrong
+
+=== Experiment complete ===
+  success_rate: 3.33%
+  finish_rate:  96.67%
+  mean_steps:   3.4
+  mean_steps_to_success: 6.0
+  aggregate saved to: outputs/beers_abstract_qwen25_3b/aggregate.json
+  episode files saved under: outputs/beers_abstract_qwen25_3b/run_XX/
