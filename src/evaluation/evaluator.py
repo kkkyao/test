@@ -165,12 +165,17 @@ class EpisodeEvaluator:
         finish_reached: bool,
         equation_correct: bool,
     ) -> str:
-        if parse_error:
-            return "parse_error"
+        # finish_reached always takes priority: a parse_error that occurred
+        # mid-episode but was recovered by the forced-finish step should not
+        # shadow the final outcome.  parse_error is kept in error_message for
+        # diagnostics but does not affect termination_reason when an equation
+        # was ultimately submitted.
         if finish_reached and equation_correct:
             return "finish_success"
         if finish_reached and not equation_correct:
             return "finish_wrong"
+        if parse_error:
+            return "parse_error"
         return "max_steps"
 
     @staticmethod
