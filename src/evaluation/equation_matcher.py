@@ -158,7 +158,9 @@ class EquationMatcher:
         mapped = text
         for source, target in sorted(mapping.items(), key=lambda kv: -len(kv[0])):
             pattern = rf"\b{re.escape(source)}\b"
-            mapped = re.sub(pattern, target, mapped)
+            # re.IGNORECASE so that model outputs like C, L, Epsilon are
+            # treated the same as the lowercase display names c, l, epsilon.
+            mapped = re.sub(pattern, target, mapped, flags=re.IGNORECASE)
         return mapped
 
     @staticmethod
@@ -190,21 +192,21 @@ class EquationMatcher:
         for unicode_char, ascii_name in _GREEK.items():
             equation = equation.replace(unicode_char, ascii_name)
 
-        # 2. LaTeX multiplication
-        equation = re.sub(r"\times", "*", equation)
-        equation = re.sub(r"\cdot", "*", equation)
+        # 2. LaTeX multiplication  (match literal backslash + command)
+        equation = re.sub(r"\\times", "*", equation)
+        equation = re.sub(r"\\cdot", "*", equation)
 
         # 3. LaTeX fraction
-        equation = re.sub(r"\frac\{(.*?)\}\{(.*?)\}", r"(\1)/(\2)", equation)
+        equation = re.sub(r"\\frac\{(.*?)\}\{(.*?)\}", r"(\1)/(\2)", equation)
 
         # 4. LaTeX parentheses
-        equation = re.sub(r"\left\(", "(", equation)
-        equation = re.sub(r"\right\)", ")", equation)
-        equation = re.sub(r"\\(", "(", equation)
-        equation = re.sub(r"\\)", ")", equation)
+        equation = re.sub(r"\\left\(", "(", equation)
+        equation = re.sub(r"\\right\)", ")", equation)
+        equation = re.sub(r"\\\(", "(", equation)
+        equation = re.sub(r"\\\)", ")", equation)
 
         # 5. Escaped asterisk
-        equation = equation.replace("\*", "*")
+        equation = equation.replace("\\*", "*")
 
         # 6. Caret exponent
         equation = equation.replace("^", "**")
