@@ -153,6 +153,7 @@ def main(
         target_variable=target_variable,
         max_steps=max_steps,
         action_mode=action_mode,
+        equation_variables=evaluation_cfg.get("equation_variables", []),
         include_history=True,
         history_window=experiment_cfg.get("history_window"),
     )
