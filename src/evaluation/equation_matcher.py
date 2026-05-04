@@ -60,10 +60,20 @@ class EquationMatcher:
         self.variable_mapping = variable_mapping or {}
 
         # Pre-build the reverse mapping for strategy 3.
-        # If the forward mapping has duplicates in values, the reverse is
-        # best-effort (last one wins); that is acceptable here.
         self._reverse_mapping: Dict[str, str] = {
             v: k for k, v in self.variable_mapping.items()
+        }
+
+        # Pre-declare every known variable name (both display and concrete) as
+        # a SymPy Symbol so that parse_expr never misinterprets them.
+        # Without this local_dict:
+        #   - "concentration" is split into c*o*n*c*... by implicit_multiplication
+        #   - x0 becomes x*0 = 0, Y2 becomes Y*2, I becomes ImaginaryUnit
+        all_names = (
+            set(self.variable_mapping.keys()) | set(self.variable_mapping.values())
+        )
+        self._known_symbols: Dict[str, sp.Symbol] = {
+            name: sp.Symbol(name) for name in all_names
         }
 
     # -------------------------------------------------------------------------
@@ -241,6 +251,13 @@ class EquationMatcher:
 
         "lhs = rhs"  →  parse(lhs) - parse(rhs)
         "expr"       →  parse(expr)
+
+        self._known_symbols is passed as local_dict so that:
+        - Multi-letter concrete names like "concentration" are treated as a
+          single Symbol and not split into implicit products by
+          implicit_multiplication_application (e.g. c*o*n*c*...).
+        - Short names like x0, Y2, I keep their intended meaning instead of
+          being misinterpreted as x*0, Y*2, or ImaginaryUnit.
         """
         equation = equation.strip()
 
@@ -250,13 +267,16 @@ class EquationMatcher:
             rhs_str = rhs_str.strip()
             if not lhs_str or not rhs_str:
                 return None
-            lhs = parse_expr(lhs_str, transformations=_TRANSFORMATIONS)
-            rhs = parse_expr(rhs_str, transformations=_TRANSFORMATIONS)
+            lhs = parse_expr(lhs_str, transformations=_TRANSFORMATIONS,
+                             local_dict=self._known_symbols)
+            rhs = parse_expr(rhs_str, transformations=_TRANSFORMATIONS,
+                             local_dict=self._known_symbols)
             return lhs - rhs
 
         if not equation:
             return None
-        return parse_expr(equation, transformations=_TRANSFORMATIONS)
+        return parse_expr(equation, transformations=_TRANSFORMATIONS,
+                         local_dict=self._known_symbols)
 
     @staticmethod
     def _extract_rhs_if_equation(equation: str) -> Optional[str]:
