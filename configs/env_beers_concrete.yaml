@@ -58,6 +58,10 @@ evaluation:
     path_length: path_length
     transmittance: transmittance
     absorbance: absorbance
+  equation_variables:
+    - molar_absorptivity
+    - concentration
+    - path_length
 
 noise:
   enabled: false

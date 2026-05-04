@@ -41,6 +41,9 @@ evaluation:
     current: current
     resistance: resistance
     voltage: voltage
+  equation_variables:
+    - current
+    - resistance
 
 noise:
   enabled: false

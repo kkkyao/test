@@ -41,6 +41,9 @@ evaluation:
     A: R1
     B: R2
     Y: total_resistance
+  equation_variables:
+    - A
+    - B
 
 noise:
   enabled: false

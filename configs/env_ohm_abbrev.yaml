@@ -1,46 +1,60 @@
 environment:
-  target_variable: voltage
+  target_variable: mass
 
   variables:
-    current:
+    density:
       manipulable: true
       initial_value: 2
       step_size: 1
       min_value: null
       max_value: null
-      description: electric current in amperes
+      description: density of the material in kg per cubic metre
 
-    resistance:
+    volume:
       manipulable: true
       initial_value: 10
       step_size: 10
       min_value: null
       max_value: null
-      description: electrical resistance in ohms
+      description: volume of the object in cubic metres
 
-    voltage:
+    k:
+      manipulable: true
+      initial_value: 3
+      step_size: 1
+      min_value: null
+      max_value: null
+      description: scaling constant
+
+    mass:
       manipulable: false
-      description: electric voltage in volts
+      description: total mass of the object in kilograms
 
   equations:
-    voltage: "current * resistance"
+    mass: "density * volume * k"
 
 representation:
   naming_mode: abstract
   metadata_level: minimal
   name_mapping:
-    current: I
-    resistance: R
-    voltage: V
+    density: rho
+    volume: V
+    k: k
+    mass: m
 
 actions:
   action_mode: increase_decrease
 
 evaluation:
   variable_mapping:
-    I: current
-    R: resistance
-    V: voltage
+    rho: density
+    V: volume
+    k: k
+    m: mass
+  equation_variables:
+    - rho
+    - V
+    - k
 
 noise:
   enabled: false

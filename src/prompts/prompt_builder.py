@@ -27,6 +27,7 @@ class PromptBuilder:
         target_variable: str,
         max_steps: int,
         action_mode: str,
+        equation_variables: Optional[List[str]] = None,
         include_history: bool = True,
         history_window: Optional[int] = None,
     ) -> None:
@@ -52,6 +53,9 @@ class PromptBuilder:
         self.action_mode = action_mode
         self.include_history = include_history
         self.history_window = history_window
+        self.equation_variables = equation_variables or []
+        self.num_variables = len(self.equation_variables)
+        self.equation_variables_str = ", ".join(self.equation_variables)
 
         self._require_keys(
             self._cfg,
@@ -112,7 +116,12 @@ class PromptBuilder:
             self._cfg["task_template"].format(target_variable=display_target)
         )
         for line in self._cfg["exploration_lines"]:
-            sections.append(line.format(max_steps=self.max_steps))
+            sections.append(line.format(
+                max_steps=self.max_steps,
+                num_variables=self.num_variables,
+                equation_variables=self.equation_variables_str,
+                target_variable=display_target,
+            ))
 
         # 3. Allowed step types
         sections.append("")
@@ -124,7 +133,11 @@ class PromptBuilder:
         sections.append("")
         sections.append(self._cfg["section_headers"]["rules"])
         for rule in self._cfg["rules"]:
-            sections.append(f"- {rule}")
+            sections.append("- " + rule.format(
+                num_variables=self.num_variables,
+                equation_variables=self.equation_variables_str,
+                target_variable=display_target,
+            ))
 
         # 5. Current observation
         sections.append("")
@@ -176,9 +189,6 @@ class PromptBuilder:
             "target_variable", self.target_variable
         )
 
-        # Variable names the model has been shown (display names)
-        variable_list = ", ".join(observation.visible_state.keys())
-
         history_text = self._format_history(history)
 
         template: str = self._cfg["forced_finish_template"]
@@ -189,7 +199,8 @@ class PromptBuilder:
             "",
             template.format(
                 target_variable=display_target,
-                variable_list=variable_list,
+                equation_variables=self.equation_variables_str,
+                num_variables=self.num_variables,
             ).strip(),
         ]
 

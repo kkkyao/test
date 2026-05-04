@@ -51,6 +51,10 @@ evaluation:
     distance_2: distance_2
     distance_3: distance_3
     total_distance: total_distance
+  equation_variables:
+    - distance_1
+    - distance_2
+    - distance_3
 
 noise:
   enabled: false

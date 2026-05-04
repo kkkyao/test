@@ -51,6 +51,10 @@ evaluation:
     volume: volume
     k: k
     mass: mass
+  equation_variables:
+    - density
+    - volume
+    - k
 
 noise:
   enabled: false

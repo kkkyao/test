@@ -51,6 +51,10 @@ evaluation:
     v: velocity
     t: time
     x: position
+  equation_variables:
+    - x0
+    - v
+    - t
 
 noise:
   enabled: false

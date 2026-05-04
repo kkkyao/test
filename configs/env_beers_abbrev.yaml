@@ -58,6 +58,10 @@ evaluation:
     l: path_length
     T: transmittance
     A: absorbance
+  equation_variables:
+    - epsilon
+    - c
+    - l
 
 noise:
   enabled: false
