@@ -66,16 +66,6 @@ class EquationMatcher:
             v: k for k, v in self.variable_mapping.items()
         }
 
-        # Pre-declare every known variable name as a SymPy Symbol so that
-        # parse_expr never misinterprets them.  Without this, names like
-        # x0 -> x*0 = 0, Y2 -> Y*2, I -> ImaginaryUnit.
-        all_names = (
-            set(self.variable_mapping.keys()) | set(self.variable_mapping.values())
-        )
-        self._known_symbols: Dict[str, sp.Symbol] = {
-            name: sp.Symbol(name) for name in all_names
-        }
-
     # -------------------------------------------------------------------------
     # Public API
     # -------------------------------------------------------------------------
@@ -128,10 +118,15 @@ class EquationMatcher:
         ("lhs = rhs") but the ground truth is a bare expression: the RHS
         of the prediction is compared separately.
         """
-        predicted_mapped = self._apply_mapping(predicted, mapping)
+        # Normalize surface formatting first (Unicode Greek, LaTeX, etc.) so
+        # that variable names like ε become epsilon before the mapping
+        # epsilon -> molar_absorptivity is applied.  Wrong order means mapping
+        # never finds the Unicode character and the equation fails to match.
+        predicted_mapped   = self._apply_mapping(self._preprocess(predicted), mapping)
+        ground_truth_clean = self._preprocess(ground_truth)
 
         pred_expr = self._equation_to_expr(predicted_mapped)
-        gt_expr   = self._equation_to_expr(ground_truth)
+        gt_expr   = self._equation_to_expr(ground_truth_clean)
 
         if pred_expr is None or gt_expr is None:
             return False
@@ -139,9 +134,9 @@ class EquationMatcher:
         if self._expressions_equivalent(pred_expr, gt_expr):
             return True
 
-        # RHS-only fallback
+        # RHS-only fallback: model wrote "lhs = rhs" but ground truth is a bare expression
         predicted_rhs = self._extract_rhs_if_equation(predicted_mapped)
-        if predicted_rhs is not None and "=" not in ground_truth:
+        if predicted_rhs is not None and "=" not in ground_truth_clean:
             rhs_expr = self._equation_to_expr(predicted_rhs)
             if rhs_expr is not None:
                 return self._expressions_equivalent(rhs_expr, gt_expr)
@@ -166,16 +161,62 @@ class EquationMatcher:
             mapped = re.sub(pattern, target, mapped)
         return mapped
 
+    @staticmethod
+    def _preprocess(equation: str) -> str:
+        """
+        Normalize surface-level formatting before parsing.
+
+        Transformations applied (in order):
+        1. Unicode Greek letters → ASCII names (e.g. ε → epsilon, ρ → rho).
+           Models sometimes output the actual Unicode character instead of the
+           spelled-out name used in variable_mapping, causing mapping to fail.
+        2. LaTeX multiplication symbols (\times, \cdot) → *
+        3. LaTeX fraction \frac{a}{b} → (a)/(b)
+        4. LaTeX parentheses (\left(, \right)) → (, )
+        5. Escaped asterisk \* → *
+        6. Caret exponent ^ → **
+        """
+        # 1. Unicode Greek letters → ASCII names
+        _GREEK = {
+            "α": "alpha",   "β": "beta",    "γ": "gamma",   "δ": "delta",
+            "ε": "epsilon", "ζ": "zeta",    "η": "eta",     "θ": "theta",
+            "λ": "lambda",  "μ": "mu",      "ν": "nu",      "ξ": "xi",
+            "π": "pi",      "ρ": "rho",     "σ": "sigma",   "τ": "tau",
+            "φ": "phi",     "χ": "chi",     "ψ": "psi",     "ω": "omega",
+            "Γ": "Gamma",   "Δ": "Delta",   "Θ": "Theta",   "Λ": "Lambda",
+            "Ξ": "Xi",      "Π": "Pi",      "Σ": "Sigma",   "Φ": "Phi",
+            "Ψ": "Psi",     "Ω": "Omega",
+        }
+        for unicode_char, ascii_name in _GREEK.items():
+            equation = equation.replace(unicode_char, ascii_name)
+
+        # 2. LaTeX multiplication
+        equation = re.sub(r"\times", "*", equation)
+        equation = re.sub(r"\cdot", "*", equation)
+
+        # 3. LaTeX fraction
+        equation = re.sub(r"\frac\{(.*?)\}\{(.*?)\}", r"(\1)/(\2)", equation)
+
+        # 4. LaTeX parentheses
+        equation = re.sub(r"\left\(", "(", equation)
+        equation = re.sub(r"\right\)", ")", equation)
+        equation = re.sub(r"\\(", "(", equation)
+        equation = re.sub(r"\\)", ")", equation)
+
+        # 5. Escaped asterisk
+        equation = equation.replace("\*", "*")
+
+        # 6. Caret exponent
+        equation = equation.replace("^", "**")
+
+        return equation
+
     def _equation_to_expr(self, equation: str) -> Optional[sp.Expr]:
         """
         Parse an equation string into a single SymPy expression.
 
-        "lhs = rhs"  ->  parse(lhs) - parse(rhs)
-        "expr"       ->  parse(expr)
-
-        local_dict is passed to parse_expr so that every known variable name
-        is treated as a plain Symbol, preventing SymPy from misinterpreting
-        names such as x0 (-> x*0), Y2 (-> Y*2), or I (-> ImaginaryUnit).
+        "lhs = rhs"  →  parse(lhs) - parse(rhs)
+        "expr"       →  parse(expr)
         """
         equation = equation.strip()
 
@@ -185,16 +226,13 @@ class EquationMatcher:
             rhs_str = rhs_str.strip()
             if not lhs_str or not rhs_str:
                 return None
-            lhs = parse_expr(lhs_str, transformations=_TRANSFORMATIONS,
-                             local_dict=self._known_symbols)
-            rhs = parse_expr(rhs_str, transformations=_TRANSFORMATIONS,
-                             local_dict=self._known_symbols)
+            lhs = parse_expr(lhs_str, transformations=_TRANSFORMATIONS)
+            rhs = parse_expr(rhs_str, transformations=_TRANSFORMATIONS)
             return lhs - rhs
 
         if not equation:
             return None
-        return parse_expr(equation, transformations=_TRANSFORMATIONS,
-                         local_dict=self._known_symbols)
+        return parse_expr(equation, transformations=_TRANSFORMATIONS)
 
     @staticmethod
     def _extract_rhs_if_equation(equation: str) -> Optional[str]:
