@@ -111,34 +111,56 @@ class EquationMatcher:
         """
         Try a single mapping strategy.
 
-        Applies `mapping` to the predicted equation, converts both sides
-        to SymPy expressions, and checks algebraic equivalence.
-
-        Also handles the case where the prediction is a full equation
-        ("lhs = rhs") but the ground truth is a bare expression: the RHS
-        of the prediction is compared separately.
+        Strategy (in order):
+        1. Normalize surface formatting (Unicode Greek letters, LaTeX, etc.)
+           so that e.g. the Unicode character ε becomes the ASCII string
+           epsilon before any further processing.
+        2. Parse both equations into SymPy expressions using self._known_symbols
+           as a local_dict.  Passing the local_dict is critical for two reasons:
+           a) It prevents SymPy from misinterpreting names like x0 (→ x*0=0),
+              Y2 (→ Y*2), or I (→ ImaginaryUnit).
+           b) implicit_multiplication_application can split concatenated single-
+              letter variables correctly: "cl" → c*l when both c and l are in
+              the local_dict.  This handles model outputs like A = εcl.
+        3. Apply the variable mapping as a symbolic substitution on the parsed
+           SymPy expression rather than as a string-level replacement.  This
+           avoids false positives such as mapping c → concentration inside the
+           word "concentration" that was already placed by a prior substitution.
+        4. Also build case-insensitive substitutions for short variable names so
+           that C and c are treated as the same variable.
+        5. RHS-only fallback for equations where the model includes a lhs.
         """
-        # Normalize surface formatting first (Unicode Greek, LaTeX, etc.) so
-        # that variable names like ε become epsilon before the mapping
-        # epsilon -> molar_absorptivity is applied.  Wrong order means mapping
-        # never finds the Unicode character and the equation fails to match.
-        predicted_mapped   = self._apply_mapping(self._preprocess(predicted), mapping)
-        ground_truth_clean = self._preprocess(ground_truth)
+        # 1. Normalize surface formatting
+        predicted_pre  = self._preprocess(predicted)
+        gt_pre         = self._preprocess(ground_truth)
 
-        pred_expr = self._equation_to_expr(predicted_mapped)
-        gt_expr   = self._equation_to_expr(ground_truth_clean)
+        # 2. Parse with known_symbols as local_dict
+        pred_expr = self._equation_to_expr(predicted_pre)
+        gt_expr   = self._equation_to_expr(gt_pre)
 
         if pred_expr is None or gt_expr is None:
             return False
 
+        # 3 & 4. Build symbolic substitution map (display → concrete).
+        #    Add case-insensitive variants for short names so that C matches c.
+        subs: Dict[sp.Symbol, sp.Symbol] = {}
+        for display, concrete in mapping.items():
+            subs[sp.Symbol(display)] = sp.Symbol(concrete)
+            if len(display) <= 3:
+                subs[sp.Symbol(display.upper())] = sp.Symbol(concrete)
+                subs[sp.Symbol(display.lower())] = sp.Symbol(concrete)
+
+        pred_expr = pred_expr.subs(subs)
+
         if self._expressions_equivalent(pred_expr, gt_expr):
             return True
 
-        # RHS-only fallback: model wrote "lhs = rhs" but ground truth is a bare expression
-        predicted_rhs = self._extract_rhs_if_equation(predicted_mapped)
-        if predicted_rhs is not None and "=" not in ground_truth_clean:
+        # 5. RHS-only fallback
+        predicted_rhs = self._extract_rhs_if_equation(predicted_pre)
+        if predicted_rhs is not None and "=" not in gt_pre:
             rhs_expr = self._equation_to_expr(predicted_rhs)
             if rhs_expr is not None:
+                rhs_expr = rhs_expr.subs(subs)
                 return self._expressions_equivalent(rhs_expr, gt_expr)
 
         return False
@@ -158,8 +180,6 @@ class EquationMatcher:
         mapped = text
         for source, target in sorted(mapping.items(), key=lambda kv: -len(kv[0])):
             pattern = rf"\b{re.escape(source)}\b"
-            # re.IGNORECASE so that model outputs like C, L, Epsilon are
-            # treated the same as the lowercase display names c, l, epsilon.
             mapped = re.sub(pattern, target, mapped, flags=re.IGNORECASE)
         return mapped
 
@@ -190,7 +210,9 @@ class EquationMatcher:
             "Ψ": "Psi",     "Ω": "Omega",
         }
         for unicode_char, ascii_name in _GREEK.items():
-            equation = equation.replace(unicode_char, ascii_name)
+            # Add spaces around the replacement so that implicit multiplication
+            # is preserved: e.g. εcl -> " epsilon cl" -> epsilon * c * l.
+            equation = equation.replace(unicode_char, f" {ascii_name} ")
 
         # 2. LaTeX multiplication  (match literal backslash + command)
         equation = re.sub(r"\\times", "*", equation)
