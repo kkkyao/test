@@ -78,6 +78,11 @@ class EquationEngine:
                 raise ValueError(
                     f"division by zero while evaluating equation for '{target}': '{expr}'"
                 ) from e
+            except OverflowError:
+                # Numerical result out of range (e.g. 10**(-absorbance) when
+                # absorbance is a very large negative number).  Use inf so that
+                # the environment can continue running without crashing.
+                value = float("inf")
 
             results[target] = value
             context[target] = value
@@ -117,7 +122,11 @@ class EquationEngine:
                 raise ValueError(f"unsupported binary operator: {op_type.__name__}")
             left = self._eval_node(node.left, variables)
             right = self._eval_node(node.right, variables)
-            return float(self._BIN_OPS[op_type](left, right))
+            try:
+                return float(self._BIN_OPS[op_type](left, right))
+            except OverflowError:
+                # e.g. 10 ** very_large_exponent
+                return float("inf")
 
         if isinstance(node, ast.UnaryOp):
             op_type = type(node.op)

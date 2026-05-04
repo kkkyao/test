@@ -105,7 +105,7 @@ class EpisodeRunner:
                     observation  = self.renderer.render(state_after)
                     observation_after = observation.to_dict()
 
-                except (ValueError, KeyError) as exc:
+                except (ValueError, KeyError, OverflowError) as exc:
                     error_text = (
                         f"[ERROR] Invalid action: '{env_action.variable}' cannot be manipulated. "
                         f"Only the variables shown in 'Available actions' can be changed. "
