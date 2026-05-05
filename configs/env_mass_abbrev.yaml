@@ -43,7 +43,7 @@ representation:
     mass: m
 
 actions:
-  action_mode: increase_decrease
+  action_mode: set_value
 
 evaluation:
   variable_mapping:
