@@ -49,7 +49,7 @@ representation:
     absorbance: A
 
 actions:
-  action_mode: increase_decrease
+  action_mode: set_value
 
 evaluation:
   variable_mapping:
