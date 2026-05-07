@@ -142,6 +142,26 @@ class PromptBuilder:
         # 5. Current observation
         sections.append("")
         sections.append(self._cfg["section_headers"]["observation"])
+
+        # Inject image notice when observation contains a screenshot.
+        # Only activates in text+image mode (observation.image_path is not None).
+        # In text-only mode image_path is always None, so this block is skipped
+        # and prompt_default.yaml does not need an image_notice field.
+        if observation.image_path:
+            image_notice = self._cfg.get("image_notice", "")
+            if image_notice:
+                # image_notice may reference {target_variable} — resolve it
+                try:
+                    image_notice = image_notice.format(
+                        target_variable=display_target,
+                        equation_variables=self.equation_variables_str,
+                        num_variables=self.num_variables,
+                    )
+                except KeyError:
+                    pass  # unknown placeholder — leave notice as-is
+                sections.append(image_notice)
+                sections.append("")
+
         sections.append(observation.text or "")
 
         # 6. History

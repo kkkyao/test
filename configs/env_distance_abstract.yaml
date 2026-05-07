@@ -2,28 +2,28 @@ environment:
   target_variable: total_distance
 
   variables:
-    d1:
+    distance_1:
       manipulable: true
       initial_value: 10
-      step_size: 10
-      min_value: null
-      max_value: null
+      step_size: 5
+      min_value: 5
+      max_value: 50
       description: first segment distance in metres
 
-    d2:
+    distance_2:
       manipulable: true
       initial_value: 20
-      step_size: 10
-      min_value: null
-      max_value: null
+      step_size: 5
+      min_value: 5
+      max_value: 50
       description: second segment distance in metres
 
-    d3:
+    distance_3:
       manipulable: true
       initial_value: 30
-      step_size: 10
-      min_value: null
-      max_value: null
+      step_size: 5
+      min_value: 5
+      max_value: 50
       description: third segment distance in metres
 
     total_distance:
@@ -31,25 +31,25 @@ environment:
       description: total distance in metres
 
   equations:
-    total_distance: "d1 + d2 + d3"
+    total_distance: "distance_1 + distance_2 + distance_3"
 
 representation:
   naming_mode: abstract
   metadata_level: none
   name_mapping:
-    d1: A
-    d2: B
-    d3: C
+    distance_1: A
+    distance_2: B
+    distance_3: C
     total_distance: Y
 
 actions:
-  action_mode: set_value
+  action_mode: increase_decrease
 
 evaluation:
   variable_mapping:
-    A: d1
-    B: d2
-    C: d3
+    A: distance_1
+    B: distance_2
+    C: distance_3
     Y: total_distance
   equation_variables:
     - A

@@ -1,31 +1,41 @@
+# Python
 .venv/
 __pycache__/
 *.pyc
+
+# Editor
+.vscode/
+
+# Logs
+*.log
+
+# Generated outputs
 outputs/
-wandb_downloads/
+figures/
+
+# W&B local data
+wandb/
 wandb_downloads/
 wandb_episode_jsons_all/
+wandb_episode_jsons_all_rerun/
+wandb_episode_jsons_increase_decrease_combined/
+wandb_episode_jsons_set/
 wandb_run_files/
+wandb_run_files_filtered/
 wandb_run_tables/
-wandb/
-outputs/
-*.log
-.vscode/
-figures/
+
+# W&B metadata
 wandb_artifact_list.csv
 failed_artifacts.txt
 missing_files.txt
+failed_*.txt
+missing_*.txt
+
+# Local analysis notebooks
 *_overall_performance_success_rate.ipynb
-download_run_files.py
-download_run_table_csvs.py
-download_wandb_episode_jsons.py
-list_wandb_artifacts.py
-.vscode/
-figures/
-wandb_artifact_list.csv
-failed_artifacts.txt
-missing_files.txt
-*_overall_performance_success_rate.ipynb
+analysis_figures_all.ipynb
+
+# Old download helper scripts
 download_run_files.py
 download_run_table_csvs.py
 download_wandb_episode_jsons.py

@@ -5,25 +5,25 @@ environment:
     distance_1:
       manipulable: true
       initial_value: 10
-      step_size: 10
-      min_value: null
-      max_value: null
+      step_size: 5
+      min_value: 5
+      max_value: 50
       description: first segment distance in metres
 
     distance_2:
       manipulable: true
       initial_value: 20
-      step_size: 10
-      min_value: null
-      max_value: null
+      step_size: 5
+      min_value: 5
+      max_value: 50
       description: second segment distance in metres
 
     distance_3:
       manipulable: true
       initial_value: 30
-      step_size: 10
-      min_value: null
-      max_value: null
+      step_size: 5
+      min_value: 5
+      max_value: 50
       description: third segment distance in metres
 
     total_distance:
@@ -43,7 +43,7 @@ representation:
     total_distance: total_distance
 
 actions:
-  action_mode: set_value
+  action_mode: increase_decrease
 
 evaluation:
   variable_mapping:

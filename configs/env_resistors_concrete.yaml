@@ -5,17 +5,17 @@ environment:
     resistance_1:
       manipulable: true
       initial_value: 10
-      step_size: 10
-      min_value: null
-      max_value: null
+      step_size: 5
+      min_value: 5
+      max_value: 50
       description: resistance of the first resistor in ohms
 
     resistance_2:
       manipulable: true
       initial_value: 5
       step_size: 5
-      min_value: null
-      max_value: null
+      min_value: 5
+      max_value: 50
       description: resistance of the second resistor in ohms
 
     total_resistance:
@@ -34,7 +34,7 @@ representation:
     total_resistance: total_resistance
 
 actions:
-  action_mode: set_value
+  action_mode: increase_decrease
 
 evaluation:
   variable_mapping:

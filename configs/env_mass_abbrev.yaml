@@ -6,24 +6,24 @@ environment:
       manipulable: true
       initial_value: 2
       step_size: 1
-      min_value: null
-      max_value: null
+      min_value: 1
+      max_value: 10
       description: density of the material in kg per cubic metre
 
     volume:
       manipulable: true
       initial_value: 10
-      step_size: 10
-      min_value: null
-      max_value: null
+      step_size: 5
+      min_value: 5
+      max_value: 50
       description: volume of the object in cubic metres
 
     k:
       manipulable: true
       initial_value: 3
       step_size: 1
-      min_value: null
-      max_value: null
+      min_value: 1
+      max_value: 10
       description: scaling constant
 
     mass:
@@ -43,7 +43,7 @@ representation:
     mass: m
 
 actions:
-  action_mode: set_value
+  action_mode: increase_decrease
 
 evaluation:
   variable_mapping:

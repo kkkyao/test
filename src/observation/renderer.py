@@ -52,8 +52,30 @@ class TextRenderer:
 
         self._reverse_name_mapping = {v: k for k, v in self.name_mapping.items()}
 
-    def render(self, state: Dict[str, Any]) -> Observation:
-        """Render the current state into a text Observation."""
+    def render(
+        self,
+        state: Dict[str, Any],
+        history: Optional[List[Dict[str, Any]]] = None,
+        step_id: Optional[int] = None,
+    ) -> Observation:
+        """
+        Render the current state into a text Observation.
+
+        Parameters
+        ----------
+        state:
+            Current environment state dict.
+        history:
+            Ignored by TextRenderer. Accepted for interface compatibility
+            with RendererProtocol and TextImageRenderer.
+        step_id:
+            Ignored by TextRenderer. Accepted for interface compatibility
+            with RendererProtocol and TextImageRenderer.
+
+        Returns
+        -------
+        Observation with mode=TEXT.
+        """
         if not isinstance(state, dict):
             raise ValueError("state must be a dictionary")
 
@@ -134,7 +156,6 @@ class TextRenderer:
         lines.append("")
         lines.append("Available actions:")
 
-        # FIX: 渲染为人类可读格式，而非 Python dict repr
         for action in available_actions:
             action_type = action["action_type"]
             variable    = action["variable"]

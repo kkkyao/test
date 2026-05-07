@@ -1,0 +1,21 @@
+experiment:
+  name: beers_text_image_default
+  max_steps: 20
+  history_window: null
+  auto_evaluate: true
+
+logging:
+  output_dir: outputs/beers_text_image_default
+  save_steps: true
+  save_trajectory: true
+  save_interaction_log: true
+
+visual:
+  observation_mode: text_image
+  template_path: templates/chart_state_view.html
+  output_subdir: images
+  normalize_bars: true
+  playwright:
+    headless: true
+    slow_mo: 0
+  image_history_window: null

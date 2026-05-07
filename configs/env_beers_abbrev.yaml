@@ -6,24 +6,24 @@ environment:
       manipulable: true
       initial_value: 1
       step_size: 1
-      min_value: null
-      max_value: null
+      min_value: 1
+      max_value: 10
       description: molar absorptivity coefficient of the solute
 
     concentration:
       manipulable: true
       initial_value: 2
       step_size: 1
-      min_value: null
-      max_value: null
+      min_value: 1
+      max_value: 10
       description: amount of solute per volume
 
     path_length:
       manipulable: true
       initial_value: 1
       step_size: 1
-      min_value: null
-      max_value: null
+      min_value: 1
+      max_value: 10
       description: distance the light travels through the solution
 
     transmittance:
@@ -49,7 +49,7 @@ representation:
     absorbance: A
 
 actions:
-  action_mode: set_value
+  action_mode: increase_decrease
 
 evaluation:
   variable_mapping:

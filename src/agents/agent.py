@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import re
-from typing import Callable
+from typing import Callable, List, Optional
 
 from src.schemas.action_schema import ActionSpec
 from src.schemas.agent_output_schema import AgentStep
@@ -15,6 +15,10 @@ class TextLLMAgent:
     Lightweight text-only agent that:
     1. sends a prompt to a model callable
     2. parses the returned JSON into an AgentStep
+
+    The JSON parsing helpers (_parse_output, _clean_output, etc.) are all
+    @staticmethod so that VisionLanguageAgent can call them directly without
+    inheriting from this class.
     """
 
     def __init__(
@@ -28,18 +32,33 @@ class TextLLMAgent:
         self.model_callable = model_callable
         self.strip_markdown_fences = strip_markdown_fences
 
-    def act(self, prompt: str) -> tuple[AgentStep, str]:
+    def act(
+        self,
+        prompt: str,
+        image_paths: Optional[List[str]] = None,  # accepted but ignored by text-only agent
+    ) -> tuple[AgentStep, str]:
         """
         Generate one model step from a prompt.
 
-        Returns:
-            (parsed_agent_step, raw_model_output)
+        Parameters
+        ----------
+        prompt:
+            The full prompt string to send to the model.
+        image_paths:
+            Ignored by TextLLMAgent. Accepted so the interface is compatible
+            with AgentProtocol and VisionLanguageAgent.
+
+        Returns
+        -------
+        (parsed_agent_step, raw_model_output)
         """
         if not isinstance(prompt, str) or not prompt.strip():
             raise ValueError("prompt must be a non-empty string")
 
         raw_output = self._generate(prompt)
-        parsed_step = self._parse_output(raw_output)
+        parsed_step = TextLLMAgent._parse_output(
+            raw_output, self.strip_markdown_fences
+        )
         return parsed_step, raw_output
 
     def _generate(self, prompt: str) -> str:
@@ -50,8 +69,18 @@ class TextLLMAgent:
 
         return raw_output
 
-    def _parse_output(self, raw_text: str) -> AgentStep:
-        cleaned = self._clean_output(raw_text)
+    # -------------------------------------------------------------------------
+    # Static parsing helpers
+    # All methods below are @staticmethod so VisionLanguageAgent can call
+    # TextLLMAgent._parse_output(raw_text) without instantiating this class.
+    # -------------------------------------------------------------------------
+
+    @staticmethod
+    def _parse_output(
+        raw_text: str,
+        strip_markdown_fences: bool = True,
+    ) -> AgentStep:
+        cleaned = TextLLMAgent._clean_output(raw_text, strip_markdown_fences)
 
         try:
             data = json.loads(cleaned)
@@ -141,7 +170,11 @@ class TextLLMAgent:
             final_equation=data.get("final_equation"),
         )
 
-    def _clean_output(self, raw_text: str) -> str:
+    @staticmethod
+    def _clean_output(
+        raw_text: str,
+        strip_markdown_fences: bool = True,
+    ) -> str:
         """
         Extract a JSON object from model output.
 
@@ -163,7 +196,7 @@ class TextLLMAgent:
         """
         text = raw_text.strip()
 
-        if not self.strip_markdown_fences:
+        if not strip_markdown_fences:
             return text
 
         # 0. Strip Qwen3/Qwen3.5 thinking block if present.
@@ -174,14 +207,14 @@ class TextLLMAgent:
         fence_match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.DOTALL)
         if fence_match:
             candidate = fence_match.group(1).strip()
-            result = self._try_loads_with_repair(candidate)
+            result = TextLLMAgent._try_loads_with_repair(candidate)
             if result is not None:
                 return result
 
         # 2. Walk braces to find the JSON object boundary
-        candidate = self._extract_by_brace_walk(text)
+        candidate = TextLLMAgent._extract_by_brace_walk(text)
         if candidate is not None:
-            result = self._try_loads_with_repair(candidate)
+            result = TextLLMAgent._try_loads_with_repair(candidate)
             if result is not None:
                 return result
             # Brace-walk found a boundary but repair could not fix it.
@@ -190,10 +223,6 @@ class TextLLMAgent:
             return candidate
 
         return text
-
-    # -------------------------------------------------------------------------
-    # Private helpers
-    # -------------------------------------------------------------------------
 
     @staticmethod
     def _extract_by_brace_walk(text: str) -> str | None:
@@ -287,8 +316,8 @@ class TextLLMAgent:
 
         return fixed
 
-    @classmethod
-    def _try_loads_with_repair(cls, candidate: str) -> str | None:
+    @staticmethod
+    def _try_loads_with_repair(candidate: str) -> str | None:
         """
         Try json.loads on candidate, then on _repair(candidate).
 
@@ -301,7 +330,7 @@ class TextLLMAgent:
         except json.JSONDecodeError:
             pass
 
-        repaired = cls._repair(candidate)
+        repaired = TextLLMAgent._repair(candidate)
         try:
             json.loads(repaired)
             return repaired

@@ -1,0 +1,114 @@
+prompt:
+  # ── Modified from prompt_default.yaml for text+image (VLM) mode ────────────
+  # Key differences vs prompt_default.yaml:
+  #   1. system_intro  — tells the model it will receive bar chart images
+  #   2. exploration_lines — one extra line guiding visual comparison
+  #   3. image_notice (new) — injected just before observation text, describes
+  #      what the images show and how to use them
+  # Everything else is identical to prompt_default.yaml.
+  # ───────────────────────────────────────────────────────────────────────────
+
+  system_intro: "You are a scientific explorer interacting with an unknown environment.
+    At each step you receive a text observation AND a bar chart image showing the
+    current value of every variable. You must respond with exactly one valid JSON object."
+
+  task_template: "Your goal is to discover the equation that determines {target_variable} from the other variables in the environment."
+
+  exploration_lines:
+    - "There are {num_variables} variables available for exploration: {equation_variables}. Only these {num_variables} variables can appear in the final equation."
+    - "Explore the relationship between the variables in order to find the correct equation that models {target_variable} using {equation_variables}."
+    - "Use the current observation and previous history when deciding your next step."
+    - "Bar chart images are provided at every step (one image per step, oldest first). Compare bar heights across images to track how each variable changed after your actions."
+    - "Put any reasoning inside the JSON reasoning field only."
+    - "Stop only when you have gathered enough evidence from interaction to state a final equation supported by the observations."
+    - "You may take up to {max_steps} steps in total."
+
+  step_type_descriptions:
+    action: "take exactly one action to change the environment"
+    finish: "stop exploring and submit your final equation"
+
+  rules:
+    - "Return exactly one valid JSON object."
+    - "Do not output prose, markdown fences, bullet points, or any text outside the JSON object."
+    - "reasoning must be a non-empty string on every step."
+    - "step_type must be exactly 'action' or 'finish'."
+    - "When step_type is 'action', action must be one valid action object from Available actions; final_equation must be null."
+    - "When step_type is 'finish', action must be null; final_equation must be a non-empty equation string."
+    - "The final equation must use only these {num_variables} variables: {equation_variables}. Do not use any other variable names or numeric constants."
+    - "Do not invent new action_type values, variables, or fields."
+
+  # ── image_notice ────────────────────────────────────────────────────────────
+  # Injected by PromptBuilder just before the observation text, only when
+  # observation.image_path is not None (i.e. text+image mode).
+  # In text-only mode this field is ignored entirely.
+  # ────────────────────────────────────────────────────────────────────────────
+  image_notice: "Each image is a bar chart of the current variable values at that step.
+    The orange bar is the target variable ({target_variable}). Blue bars are input variables.
+    Images are ordered oldest to newest — compare bar heights across images to see how
+    your actions changed the state."
+
+  output_format_header: "Your answer must follow one of the JSON templates below."
+
+  output_format_action_increase_decrease: |
+    For an action step:
+    {
+      "reasoning": "brief string",
+      "step_type": "action",
+      "action": {
+        "action_type": "increase",
+        "variable": "variable_name"
+      },
+      "final_equation": null
+    }
+
+  output_format_action_set_value: |
+    For an action step:
+    {
+      "reasoning": "brief string",
+      "step_type": "action",
+      "action": {
+        "action_type": "set",
+        "variable": "variable_name",
+        "value": 0
+      },
+      "final_equation": null
+    }
+
+  output_format_finish: |
+    For a finish step:
+    {
+      "reasoning": "brief string",
+      "step_type": "finish",
+      "action": null,
+      "final_equation": "equation string"
+    }
+
+  forced_finish_template: |
+    You have finished your exploration steps.
+    Based on everything you observed, find the correct equation that models
+    variable {target_variable} using variables {equation_variables}.
+    Model the relationship using only +, -, *, / operators. Do not use coefficients.
+
+    Rules:
+    - Write only the equation on a single line.
+    - There are {num_variables} variables: {equation_variables}. Only these variables can be used.
+    - Format: {target_variable} = <expression using only {equation_variables}>
+    - Do not write anything else — no JSON, no explanation, no markdown.
+
+    Equation:
+
+  section_headers:
+    step_types: "Allowed step types:"
+    rules: "Rules:"
+    observation: "Current observation:"
+    history: "History:"
+    output_format: "Output format:"
+
+  history_labels:
+    empty: "None"
+    step_prefix: "Step {step_id}:"
+    step_type: "step_type: {value}"
+    reasoning: "reasoning: {value}"
+    action: "action: {value}"
+    visible_state_before: "state before: {value}"
+    visible_state_after: "state after: {value}"
