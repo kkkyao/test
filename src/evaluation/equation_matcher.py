@@ -72,8 +72,16 @@ class EquationMatcher:
         all_names = (
             set(self.variable_mapping.keys()) | set(self.variable_mapping.values())
         )
+        # Also register lowercase variants so that model outputs like
+        # "Molar_Absorptivity" or "CONCENTRATION" are parsed as a single
+        # Symbol rather than split by implicit_multiplication_application.
+        all_names_with_variants: set = set()
+        for name in all_names:
+            all_names_with_variants.add(name)
+            all_names_with_variants.add(name.lower())
+
         self._known_symbols: Dict[str, sp.Symbol] = {
-            name: sp.Symbol(name) for name in all_names
+            name: sp.Symbol(name) for name in all_names_with_variants
         }
 
     # -------------------------------------------------------------------------
@@ -155,10 +163,15 @@ class EquationMatcher:
         #    Add case-insensitive variants for short names so that C matches c.
         subs: Dict[sp.Symbol, sp.Symbol] = {}
         for display, concrete in mapping.items():
-            subs[sp.Symbol(display)] = sp.Symbol(concrete)
-            if len(display) <= 3:
-                subs[sp.Symbol(display.upper())] = sp.Symbol(concrete)
-                subs[sp.Symbol(display.lower())] = sp.Symbol(concrete)
+            # Map all case variants of the display name to the concrete name.
+            # _preprocess lowercases everything, so display.lower() is the
+            # canonical form after preprocessing.  The other variants are kept
+            # for safety in case _preprocess is called independently.
+            concrete_lower = concrete.lower()
+            subs[sp.Symbol(display)]           = sp.Symbol(concrete_lower)
+            subs[sp.Symbol(display.lower())]   = sp.Symbol(concrete_lower)
+            subs[sp.Symbol(display.upper())]   = sp.Symbol(concrete_lower)
+            subs[sp.Symbol(display.capitalize())] = sp.Symbol(concrete_lower)
 
         pred_expr = pred_expr.subs(subs)
 
@@ -242,6 +255,11 @@ class EquationMatcher:
 
         # 6. Caret exponent
         equation = equation.replace("^", "**")
+
+        # 7. Normalize to lowercase so that model outputs like
+        #    "Molar_Absorptivity" or "CONCENTRATION" match the ground truth.
+        #    Applied last so it does not interfere with Greek/LaTeX transforms.
+        equation = equation.lower()
 
         return equation
 
