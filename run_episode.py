@@ -283,8 +283,192 @@ def build_vlm_callable(
 
         return hf_qwen_vl_callable
 
+    if backend == "hf_internvl":
+        import torch
+        import torchvision.transforms as T
+        from PIL import Image
+        from torchvision.transforms.functional import InterpolationMode
+        from transformers import AutoModel, AutoTokenizer
+
+        _IMAGENET_MEAN = (0.485, 0.456, 0.406)
+        _IMAGENET_STD  = (0.229, 0.224, 0.225)
+
+        def _internvl_transform(input_size: int = 448):
+            return T.Compose([
+                T.Lambda(lambda img: img.convert("RGB") if img.mode != "RGB" else img),
+                T.Resize((input_size, input_size),
+                         interpolation=InterpolationMode.BICUBIC),
+                T.ToTensor(),
+                T.Normalize(mean=_IMAGENET_MEAN, std=_IMAGENET_STD),
+            ])
+
+        def _load_internvl_image(path: str, input_size: int = 448) -> "torch.Tensor":
+            img = Image.open(path).convert("RGB")
+            transform = _internvl_transform(input_size)
+            # Single tile — bar charts are simple enough that tiling is unnecessary
+            return transform(img).unsqueeze(0)  # (1, C, H, W)
+
+        model_name = agent_config.get("model_name")
+        if not isinstance(model_name, str) or not model_name.strip():
+            raise ValueError(
+                "agent.model_name must be a non-empty string when backend='hf_internvl'"
+            )
+
+        torch_dtype_cfg = str(
+            agent_config.get("dtype", agent_config.get("torch_dtype", "bfloat16"))
+        ).lower()
+        dtype_map = {
+            "auto": "auto", "float16": torch.float16,
+            "bfloat16": torch.bfloat16, "float32": torch.float32,
+        }
+        torch_dtype        = dtype_map.get(torch_dtype_cfg, torch.bfloat16)
+        device_map         = agent_config.get("device_map", "auto")
+        trust_remote_code  = bool(agent_config.get("trust_remote_code", True))
+        generation_cfg     = agent_config.get("generation", {})
+        max_new_tokens     = int(generation_cfg.get("max_new_tokens", 1024))
+        temperature        = float(generation_cfg.get("temperature", 0.0))
+        do_sample          = bool(generation_cfg.get("do_sample", False))
+
+        print(f"Loading InternVL: {model_name} ...")
+        tokenizer = AutoTokenizer.from_pretrained(
+            model_name, trust_remote_code=trust_remote_code
+        )
+        model = AutoModel.from_pretrained(
+            model_name,
+            torch_dtype=torch_dtype,
+            device_map=device_map,
+            trust_remote_code=trust_remote_code,
+        ).eval()
+        print("InternVL loaded.")
+
+        def hf_internvl_callable(prompt: str, image_paths: List[str]) -> str:
+            gen_cfg = dict(
+                max_new_tokens=max_new_tokens,
+                do_sample=do_sample,
+            )
+            if do_sample:
+                gen_cfg["temperature"] = temperature
+
+            if not image_paths:
+                # Text-only fallback (forced-finish path)
+                response = model.chat(
+                    tokenizer,
+                    pixel_values=None,
+                    question=prompt,
+                    generation_config=gen_cfg,
+                )
+                return response
+
+            # Build pixel_values and num_patches_list for multi-image input
+            pixel_values_list: List["torch.Tensor"] = []
+            num_patches_list:  List[int]             = []
+            for p in image_paths:
+                pv = _load_internvl_image(p).to(
+                    next(model.parameters()).device,
+                    dtype=torch_dtype if torch_dtype != "auto" else torch.bfloat16,
+                )
+                pixel_values_list.append(pv)
+                num_patches_list.append(pv.shape[0])
+
+            pixel_values = torch.cat(pixel_values_list, dim=0)
+
+            # Prepend image tags that InternVL expects
+            n = len(image_paths)
+            image_header = "".join(
+                [f"Image-{i + 1}: <image>\n" for i in range(n)]
+            )
+            full_question = image_header + prompt
+
+            response = model.chat(
+                tokenizer,
+                pixel_values=pixel_values,
+                question=full_question,
+                generation_config=gen_cfg,
+                num_patches_list=num_patches_list,
+            )
+            return response
+
+        return hf_internvl_callable
+
+    if backend == "hf_llava_ov":
+        import torch
+        from PIL import Image
+        from transformers import (
+            LlavaOnevisionForConditionalGeneration,
+            AutoProcessor,
+        )
+
+        model_name = agent_config.get("model_name")
+        if not isinstance(model_name, str) or not model_name.strip():
+            raise ValueError(
+                "agent.model_name must be a non-empty string when backend='hf_llava_ov'"
+            )
+
+        torch_dtype_cfg = str(
+            agent_config.get("dtype", agent_config.get("torch_dtype", "float16"))
+        ).lower()
+        dtype_map = {
+            "auto": "auto", "float16": torch.float16,
+            "bfloat16": torch.bfloat16, "float32": torch.float32,
+        }
+        torch_dtype       = dtype_map.get(torch_dtype_cfg, torch.float16)
+        device_map        = agent_config.get("device_map", "auto")
+        trust_remote_code = bool(agent_config.get("trust_remote_code", True))
+        generation_cfg    = agent_config.get("generation", {})
+        max_new_tokens    = int(generation_cfg.get("max_new_tokens", 1024))
+        temperature       = float(generation_cfg.get("temperature", 0.0))
+        do_sample         = bool(generation_cfg.get("do_sample", False))
+        top_p             = float(generation_cfg.get("top_p", 1.0))
+
+        print(f"Loading LLaVA-OneVision: {model_name} ...")
+        processor = AutoProcessor.from_pretrained(
+            model_name, trust_remote_code=trust_remote_code
+        )
+        model = LlavaOnevisionForConditionalGeneration.from_pretrained(
+            model_name,
+            torch_dtype=torch_dtype,
+            device_map=device_map,
+        ).eval()
+        print("LLaVA-OneVision loaded.")
+
+        def hf_llava_ov_callable(prompt: str, image_paths: List[str]) -> str:
+            # Build multimodal content: one {"type": "image"} per screenshot
+            content: List[Dict[str, Any]] = []
+            for _ in image_paths:
+                content.append({"type": "image"})
+            content.append({"type": "text", "text": prompt})
+
+            conversation = [{"role": "user", "content": content}]
+            prompt_text  = processor.apply_chat_template(
+                conversation, add_generation_prompt=True
+            )
+
+            images = [Image.open(p).convert("RGB") for p in image_paths] if image_paths else None
+
+            inputs = processor(
+                text=prompt_text,
+                images=images,
+                return_tensors="pt",
+            )
+            inputs = {k: v.to(model.device) for k, v in inputs.items()}
+
+            with torch.no_grad():
+                output_ids = model.generate(
+                    **inputs,
+                    max_new_tokens=max_new_tokens,
+                    temperature=temperature,
+                    do_sample=do_sample,
+                    top_p=top_p,
+                )
+
+            trimmed = output_ids[0][inputs["input_ids"].shape[1]:]
+            return processor.decode(trimmed, skip_special_tokens=True).strip()
+
+        return hf_llava_ov_callable
+
     raise NotImplementedError(
-        f"Unsupported VLM backend '{backend}'. Supported: 'mock_vlm', 'hf_qwen_vl'."
+        f"Unsupported VLM backend '{backend}'. "
+        f"Supported: 'mock_vlm', 'hf_qwen_vl', 'hf_internvl', 'hf_llava_ov'."
     )
 
 
