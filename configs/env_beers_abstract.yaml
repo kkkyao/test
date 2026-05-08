@@ -4,7 +4,7 @@ environment:
   variables:
     molar_absorptivity:
       manipulable: true
-      initial_value: 1
+      initial_value: 2      # changed from 1 → avoids Y=B degeneracy
       step_size: 1
       min_value: 1
       max_value: 10
@@ -20,7 +20,7 @@ environment:
 
     path_length:
       manipulable: true
-      initial_value: 1
+      initial_value: 3      # changed from 1 → avoids Y=B degeneracy
       step_size: 1
       min_value: 1
       max_value: 10
@@ -47,6 +47,8 @@ representation:
     path_length: C
     transmittance: T
     absorbance: Y
+  chart_exclude:
+    - transmittance
 
 actions:
   action_mode: increase_decrease

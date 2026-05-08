@@ -4,7 +4,7 @@ environment:
   variables:
     molar_absorptivity:
       manipulable: true
-      initial_value: 1
+      initial_value: 2      # changed from 1
       step_size: 1
       min_value: 1
       max_value: 10
@@ -20,7 +20,7 @@ environment:
 
     path_length:
       manipulable: true
-      initial_value: 1
+      initial_value: 3      # changed from 1
       step_size: 1
       min_value: 1
       max_value: 10
@@ -47,7 +47,6 @@ representation:
     path_length: path_length
     transmittance: transmittance
     absorbance: absorbance
-
   chart_exclude:
     - transmittance
 

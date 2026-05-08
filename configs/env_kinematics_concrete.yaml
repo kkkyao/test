@@ -4,7 +4,7 @@ environment:
   variables:
     initial_position:
       manipulable: true
-      initial_value: 0
+      initial_value: 10     # changed from 0
       step_size: 5
       min_value: 0
       max_value: 45
