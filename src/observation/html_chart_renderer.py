@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from playwright.sync_api import sync_playwright
 
 
 class HtmlChartRenderer:
@@ -259,25 +258,24 @@ class HtmlChartRenderer:
         step_id: Optional[int],
     ) -> str:
         """
-        Open the HTML file in a headless Chromium browser and save a screenshot.
+        Render the HTML file to a PNG using html2image (Chrome headless).
+        Replaces Playwright to avoid libglib dependency issues in containers.
         """
         filename = (
             f"step_{step_id:04d}.png" if step_id is not None else "step_none.png"
         )
         image_path = self._base_dir / filename
 
-        file_uri = Path(html_path).as_uri()
-
-        with sync_playwright() as pw:
-            browser = pw.chromium.launch(
-                headless=self.headless,
-                slow_mo=self.slow_mo,
-            )
-            page = browser.new_page(viewport={"width": 900, "height": 500})
-            page.goto(file_uri, wait_until="networkidle")
-            page.screenshot(path=str(image_path), full_page=False)
-            browser.close()
-
+        from html2image import Html2Image
+        hti = Html2Image(
+            output_path=str(self._base_dir),
+            custom_flags=["--no-sandbox", "--disable-dev-shm-usage"],
+        )
+        hti.screenshot(
+            html_file=html_path,
+            save_as=filename,
+            size=(900, 500),
+        )
         return str(image_path.resolve())
 
     # -------------------------------------------------------------------------
@@ -287,4 +285,4 @@ class HtmlChartRenderer:
     def _display_name(self, variable: str) -> str:
         if self.naming_mode == "abstract":
             return self.name_mapping.get(variable, variable)
-        return variables
+        return variable
