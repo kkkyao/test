@@ -1,60 +1,70 @@
 environment:
-  target_variable: total_distance
+  target_variable: absorbance
 
   variables:
-    distance_1:
+    molar_absorptivity:
       manipulable: true
-      initial_value: 10
-      step_size: 5
-      min_value: 5
-      max_value: 50
-      description: first segment distance in metres
+      initial_value: 1
+      step_size: 1
+      min_value: 1
+      max_value: 10
+      description: molar absorptivity coefficient of the solute
 
-    distance_2:
+    concentration:
       manipulable: true
-      initial_value: 20
-      step_size: 5
-      min_value: 5
-      max_value: 50
-      description: second segment distance in metres
+      initial_value: 2
+      step_size: 1
+      min_value: 1
+      max_value: 10
+      description: amount of solute per volume
 
-    distance_3:
+    path_length:
       manipulable: true
-      initial_value: 30
-      step_size: 5
-      min_value: 5
-      max_value: 50
-      description: third segment distance in metres
+      initial_value: 1
+      step_size: 1
+      min_value: 1
+      max_value: 10
+      description: distance the light travels through the solution
 
-    total_distance:
+    transmittance:
       manipulable: false
-      description: total distance in metres
+      description: fraction of light transmitted through the solution
+
+    absorbance:
+      manipulable: false
+      description: amount of light absorbed by the solution
 
   equations:
-    total_distance: "distance_1 + distance_2 + distance_3"
+    absorbance: "molar_absorptivity * concentration * path_length"
+    transmittance: "10 ** (-absorbance)"
 
 representation:
   naming_mode: abstract
   metadata_level: minimal
   name_mapping:
-    distance_1: d1
-    distance_2: d2
-    distance_3: d3
-    total_distance: d
+    molar_absorptivity: epsilon
+    concentration: c
+    path_length: l
+    transmittance: T
+    absorbance: A
+
+  chart_exclude:
+    - transmittance
 
 actions:
   action_mode: increase_decrease
 
 evaluation:
   variable_mapping:
-    d1: distance_1
-    d2: distance_2
-    d3: distance_3
-    d: total_distance
+    epsilon: molar_absorptivity
+    c: concentration
+    l: path_length
+    T: transmittance
+    A: absorbance
   equation_variables:
-    - d1
-    - d2
-    - d3
+    - epsilon
+    - c
+    - l
 
 noise:
   enabled: false

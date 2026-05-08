@@ -3,25 +3,21 @@ agent:
   loop: false
   mock_action_sequence:
     - step_type: action
-      action_type: set
+      action_type: increase
       variable: A
-      value: 3.0
-      reasoning: "Set A to 3 to observe effect on Y."
+      reasoning: "Increase A to observe effect on Y."
     - step_type: action
-      action_type: set
+      action_type: increase
       variable: B
-      value: 2.0
-      reasoning: "Set B to 2 to observe joint effect."
+      reasoning: "Increase B to observe joint effect."
     - step_type: action
-      action_type: set
+      action_type: increase
       variable: C
-      value: 1.0
-      reasoning: "Set C to 1 to isolate variables."
+      reasoning: "Increase C to isolate variables."
     - step_type: action
-      action_type: set
+      action_type: increase
       variable: A
-      value: 6.0
-      reasoning: "Double A to check proportionality."
+      reasoning: "Increase A again to check proportionality."
     - step_type: finish
       final_equation: "Y = A * B * C"
       reasoning: "Y appears proportional to A, B, and C."

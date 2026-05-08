@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional
 
 import wandb
 
-from run_episode import build_model_callable
+from run_episode import build_agent_text_image, build_model_callable
 from src.agents.agent import TextLLMAgent
 from src.envs.env import EquationEnv
 from src.evaluation.evaluator import EpisodeEvaluator
@@ -68,17 +68,22 @@ def main(
     actions_cfg        = config["actions"]
     agent_cfg          = config["agent"]
     representation_cfg = config.get("representation", {})
+    visual_cfg         = config.get("visual", {})
     logging_cfg        = config.get("logging", {})
     evaluation_cfg     = config.get("evaluation", {})
 
-    target_variable = environment_cfg["target_variable"]
-    variables       = environment_cfg["variables"]
-    equations       = environment_cfg["equations"]
-    action_mode     = actions_cfg["action_mode"]
-    max_steps       = experiment_cfg["max_steps"]
-    naming_mode     = representation_cfg.get("naming_mode", "concrete")
-    metadata_level  = representation_cfg.get("metadata_level", "minimal")
-    name_mapping    = representation_cfg.get("name_mapping", {})
+    target_variable  = environment_cfg["target_variable"]
+    variables        = environment_cfg["variables"]
+    equations        = environment_cfg["equations"]
+    action_mode      = actions_cfg["action_mode"]
+    max_steps        = experiment_cfg["max_steps"]
+    naming_mode      = representation_cfg.get("naming_mode", "concrete")
+    metadata_level   = representation_cfg.get("metadata_level", "minimal")
+    name_mapping     = representation_cfg.get("name_mapping", {})
+    chart_exclude    = representation_cfg.get("chart_exclude", [])
+
+    observation_mode     = visual_cfg.get("observation_mode", "text")
+    image_history_window = visual_cfg.get("image_history_window", None)
 
     # ------------------------------------------------------------------
     # IMPORTANT CHANGE:
@@ -110,25 +115,28 @@ def main(
         entity=wandb_entity,
         name=run_name or experiment_cfg.get("name", "experiment"),
         config={
-            "n_runs":          n_runs,
-            "model_name":      agent_cfg.get("model_name"),
-            "backend":         agent_cfg.get("backend"),
-            "naming_mode":     naming_mode,
-            "metadata_level":  metadata_level,
-            "max_steps":       max_steps,
-            "target_variable": target_variable,
-            "action_mode":     action_mode,
-            "experiment_name": experiment_cfg.get("name"),
-            "local_output_dir": base_output_dir,
-            "temperature":     agent_cfg.get("generation", {}).get("temperature"),
-            "top_p":           agent_cfg.get("generation", {}).get("top_p"),
-            "top_k":           agent_cfg.get("generation", {}).get("top_k"),
-            "do_sample":       agent_cfg.get("generation", {}).get("do_sample"),
-            "_config_sources": config.get("_config_sources", {}),
+            "n_runs":            n_runs,
+            "model_name":        agent_cfg.get("model_name"),
+            "backend":           agent_cfg.get("backend"),
+            "observation_mode":  observation_mode,
+            "naming_mode":       naming_mode,
+            "metadata_level":    metadata_level,
+            "max_steps":         max_steps,
+            "target_variable":   target_variable,
+            "action_mode":       action_mode,
+            "experiment_name":   experiment_cfg.get("name"),
+            "local_output_dir":  base_output_dir,
+            "temperature":       agent_cfg.get("generation", {}).get("temperature"),
+            "top_p":             agent_cfg.get("generation", {}).get("top_p"),
+            "top_k":             agent_cfg.get("generation", {}).get("top_k"),
+            "do_sample":         agent_cfg.get("generation", {}).get("do_sample"),
+            "image_history_window": image_history_window,
+            "_config_sources":   config.get("_config_sources", {}),
         },
         tags=[
             agent_cfg.get("model_name", "unknown"),
             naming_mode,
+            observation_mode,
             experiment_cfg.get("name", "experiment"),
         ],
     )
@@ -139,7 +147,7 @@ def main(
         action_mode=action_mode,
     )
 
-    renderer = TextRenderer(
+    text_renderer = TextRenderer(
         variables=variables,
         action_mode=action_mode,
         target_variable=target_variable,
@@ -158,16 +166,12 @@ def main(
         history_window=experiment_cfg.get("history_window"),
     )
 
-    model_callable = build_model_callable(agent_cfg)
-    agent = TextLLMAgent(model_callable=model_callable)
-
-    runner = EpisodeRunner(
-        env=env,
-        renderer=renderer,
-        prompt_builder=prompt_builder,
-        agent=agent,
-        max_steps=max_steps,
-    )
+    # ── Agent (loaded once, shared across runs) ───────────────────────────────
+    if observation_mode == "text_image":
+        agent = build_agent_text_image(agent_cfg, name_mapping=name_mapping)
+    else:
+        model_callable = build_model_callable(agent_cfg)
+        agent = TextLLMAgent(model_callable=model_callable)
 
     ground_truth = equations[target_variable]
     variable_mapping = evaluation_cfg.get("variable_mapping")
@@ -195,17 +199,18 @@ def main(
     all_evaluations: List[Dict[str, Any]] = []
 
     print("\n=== Experiment setup ===")
-    print(f"Config:          {config_path}")
+    print(f"Config:           {config_path}")
     if env_config:
-        print(f"Env override:    {env_config}")
+        print(f"Env override:     {env_config}")
     if model_config:
-        print(f"Model override:  {model_config}")
-    print(f"Run name:        {output_name}")
-    print(f"Output dir:      {base_output_dir}")
-    print(f"Target variable: {target_variable}")
-    print(f"Naming mode:     {naming_mode}")
-    print(f"Action mode:     {action_mode}")
-    print(f"N runs:          {n_runs}")
+        print(f"Model override:   {model_config}")
+    print(f"Run name:         {output_name}")
+    print(f"Output dir:       {base_output_dir}")
+    print(f"Observation mode: {observation_mode}")
+    print(f"Target variable:  {target_variable}")
+    print(f"Naming mode:      {naming_mode}")
+    print(f"Action mode:      {action_mode}")
+    print(f"N runs:           {n_runs}")
 
     for run_id in range(n_runs):
         print(f"\n--- Run {run_id + 1}/{n_runs} ---")
@@ -216,6 +221,47 @@ def main(
             save_steps=logging_cfg.get("save_steps", True),
             save_trajectory=logging_cfg.get("save_trajectory", True),
             save_interaction_log=logging_cfg.get("save_interaction_log", True),
+        )
+
+        # ── Build renderer (text+image needs per-run output dir) ─────────────
+        if observation_mode == "text_image":
+            from src.observation.html_chart_renderer import HtmlChartRenderer
+            from src.observation.text_image_renderer import TextImageRenderer
+
+            images_output_dir = str(
+                Path(run_output_dir) / visual_cfg.get("output_subdir", "images")
+            )
+            chart_renderer = HtmlChartRenderer(
+                variables=variables,
+                target_variable=target_variable,
+                naming_mode=naming_mode,
+                name_mapping=name_mapping if name_mapping else None,
+                output_dir=images_output_dir,
+                template_path=visual_cfg.get(
+                    "template_path", "templates/chart_state_view.html"
+                ),
+                headless=visual_cfg.get("playwright", {}).get("headless", True),
+                slow_mo=visual_cfg.get("playwright", {}).get("slow_mo", 0),
+                normalize_bars=visual_cfg.get("normalize_bars", True),
+                exclude_variables=chart_exclude,
+            )
+            renderer = TextImageRenderer(
+                text_renderer=text_renderer,
+                chart_renderer=chart_renderer,
+            )
+            # Reset MockVLMAgent replay pointer between runs
+            if hasattr(agent, "reset"):
+                agent.reset()
+        else:
+            renderer = text_renderer
+
+        runner = EpisodeRunner(
+            env=env,
+            renderer=renderer,
+            prompt_builder=prompt_builder,
+            agent=agent,
+            max_steps=max_steps,
+            image_history_window=image_history_window,
         )
 
         result = runner.run_episode()

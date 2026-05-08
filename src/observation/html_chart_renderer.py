@@ -40,6 +40,12 @@ class HtmlChartRenderer:
     When normalize_bars=False the dynamic range is always used,
     ignoring any configured min/max.  Both branches still produce
     a proportional chart; the difference is the reference frame.
+
+    exclude_variables
+    -----------------
+    Internal variable names listed here are silently skipped when
+    building bar data.  Useful for derived variables that are not
+    relevant to the agent's task (e.g. transmittance in Beer's law).
     """
 
     def __init__(
@@ -54,6 +60,7 @@ class HtmlChartRenderer:
         slow_mo: int = 0,
         normalize_bars: bool = True,
         bar_value_range: Optional[Dict[str, tuple]] = None,
+        exclude_variables: Optional[List[str]] = None,
     ) -> None:
         if not isinstance(variables, dict) or not variables:
             raise ValueError("variables must be a non-empty dictionary")
@@ -78,6 +85,7 @@ class HtmlChartRenderer:
         self.slow_mo = slow_mo
         self.normalize_bars = normalize_bars
         self.bar_value_range: Dict[str, tuple] = dict(bar_value_range or {})
+        self.exclude_variables: set = set(exclude_variables or [])
 
         # Output directories
         self._base_dir = Path(output_dir).resolve()
@@ -140,14 +148,19 @@ class HtmlChartRenderer:
         Convert raw state into the dict that Jinja2 template expects.
 
         bars: list of {name, value, norm_height, is_target}
+        Variables listed in self.exclude_variables are skipped entirely.
         """
+        # Filter out excluded variables before computing ranges
+        visible_state = {
+            k: v for k, v in state.items()
+            if k not in self.exclude_variables
+        }
+
         numeric_values = [
-            float(v) for v in state.values() if isinstance(v, (int, float))
+            float(v) for v in visible_state.values() if isinstance(v, (int, float))
         ]
 
-        # Dynamic range: min / max across all values in this step.
-        # Used as fallback when no configured range is available, and
-        # always used when normalize_bars=False.
+        # Dynamic range: min / max across all visible values in this step.
         if numeric_values:
             dyn_min = min(numeric_values)
             dyn_max = max(numeric_values)
@@ -156,7 +169,7 @@ class HtmlChartRenderer:
 
         bars: List[Dict[str, Any]] = []
 
-        for var_name, raw_value in state.items():
+        for var_name, raw_value in visible_state.items():
             if not isinstance(raw_value, (int, float)):
                 continue  # skip non-numeric state entries
 
@@ -203,13 +216,10 @@ class HtmlChartRenderer:
             cfg = self.variables[var_name]
             lo_raw = cfg.get("min_value")
             hi_raw = cfg.get("max_value")
-            # YAML null → Python None: treat as "not configured", fall through
-            # to dynamic range rather than crashing on float(None).
             lo = float(lo_raw) if lo_raw is not None else dyn_min
             hi = float(hi_raw) if hi_raw is not None else dyn_max
             return lo, hi
 
-        # Fallback: dynamic range
         return dyn_min, dyn_max
 
     @staticmethod
@@ -233,8 +243,6 @@ class HtmlChartRenderer:
     ) -> str:
         """
         Render the Jinja2 template and write the HTML file.
-
-        Returns the absolute path to the written HTML file.
         """
         html_content = self._template.render(**render_data)
 
@@ -252,15 +260,12 @@ class HtmlChartRenderer:
     ) -> str:
         """
         Open the HTML file in a headless Chromium browser and save a screenshot.
-
-        Returns the absolute path to the saved PNG file.
         """
         filename = (
             f"step_{step_id:04d}.png" if step_id is not None else "step_none.png"
         )
         image_path = self._base_dir / filename
 
-        # file:// URI that works on all platforms (handles spaces in paths)
         file_uri = Path(html_path).as_uri()
 
         with sync_playwright() as pw:
@@ -282,4 +287,4 @@ class HtmlChartRenderer:
     def _display_name(self, variable: str) -> str:
         if self.naming_mode == "abstract":
             return self.name_mapping.get(variable, variable)
-        return variable
+        return variables

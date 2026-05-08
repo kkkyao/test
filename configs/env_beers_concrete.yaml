@@ -48,6 +48,9 @@ representation:
     transmittance: transmittance
     absorbance: absorbance
 
+  chart_exclude:
+    - transmittance
+
 actions:
   action_mode: increase_decrease
 
