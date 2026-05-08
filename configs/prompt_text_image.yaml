@@ -101,14 +101,13 @@ prompt:
     step_types: "Allowed step types:"
     rules: "Rules:"
     observation: "Current observation:"
-    history: "History:"
+    history: "Previous actions (full state history is shown in the bar chart images):"
     output_format: "Output format:"
 
   history_labels:
-    empty: "None"
+    empty: "The history is shown in the provided bar chart images. No actions have been taken yet."
     step_prefix: "Step {step_id}:"
     step_type: "step_type: {value}"
-    reasoning: "reasoning: {value}"
     action: "action: {value}"
-    visible_state_before: "state before: {value}"
-    visible_state_after: "state after: {value}"
+    # visible_state_before and visible_state_after intentionally omitted:
+    # numeric state history is conveyed via bar chart images, not text.

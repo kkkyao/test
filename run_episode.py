@@ -508,9 +508,16 @@ def build_agent_text_image(
             strip_markdown_fences=True,
         )
 
+    if backend in {"hf_internvl", "hf_llava_ov"}:
+        vlm_callable = build_vlm_callable(agent_config)
+        return VisionLanguageAgent(
+            model_callable=vlm_callable,
+            strip_markdown_fences=True,
+        )
+
     raise NotImplementedError(
         f"Unsupported text+image backend '{backend}'. "
-        f"Supported: 'mock_vlm', 'hf_qwen_vl'."
+        f"Supported: 'mock_vlm', 'hf_qwen_vl', 'hf_internvl', 'hf_llava_ov'."
     )
 
 
