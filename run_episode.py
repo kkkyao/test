@@ -196,7 +196,7 @@ def build_vlm_callable(
 
     if backend == "hf_qwen_vl":
         import torch
-        from transformers import AutoProcessor, Qwen2VLForConditionalGeneration
+        from transformers import AutoProcessor, AutoModelForVision2Seq
 
         try:
             from qwen_vl_utils import process_vision_info
@@ -237,7 +237,7 @@ def build_vlm_callable(
         processor = AutoProcessor.from_pretrained(
             model_name, trust_remote_code=trust_remote_code
         )
-        model = Qwen2VLForConditionalGeneration.from_pretrained(
+        model = AutoModelForVision2Seq.from_pretrained(
             model_name,
             torch_dtype=torch_dtype,
             device_map=device_map,
