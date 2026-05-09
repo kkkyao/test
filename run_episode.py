@@ -361,14 +361,25 @@ def build_vlm_callable(
                 device_map=device_map,
                 trust_remote_code=trust_remote_code,
             ).eval()
-        # transformers 5.x: InternLM2ForCausalLM lost GenerationMixin.generate().
-        # Re-inject GenerationMixin into the language_model class hierarchy.
+
+        # transformers 5.x compatibility patches for InternLM2ForCausalLM:
+        # 1. Re-inject GenerationMixin (lost because class doesn't inherit it)
+        # 2. Add missing attributes that GenerationMixin.generate() requires
         from transformers import GenerationMixin as _GenMixin
-        if hasattr(model, "language_model") and not isinstance(model.language_model, _GenMixin):
-            _cls = model.language_model.__class__
-            model.language_model.__class__ = type(
-                _cls.__name__, (_GenMixin, _cls), {}
-            )
+        from transformers import GenerationConfig as _GenConfig
+        if hasattr(model, "language_model"):
+            lm = model.language_model
+            if not isinstance(lm, _GenMixin):
+                _cls = lm.__class__
+                lm.__class__ = type(_cls.__name__, (_GenMixin, _cls), {})
+            if not hasattr(lm, "generation_config"):
+                lm.generation_config = _GenConfig()
+            if not hasattr(lm, "main_input_name"):
+                lm.main_input_name = "input_ids"
+            if not hasattr(lm, "_supports_cache_class"):
+                lm._supports_cache_class = False
+            if not hasattr(lm, "_is_stateful"):
+                lm._is_stateful = False
 
         print("InternVL loaded.")
 
