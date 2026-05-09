@@ -444,6 +444,7 @@ def build_vlm_callable(
             model_name,
             torch_dtype=torch_dtype,
             device_map=device_map,
+            ignore_mismatched_sizes=True,
         ).eval()
         print("LLaVA-OneVision loaded.")
 
