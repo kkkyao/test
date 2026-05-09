@@ -361,6 +361,15 @@ def build_vlm_callable(
                 device_map=device_map,
                 trust_remote_code=trust_remote_code,
             ).eval()
+        # transformers 5.x: InternLM2ForCausalLM lost GenerationMixin.generate().
+        # Re-inject GenerationMixin into the language_model class hierarchy.
+        from transformers import GenerationMixin as _GenMixin
+        if hasattr(model, "language_model") and not isinstance(model.language_model, _GenMixin):
+            _cls = model.language_model.__class__
+            model.language_model.__class__ = type(
+                _cls.__name__, (_GenMixin, _cls), {}
+            )
+
         print("InternVL loaded.")
 
         def hf_internvl_callable(prompt: str, image_paths: List[str]) -> str:
