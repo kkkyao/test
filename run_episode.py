@@ -333,12 +333,28 @@ def build_vlm_callable(
         tokenizer = AutoTokenizer.from_pretrained(
             model_name, trust_remote_code=trust_remote_code
         )
-        model = AutoModel.from_pretrained(
-            model_name,
-            torch_dtype=torch_dtype,
-            device_map=device_map,
-            trust_remote_code=trust_remote_code,
-        ).eval()
+        try:
+            model = AutoModel.from_pretrained(
+                model_name,
+                torch_dtype=torch_dtype,
+                device_map=device_map,
+                trust_remote_code=trust_remote_code,
+            ).eval()
+        except AttributeError as e:
+            # transformers 5.x: InternVLChatModel missing all_tied_weights_keys
+            # when device_map="auto". Fall back to loading without device_map,
+            # then move to GPU manually.
+            if "all_tied_weights_keys" in str(e):
+                import torch as _torch
+                model = AutoModel.from_pretrained(
+                    model_name,
+                    torch_dtype=torch_dtype,
+                    trust_remote_code=trust_remote_code,
+                ).eval()
+                if _torch.cuda.is_available():
+                    model = model.cuda()
+            else:
+                raise
         print("InternVL loaded.")
 
         def hf_internvl_callable(prompt: str, image_paths: List[str]) -> str:
