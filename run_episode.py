@@ -333,28 +333,34 @@ def build_vlm_callable(
         tokenizer = AutoTokenizer.from_pretrained(
             model_name, trust_remote_code=trust_remote_code
         )
-        try:
+
+        # transformers 5.x: InternVLChatModel is missing all_tied_weights_keys,
+        # which is accessed in both _init_infer_auto_device_map and
+        # _move_missing_keys_from_meta_to_device. Monkey-patch nn.Module
+        # temporarily to return an empty dict for that attribute.
+        import torch.nn as _nn
+        import contextlib as _contextlib
+
+        @_contextlib.contextmanager
+        def _patch_tied_weights():
+            _orig = _nn.Module.__getattr__
+            def _patched(self, name):
+                if name == "all_tied_weights_keys":
+                    return {}
+                return _orig(self, name)
+            _nn.Module.__getattr__ = _patched
+            try:
+                yield
+            finally:
+                _nn.Module.__getattr__ = _orig
+
+        with _patch_tied_weights():
             model = AutoModel.from_pretrained(
                 model_name,
                 torch_dtype=torch_dtype,
                 device_map=device_map,
                 trust_remote_code=trust_remote_code,
             ).eval()
-        except AttributeError as e:
-            # transformers 5.x: InternVLChatModel missing all_tied_weights_keys
-            # when device_map="auto". Fall back to loading without device_map,
-            # then move to GPU manually.
-            if "all_tied_weights_keys" in str(e):
-                import torch as _torch
-                model = AutoModel.from_pretrained(
-                    model_name,
-                    torch_dtype=torch_dtype,
-                    trust_remote_code=trust_remote_code,
-                ).eval()
-                if _torch.cuda.is_available():
-                    model = model.cuda()
-            else:
-                raise
         print("InternVL loaded.")
 
         def hf_internvl_callable(prompt: str, image_paths: List[str]) -> str:
