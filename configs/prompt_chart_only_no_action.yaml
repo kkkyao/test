@@ -1,0 +1,112 @@
+prompt:
+  # ── Chart-only (no action history) mode ─────────────────────────────────────
+  # Variant of prompt_chart_only.yaml where action history is also removed.
+  # The model receives only task/control text + ordered bar-chart images.
+  # All state values, numeric history, and action history must be inferred
+  # from the bar-chart images alone.
+  #
+  # Differences vs prompt_chart_only.yaml:
+  #   1. include_observation_text: false (same)
+  #   2. history_labels: action key removed — no action history shown
+  #   3. section_headers.history updated accordingly
+  #   4. exploration_lines updated to reflect no action context
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  include_observation_text: false
+
+  system_intro: "You are a scientific explorer interacting with an unknown environment.
+    At each step you receive one or more bar chart images showing variable values.
+    You do NOT receive any text describing the current state or previous actions —
+    you must infer everything from the bar chart images alone.
+    You must respond with exactly one valid JSON object."
+
+  task_template: "Your goal is to discover the equation that determines {target_variable} from the other variables in the environment."
+
+  exploration_lines:
+    - "There are {num_variables} variables available for exploration: {equation_variables}. Only these {num_variables} variables can appear in the final equation."
+    - "Explore the relationship between the variables in order to find the correct equation that models {target_variable} using {equation_variables}."
+    - "Bar chart images are provided at every step (one image per step, oldest first). The last image is the current state. Infer all variable values and history from the images."
+    - "Put any reasoning inside the JSON reasoning field only."
+    - "Stop only when you have gathered enough evidence from the images to state a final equation."
+    - "You may take up to {max_steps} steps in total."
+
+  step_type_descriptions:
+    action: "take exactly one action to change the environment"
+    finish: "stop exploring and submit your final equation"
+
+  rules:
+    - "Return exactly one valid JSON object."
+    - "Do not output prose, markdown fences, bullet points, or any text outside the JSON object."
+    - "reasoning must be a non-empty string on every step."
+    - "step_type must be exactly 'action' or 'finish'."
+    - "When step_type is 'action', action must be one valid action object from Available actions; final_equation must be null."
+    - "When step_type is 'finish', action must be null; final_equation must be a non-empty equation string."
+    - "The final equation must use only these {num_variables} variables: {equation_variables}. Do not use any other variable names or numeric constants."
+    - "Do not invent new action_type values, variables, or fields."
+
+  image_notice: "Bar chart images are shown above, ordered oldest to newest.
+    The orange bar is the target variable ({target_variable}). Blue bars are input variables.
+    The last image shows the current state. Infer all variable values and history from the images."
+
+  output_format_header: "Your answer must follow one of the JSON templates below."
+
+  output_format_action_increase_decrease: |
+    For an action step:
+    {
+      "reasoning": "brief string",
+      "step_type": "action",
+      "action": {
+        "action_type": "increase",
+        "variable": "variable_name"
+      },
+      "final_equation": null
+    }
+
+  output_format_action_set_value: |
+    For an action step:
+    {
+      "reasoning": "brief string",
+      "step_type": "action",
+      "action": {
+        "action_type": "set",
+        "variable": "variable_name",
+        "value": 0
+      },
+      "final_equation": null
+    }
+
+  output_format_finish: |
+    For a finish step:
+    {
+      "reasoning": "brief string",
+      "step_type": "finish",
+      "action": null,
+      "final_equation": "equation string"
+    }
+
+  forced_finish_template: |
+    You have finished your exploration steps.
+    Based on everything you observed in the bar chart images, find the correct equation
+    that models variable {target_variable} using variables {equation_variables}.
+    Model the relationship using only +, -, *, / operators. Do not use coefficients.
+
+    Rules:
+    - Write only the equation on a single line.
+    - There are {num_variables} variables: {equation_variables}. Only these variables can be used.
+    - Format: {target_variable} = <expression using only {equation_variables}>
+    - Do not write anything else — no JSON, no explanation, no markdown.
+
+    Equation:
+
+  section_headers:
+    step_types: "Allowed step types:"
+    rules: "Rules:"
+    observation: "Current state (read from the last bar chart image above):"
+    history: "Previous steps taken:"
+    output_format: "Output format:"
+
+  history_labels:
+    empty: "No actions have been taken yet. The first image shows the initial state."
+    step_prefix: "Step {step_id}:"
+    step_type: "step_type: {value}"
+    # action intentionally omitted: all history must be inferred from images only.
