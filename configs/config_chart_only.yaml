@@ -1,0 +1,4 @@
+experiment_config: experiment_chart_only.yaml
+env_config:        env_beers_abstract.yaml
+model_config:      model_qwen25_vl_7b.yaml
+prompt_config:     prompt_chart_only.yaml

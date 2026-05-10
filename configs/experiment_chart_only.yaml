@@ -1,0 +1,21 @@
+experiment:
+  name: chart_only_default
+  max_steps: 50
+  history_window: null
+  auto_evaluate: true
+
+logging:
+  output_dir: outputs/chart_only_default
+  save_steps: true
+  save_trajectory: true
+  save_interaction_log: true
+
+visual:
+  observation_mode: text_image
+  template_path: templates/chart_state_view.html
+  output_subdir: images
+  normalize_bars: true
+  playwright:
+    headless: true
+    slow_mo: 0
+  image_history_window: null

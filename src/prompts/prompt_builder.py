@@ -57,6 +57,11 @@ class PromptBuilder:
         self.num_variables = len(self.equation_variables)
         self.equation_variables_str = ", ".join(self.equation_variables)
 
+        # When False, observation.text (current state values) is omitted from
+        # the prompt. Used in chart-only mode where the model must read state
+        # values from bar-chart images instead of text.
+        self.include_observation_text = prompt_config.get("include_observation_text", True)
+
         self._require_keys(
             self._cfg,
             [
@@ -162,7 +167,8 @@ class PromptBuilder:
                 sections.append(image_notice)
                 sections.append("")
 
-        sections.append(observation.text or "")
+        if self.include_observation_text:
+            sections.append(observation.text or "")
 
         # 6. History
         sections.append("")
