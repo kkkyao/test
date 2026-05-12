@@ -1,0 +1,528 @@
+{% set solute_pct = (8 + simulation.amount_norm * 84) | round(2) %}
+{% set volume_pct = (8 + simulation.volume_norm * 84) | round(2) %}
+{% set concentration_pct = (8 + simulation.concentration_norm * 84) | round(2) %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{{ target.display }} Experiment</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      width: 900px;
+      height: 500px;
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #111827;
+      background: #f2f2f2;
+    }
+
+    .screen {
+      width: 900px;
+      height: 500px;
+      padding: 12px 14px;
+      display: grid;
+      grid-template-rows: 46px 1fr;
+      gap: 10px;
+      background: #f2f2f2;
+    }
+
+    .topbar {
+      height: 46px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, #ffffff, #f1f6fa);
+      border: 2px solid #b5c5d0;
+      box-shadow: 0 2px 8px rgba(28, 55, 75, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0.4px;
+      color: #1d2939;
+    }
+
+    .step-badge {
+      padding: 7px 13px;
+      border-radius: 999px;
+      background: #243444;
+      color: white;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .canvas {
+      position: relative;
+      width: 872px;
+      height: 420px;
+      border-radius: 12px;
+      background: #f2f2f2;
+      overflow: hidden;
+    }
+
+    /* Tank */
+
+    .tank {
+      position: absolute;
+      left: 205px;
+      top: 78px;
+      width: 432px;
+      height: 240px;
+      border-left: 4px solid #111;
+      border-right: 4px solid #111;
+      border-bottom: 4px solid #111;
+      background: rgba(255,255,255,0.26);
+      z-index: 2;
+    }
+
+    .solution {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: {{ simulation.water_fill_percent }}%;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.22), transparent 40%),
+        rgba(135, 226, 228, {{ simulation.solution_alpha }});
+      border-top: 2px solid rgba(31,42,55,0.25);
+    }
+
+    .tank-scale {
+      position: absolute;
+      left: -36px;
+      top: 0;
+      width: 34px;
+      height: 100%;
+      z-index: 5;
+    }
+
+    .scale-line {
+      position: absolute;
+      left: 32px;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #111;
+    }
+
+    .tick {
+      position: absolute;
+      left: 32px;
+      width: 20px;
+      height: 3px;
+      background: #111;
+    }
+
+    .tick.t1 { top: 20%; }
+    .tick.t2 { top: 35%; }
+    .tick.t3 { top: 50%; }
+    .tick.t4 { top: 65%; }
+    .tick.t5 { top: 80%; }
+
+    .scale-label-top {
+      position: absolute;
+      left: 58px;
+      top: 20px;
+      font-size: 18px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .scale-label-mid {
+      position: absolute;
+      left: 58px;
+      top: 118px;
+      font-size: 18px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    /* Faucet */
+
+    .faucet-top {
+      position: absolute;
+      left: 0;
+      top: 50px;
+      width: 274px;
+      height: 48px;
+      background: linear-gradient(180deg, #e2e2e2, #868686 55%, #383838);
+      border-radius: 0 24px 24px 0;
+      z-index: 5;
+    }
+
+    .faucet-neck {
+      position: absolute;
+      left: 250px;
+      top: 78px;
+      width: 70px;
+      height: 78px;
+      border-radius: 0 0 34px 34px;
+      background: linear-gradient(90deg, #8c8c8c, #f0f0f0 50%, #7e7e7e);
+      z-index: 5;
+    }
+
+    .faucet-spout {
+      position: absolute;
+      left: 250px;
+      top: 146px;
+      width: 74px;
+      height: 42px;
+      border-radius: 0 0 18px 18px;
+      background: linear-gradient(180deg, #ededed, #8b8b8b);
+      z-index: 5;
+    }
+
+    .faucet-knob {
+      position: absolute;
+      left: 292px;
+      top: 24px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #d9ecff, #4e9ad0 70%);
+      z-index: 6;
+    }
+
+    /* Solute container */
+
+    .solute-bottle {
+      position: absolute;
+      left: 430px;
+      top: 10px;
+      width: 92px;
+      height: 132px;
+      border-radius: 18px 18px 28px 28px;
+      background: linear-gradient(135deg, #f4f4f4, #9c9c9c);
+      border: 2px solid #9a9a9a;
+      transform: rotate(38deg);
+      z-index: 7;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.16);
+    }
+
+    .solute-bottle-label {
+      position: absolute;
+      left: 12px;
+      top: 35px;
+      width: 70px;
+      transform: rotate(-90deg);
+      font-size: 16px;
+      font-weight: 900;
+      color: #111;
+      white-space: nowrap;
+    }
+
+    .solute-stream {
+      position: absolute;
+      left: 465px;
+      top: 123px;
+      width: 70px;
+      height: 110px;
+      z-index: 4;
+      opacity: {{ simulation.solute_stream_opacity }};
+      background:
+        radial-gradient(circle at 18% 16%, #9b0056 0, #9b0056 4px, transparent 5px),
+        radial-gradient(circle at 50% 36%, #9b0056 0, #9b0056 4px, transparent 5px),
+        radial-gradient(circle at 36% 62%, #9b0056 0, #9b0056 4px, transparent 5px),
+        radial-gradient(circle at 72% 82%, #9b0056 0, #9b0056 4px, transparent 5px);
+    }
+
+    /* Meter */
+
+    .meter {
+      position: absolute;
+      right: 72px;
+      top: 102px;
+      width: 128px;
+      height: 88px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #b10064, #8d004f);
+      border: 3px solid #7d0049;
+      color: #fff;
+      z-index: 8;
+      box-shadow: 0 3px 7px rgba(0,0,0,0.22);
+    }
+
+    .meter-title {
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .meter-screen {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 18px;
+      height: 34px;
+      border-radius: 9px;
+      border: 2px solid #b7b7b7;
+      background: #f5f5f5;
+      color: #111;
+      font-family: "Courier New", monospace;
+      font-size: 20px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .probe {
+      position: absolute;
+      right: 214px;
+      top: 188px;
+      width: 72px;
+      height: 58px;
+      border-radius: 50%;
+      background: #a0005d;
+      border: 5px solid #7d0049;
+      z-index: 7;
+    }
+
+    .probe::before,
+    .probe::after {
+      content: "";
+      position: absolute;
+      background: #111;
+    }
+
+    .probe::before {
+      left: 31px;
+      top: 10px;
+      width: 4px;
+      height: 38px;
+    }
+
+    .probe::after {
+      left: 14px;
+      top: 27px;
+      width: 42px;
+      height: 4px;
+    }
+
+    .probe-cable {
+      position: absolute;
+      right: 168px;
+      top: 178px;
+      width: 110px;
+      height: 68px;
+      border: 7px solid #777;
+      border-left: none;
+      border-top: none;
+      border-radius: 0 0 60px 0;
+      z-index: 3;
+    }
+
+    /* Bottom controls */
+
+    .control-panel {
+      position: absolute;
+      left: 205px;
+      bottom: 12px;
+      width: 416px;
+      height: 82px;
+      border: 2px solid #a0a0a0;
+      border-radius: 12px;
+      background: #e9e9e9;
+      padding: 12px 16px;
+      z-index: 9;
+    }
+
+    .control-row {
+      display: grid;
+      grid-template-columns: 126px 70px 1fr;
+      align-items: center;
+      gap: 12px;
+      height: 28px;
+      margin-bottom: 8px;
+    }
+
+    .control-row:last-child { margin-bottom: 0; }
+
+    .control-name {
+      min-width: 0;
+      font-size: 16px;
+      font-weight: 900;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .value-box {
+      height: 26px;
+      background: #f5f5f5;
+      border: 1px solid #cfcfcf;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Courier New", monospace;
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .slider {
+      position: relative;
+      height: 28px;
+    }
+
+    .slider-track {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 10px;
+      height: 10px;
+      border: 1px solid #555;
+      background: #f5f5f5;
+    }
+
+    .slider-fill-solute {
+      position: absolute;
+      left: 0;
+      top: 10px;
+      height: 10px;
+      width: {{ solute_pct }}%;
+      background: linear-gradient(90deg, #f3c2e0, #9b0056);
+    }
+
+    .slider-fill-volume {
+      position: absolute;
+      left: 0;
+      top: 10px;
+      height: 10px;
+      width: {{ volume_pct }}%;
+      background: linear-gradient(90deg, #d6ffff, #60cfd1);
+    }
+
+    .slider-thumb {
+      position: absolute;
+      top: 2px;
+      width: 20px;
+      height: 26px;
+      border-radius: 7px;
+      border: 1.5px solid #3d5d6e;
+      background: #5ea5cd;
+    }
+
+    .solute-thumb { left: calc({{ solute_pct }}% - 10px); }
+    .volume-thumb { left: calc({{ volume_pct }}% - 10px); }
+
+    .meter-bar {
+      position: absolute;
+      right: 72px;
+      top: 198px;
+      width: 128px;
+      height: 16px;
+      border-radius: 999px;
+      border: 2px solid #8a9dab;
+      background: #f7fbfd;
+      overflow: hidden;
+      z-index: 9;
+    }
+
+    .meter-bar-fill {
+      height: 100%;
+      width: {{ simulation.meter_bar_width }}%;
+      background: linear-gradient(90deg, #cf7fb0, #9b0056);
+    }
+
+    .reset-btn {
+      position: absolute;
+      right: 36px;
+      bottom: 22px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid #b36e10;
+      background: radial-gradient(circle at 35% 35%, #ffd08a 0%, #ef9b2b 70%, #d58011 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 29px;
+      color: #fff;
+      font-weight: bold;
+      z-index: 9;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="screen">
+    <div class="topbar">
+      <div class="title">Experiment</div>
+      <div class="step-badge">Step {{ step_id if step_id is not none else "?" }}</div>
+    </div>
+
+    <div class="canvas">
+      <div class="faucet-top"></div>
+      <div class="faucet-neck"></div>
+      <div class="faucet-spout"></div>
+      <div class="faucet-knob"></div>
+
+      <div class="solute-bottle">
+        <div class="solute-bottle-label">Solute</div>
+      </div>
+      <div class="solute-stream"></div>
+
+      <div class="tank">
+        <div class="solution"></div>
+        <div class="tank-scale">
+          <div class="scale-line"></div>
+          <div class="tick t1"></div>
+          <div class="tick t2"></div>
+          <div class="tick t3"></div>
+          <div class="tick t4"></div>
+          <div class="tick t5"></div>
+          <div class="scale-label-top">{{ variables.solution_volume.max | round(0) | int }}</div>
+          <div class="scale-label-mid">{{ variables.solution_volume.value }}</div>
+        </div>
+      </div>
+
+      <div class="probe-cable"></div>
+      <div class="probe"></div>
+
+      <div class="meter">
+        <div class="meter-title">{{ target.display }}</div>
+        <div class="meter-screen">{{ target.value }}</div>
+      </div>
+
+      <div class="meter-bar">
+        <div class="meter-bar-fill"></div>
+      </div>
+
+      <div class="control-panel">
+        <div class="control-row">
+          <div class="control-name">{{ variables.solute_amount.display }}</div>
+          <div class="value-box">{{ variables.solute_amount.value }}</div>
+          <div class="slider">
+            <div class="slider-track"></div>
+            <div class="slider-fill-solute"></div>
+            <div class="slider-thumb solute-thumb"></div>
+          </div>
+        </div>
+
+        <div class="control-row">
+          <div class="control-name">{{ variables.solution_volume.display }}</div>
+          <div class="value-box">{{ variables.solution_volume.value }}</div>
+          <div class="slider">
+            <div class="slider-track"></div>
+            <div class="slider-fill-volume"></div>
+            <div class="slider-thumb volume-thumb"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reset-btn">↻</div>
+    </div>
+  </div>
+</body>
+</html>

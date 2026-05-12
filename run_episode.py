@@ -140,16 +140,22 @@ def build_model_callable(agent_config: Dict[str, Any]) -> Callable[[str], str]:
             if hasattr(model, "device"):
                 inputs = {k: v.to(model.device) for k, v in inputs.items()}
 
+            # Build generate kwargs: only pass sampling params when do_sample=True.
+            # Passing temperature when do_sample=False raises a warning/error
+            # in newer versions of transformers.
+            generate_kwargs: Dict[str, Any] = {
+                "max_new_tokens": max_new_tokens,
+                "do_sample": do_sample,
+                "pad_token_id": tokenizer.eos_token_id,
+            }
+            if do_sample:
+                generate_kwargs["temperature"] = temperature
+                generate_kwargs["top_p"] = top_p
+                if top_k > 0:
+                    generate_kwargs["top_k"] = top_k
+
             with torch.no_grad():
-                outputs = model.generate(
-                    **inputs,
-                    max_new_tokens=max_new_tokens,
-                    temperature=temperature,
-                    top_p=top_p,
-                    top_k=top_k,
-                    do_sample=do_sample,
-                    pad_token_id=tokenizer.eos_token_id,
-                )
+                outputs = model.generate(**inputs, **generate_kwargs)
 
             prompt_length = inputs["input_ids"].shape[1]
             generated_ids = outputs[0][prompt_length:]
@@ -229,9 +235,10 @@ def build_vlm_callable(
         trust_remote_code = bool(agent_config.get("trust_remote_code", True))
         generation_cfg    = agent_config.get("generation", {})
         max_new_tokens    = int(generation_cfg.get("max_new_tokens", 1024))
-        temperature       = float(generation_cfg.get("temperature", 0.0))
-        do_sample         = bool(generation_cfg.get("do_sample", False))
-        top_p             = float(generation_cfg.get("top_p", 1.0))
+        temperature       = float(generation_cfg.get("temperature", 0.7))
+        do_sample         = bool(generation_cfg.get("do_sample", True))
+        top_p             = float(generation_cfg.get("top_p", 0.9))
+        top_k             = int(generation_cfg.get("top_k", 0))
 
         print(f"Loading VLM: {model_name} ...")
         processor = AutoProcessor.from_pretrained(
@@ -268,14 +275,22 @@ def build_vlm_callable(
             )
             inputs = {k: v.to(model.device) for k, v in inputs.items()}
 
+            # Build generate kwargs: only pass sampling params when do_sample=True.
+            # Passing temperature when do_sample=False raises a warning/error
+            # in newer versions of transformers.
+            generate_kwargs: Dict[str, Any] = {
+                "max_new_tokens": max_new_tokens,
+                "do_sample": do_sample,
+                "pad_token_id": processor.tokenizer.eos_token_id,
+            }
+            if do_sample:
+                generate_kwargs["temperature"] = temperature
+                generate_kwargs["top_p"] = top_p
+                if top_k > 0:
+                    generate_kwargs["top_k"] = top_k
+
             with torch.no_grad():
-                output_ids = model.generate(
-                    **inputs,
-                    max_new_tokens=max_new_tokens,
-                    temperature=temperature,
-                    do_sample=do_sample,
-                    top_p=top_p,
-                )
+                output_ids = model.generate(**inputs, **generate_kwargs)
 
             # Trim prompt tokens, decode only generated tokens
             trimmed = output_ids[0][inputs["input_ids"].shape[1]:]
@@ -445,10 +460,54 @@ def main(
         )
         agent = build_agent_text_image(agent_cfg, name_mapping=name_mapping)
 
+    elif observation_mode == "simulation_only":
+        # ── Simulation-only path ──────────────────────────────────────────────
+        from src.observation.html_simulation_renderer import HtmlSimulationRenderer
+        from src.observation.simulation_image_renderer import SimulationImageRenderer
+
+        simulation_type = visual_cfg.get("simulation_type")
+        if not isinstance(simulation_type, str) or not simulation_type.strip():
+            raise ValueError(
+                "visual.simulation_type must be provided when "
+                "visual.observation_mode='simulation_only'"
+            )
+
+        images_output_dir = os.path.join(
+            output_dir,
+            visual_cfg.get("output_subdir", "simulation_images"),
+        )
+
+        simulation_renderer = HtmlSimulationRenderer(
+            variables=variables,
+            target_variable=target_variable,
+            naming_mode=naming_mode,
+            name_mapping=name_mapping if name_mapping else None,
+            output_dir=images_output_dir,
+            template_dir=visual_cfg.get("template_dir", "templates/simulations"),
+            simulation_type=simulation_type,
+            headless=visual_cfg.get("playwright", {}).get("headless", True),
+            slow_mo=visual_cfg.get("playwright", {}).get("slow_mo", 0),
+            exclude_variables=visual_cfg.get("exclude_variables", []),
+            viewport_width=visual_cfg.get("viewport", {}).get("width", 900),
+            viewport_height=visual_cfg.get("viewport", {}).get("height", 500),
+        )
+
+        renderer = SimulationImageRenderer(
+            variables=variables,
+            action_mode=action_mode,
+            target_variable=target_variable,
+            naming_mode=naming_mode,
+            metadata_level=metadata_level,
+            name_mapping=name_mapping,
+            image_renderer=simulation_renderer,
+        )
+
+        agent = build_agent_text_image(agent_cfg, name_mapping=name_mapping)
+
     else:
         raise ValueError(
             f"Unknown observation_mode: '{observation_mode}'. "
-            f"Must be 'text' or 'text_image'."
+            f"Must be 'text', 'text_image', or 'simulation_only'."
         )
 
     # ── Runner ────────────────────────────────────────────────────────────────

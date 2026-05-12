@@ -1,0 +1,768 @@
+{% set wavelength_pct = (8 + simulation.wavelength_norm * 84) | round(2) %}
+{% set beam_hue = (280 - simulation.wavelength_norm * 160) | round(0) %}
+{% set concentration_pct = (8 + simulation.concentration_norm * 84) | round(2) %}
+{% set path_pct = (8 + simulation.path_norm * 84) | round(2) %}
+{% set absorbance_pct = (8 + simulation.absorbance_norm * 84) | round(2) %}
+
+{% set cuvette_left = 340 %}
+{% set cuvette_width = (70 + simulation.path_norm * 190) | round(0) | int %}
+{% set cuvette_right = cuvette_left + cuvette_width %}
+{% set detector_left = 655 %}
+{% set beam_after_width = detector_left - cuvette_right %}
+{% set cuvette_center = cuvette_left + cuvette_width / 2 %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{{ target.display }} Measurement Experiment</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      width: 900px;
+      height: 500px;
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #111827;
+      background: #efefef;
+    }
+
+    .screen {
+      width: 900px;
+      height: 500px;
+      padding: 12px 14px;
+      display: grid;
+      grid-template-rows: 46px 1fr;
+      gap: 10px;
+      background: #efefef;
+    }
+
+    .topbar {
+      height: 46px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, #ffffff, #f1f6fa);
+      border: 2px solid #b5c5d0;
+      box-shadow: 0 2px 8px rgba(28, 55, 75, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0.4px;
+      color: #1d2939;
+    }
+
+    .step-badge {
+      padding: 7px 13px;
+      border-radius: 999px;
+      background: #243444;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .canvas {
+      position: relative;
+      width: 872px;
+      height: 420px;
+      background: #efefef;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    /* LIGHT SOURCE */
+
+    .light-source {
+      position: absolute;
+      left: 54px;
+      top: 132px;
+      width: 116px;
+      height: 70px;
+      border: 2px solid #222;
+      border-radius: 7px;
+      background: linear-gradient(to bottom, #f2f2f2, #8f8f8f 55%, #2b2b2b);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+      z-index: 4;
+    }
+
+    .light-source::after {
+      content: "";
+      position: absolute;
+      right: -18px;
+      top: 10px;
+      width: 18px;
+      height: 50px;
+      border: 2px solid #222;
+      border-left: none;
+      border-radius: 0 7px 7px 0;
+      background: linear-gradient(to bottom, #ededed, #9c9c9c 55%, #3b3b3b);
+    }
+
+    .light-button {
+      position: absolute;
+      left: 40px;
+      top: 16px;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 2px solid hsla({{ beam_hue }}, 95%, 30%, 0.9);
+      background: hsl({{ beam_hue }}, 95%, 50%);
+      box-shadow:
+        inset 0 0 8px rgba(255,255,255,0.35),
+        0 0 10px hsla({{ beam_hue }}, 95%, 56%, 0.45);
+    }
+
+    /* BEAM */
+
+    .beam-before {
+      position: absolute;
+      left: 188px;
+      top: 159px;
+      width: {{ cuvette_left - 188 }}px;
+      height: 24px;
+      background: hsl({{ beam_hue }}, 95%, 56%);
+      opacity: 0.82;
+      box-shadow: 0 0 16px hsla({{ beam_hue }}, 95%, 56%, 0.45);
+      z-index: 1;
+    }
+
+    .beam-through {
+      position: absolute;
+      left: {{ cuvette_left }}px;
+      top: 159px;
+      width: {{ cuvette_width }}px;
+      height: 24px;
+      background: hsl({{ beam_hue }}, 95%, 56%);
+      opacity: 0.35;
+      z-index: 3;
+    }
+
+    .beam-after {
+      position: absolute;
+      left: {{ cuvette_right }}px;
+      top: 159px;
+      width: {{ beam_after_width }}px;
+      height: 24px;
+      background: hsl({{ beam_hue }}, 95%, 56%);
+      opacity: {{ simulation.beam_after_opacity }};
+      box-shadow: 0 0 14px hsla({{ beam_hue }}, 95%, 56%, 0.45);
+      z-index: 1;
+    }
+
+    /* CUVETTE */
+
+    .cuvette {
+      position: absolute;
+      left: {{ cuvette_left }}px;
+      top: 44px;
+      width: {{ cuvette_width }}px;
+      height: 225px;
+      border-left: 4px solid #111;
+      border-right: 4px solid #111;
+      border-bottom: 4px solid #111;
+      background: transparent;
+      z-index: 4;
+    }
+
+    .liquid {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 92%;
+      background:
+        radial-gradient(circle at 40% 45%, rgba(255,255,255,0.25), transparent 40%),
+        rgba(255, 110, 120, {{ simulation.solution_alpha }});
+    }
+
+    .liquid-surface {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 18px;
+      height: 2px;
+      background: rgba(31,42,55,0.25);
+    }
+
+    .absorber-particles {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      top: 36px;
+      bottom: 22px;
+      opacity: {{ 0.18 + simulation.concentration_norm * 0.65 }};
+      background:
+        radial-gradient(circle at 17% 26%, rgba(130,20,45,0.70) 0, rgba(130,20,45,0.70) 3px, transparent 4px),
+        radial-gradient(circle at 39% 63%, rgba(130,20,45,0.70) 0, rgba(130,20,45,0.70) 3px, transparent 4px),
+        radial-gradient(circle at 62% 35%, rgba(130,20,45,0.70) 0, rgba(130,20,45,0.70) 3px, transparent 4px),
+        radial-gradient(circle at 82% 72%, rgba(130,20,45,0.70) 0, rgba(130,20,45,0.70) 3px, transparent 4px),
+        radial-gradient(circle at 54% 80%, rgba(130,20,45,0.70) 0, rgba(130,20,45,0.70) 3px, transparent 4px);
+    }
+
+    /* PATH LENGTH ARROW + RULER */
+
+    .width-arrow {
+      position: absolute;
+      left: {{ cuvette_center }}px;
+      top: 250px;
+      width: 0;
+      height: 0;
+      z-index: 5;
+    }
+
+    .width-arrow .shaft {
+      position: absolute;
+      left: calc(-1 * {{ cuvette_width }}px / 2 + 28px);
+      top: 11px;
+      width: calc({{ cuvette_width }}px - 56px);
+      height: 18px;
+      background: #f4bd05;
+      border-top: 2px solid #5a3a00;
+      border-bottom: 2px solid #5a3a00;
+    }
+
+    .width-arrow .left-head {
+      position: absolute;
+      left: calc(-1 * {{ cuvette_width }}px / 2);
+      top: 0;
+      width: 0;
+      height: 0;
+      border-top: 20px solid transparent;
+      border-bottom: 20px solid transparent;
+      border-right: 34px solid #f4bd05;
+      filter: drop-shadow(-1px 0 0 #5a3a00);
+    }
+
+    .width-arrow .right-head {
+      position: absolute;
+      left: calc({{ cuvette_width }}px / 2 - 34px);
+      top: 0;
+      width: 0;
+      height: 0;
+      border-top: 20px solid transparent;
+      border-bottom: 20px solid transparent;
+      border-left: 34px solid #f4bd05;
+      filter: drop-shadow(1px 0 0 #5a3a00);
+    }
+
+    .ruler {
+      position: absolute;
+      left: {{ cuvette_left }}px;
+      top: 294px;
+      width: {{ cuvette_width }}px;
+      height: 36px;
+      background: #efe178;
+      border: 2px solid #333;
+      overflow: hidden;
+      z-index: 3;
+    }
+
+    .ruler-unit {
+      position: absolute;
+      left: 8px;
+      top: 7px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .ruler-ticks {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      top: 0;
+      background:
+        repeating-linear-gradient(
+          to right,
+          transparent 0,
+          transparent 9px,
+          rgba(0,0,0,0.85) 10px,
+          transparent 11px
+        );
+      opacity: 0.75;
+    }
+
+    .ruler-label {
+      position: absolute;
+      left: {{ cuvette_left - 18 }}px;
+      top: 334px;
+      width: {{ cuvette_width + 36 }}px;
+      height: 24px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 900;
+      color: #374151;
+      white-space: nowrap;
+    }
+
+    /* DETECTOR + OUTPUT */
+
+    .detector-cable {
+      position: absolute;
+      left: 714px;
+      top: 92px;
+      width: 82px;
+      height: 190px;
+      border: 7px solid #777;
+      border-top: none;
+      border-left: none;
+      border-radius: 0 0 70px 70px;
+      transform: rotate(10deg);
+      opacity: 0.95;
+      z-index: 0;
+    }
+
+    .detector-head {
+      position: absolute;
+      left: {{ detector_left }}px;
+      top: 126px;
+      width: 78px;
+      height: 122px;
+      border-radius: 38px 38px 28px 28px;
+      background: #0b8f31;
+      border: 4px solid #056a27;
+      box-shadow: inset 0 2px 7px rgba(255,255,255,0.2);
+      z-index: 4;
+    }
+
+    .detector-head::before {
+      content: "";
+      position: absolute;
+      left: 13px;
+      top: 14px;
+      width: 46px;
+      height: 56px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #ffffff 0%, #cfe1ee 35%, #b8d0df 100%);
+      border: 1px solid rgba(0,0,0,0.15);
+    }
+
+    .output-panel {
+      position: absolute;
+      left: 674px;
+      top: 16px;
+      width: 170px;
+      height: 110px;
+      border-radius: 12px;
+      background: #0b8f31;
+      border: 2px solid #2a6b2a;
+      box-shadow: inset 0 2px 8px rgba(255,255,255,0.25);
+      padding: 13px;
+      color: #fff;
+      z-index: 8;
+    }
+
+    .output-screen {
+      width: 100%;
+      height: 38px;
+      border-radius: 10px;
+      border: 2px solid #a8a8a8;
+      background: #f3f3f3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #111;
+      font-family: "Courier New", monospace;
+      font-size: 22px;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .output-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .radio {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid #111;
+      background: #8fb8ff;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .radio::after {
+      content: "";
+      position: absolute;
+      left: 6px;
+      top: 6px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #111;
+    }
+
+    /* WAVELENGTH CONTROL */
+
+    .wavelength-panel {
+      position: absolute;
+      left: 54px;
+      top: 220px;
+      width: 244px;
+      height: 112px;
+      background: #e6e6e6;
+      border: 2px solid #999;
+      border-radius: 14px;
+      padding: 12px 14px;
+      color: #111;
+      z-index: 7;
+    }
+
+    .small-control-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 11px;
+    }
+
+    .small-control-name {
+      min-width: 0;
+      flex: 1;
+      font-size: 16px;
+      font-weight: 900;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .small-value-box {
+      width: 70px;
+      height: 30px;
+      background: #f4f4f4;
+      border: 1px solid #cfcfcf;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Courier New", monospace;
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .small-slider {
+      position: relative;
+      height: 42px;
+    }
+
+    .small-slider-track {
+      position: absolute;
+      left: 4px;
+      right: 4px;
+      top: 17px;
+      height: 12px;
+      border: 1px solid #555;
+      background: linear-gradient(to right, hsl({{ beam_hue }}, 95%, 82%), hsl({{ beam_hue }}, 95%, 48%));
+    }
+
+    .small-slider-thumb {
+      position: absolute;
+      left: calc({{ wavelength_pct }}% - 10px);
+      top: 5px;
+      width: 22px;
+      height: 34px;
+      border-radius: 7px;
+      border: 1.5px solid #3d5d6e;
+      background: #5ea5cd;
+    }
+
+    /* BOTTOM CONTROL PANEL */
+
+    .control-panel {
+      position: absolute;
+      left: 320px;
+      top: 286px;
+      width: 508px;
+      height: 120px;
+      background: #eaeaea;
+      border: 2px solid #a0a0a0;
+      border-radius: 14px;
+      padding: 12px 14px;
+      color: #111;
+      z-index: 6;
+    }
+
+    .control-row {
+      display: grid;
+      grid-template-columns: 130px 76px 32px 1fr 32px;
+      align-items: center;
+      gap: 10px;
+      height: 46px;
+    }
+
+    .control-row + .control-row {
+      margin-top: 7px;
+    }
+
+    .control-label {
+      min-width: 0;
+      font-size: 18px;
+      font-weight: 900;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .value-box {
+      height: 30px;
+      background: #f4f4f4;
+      border: 1px solid #cfcfcf;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Courier New", monospace;
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .arrow-btn {
+      width: 32px;
+      height: 32px;
+      border: 2px solid #333;
+      border-radius: 6px;
+      background: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .slider-zone {
+      position: relative;
+      height: 42px;
+    }
+
+    .slider-min,
+    .slider-max {
+      position: absolute;
+      top: -2px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .slider-min {
+      left: 0;
+    }
+
+    .slider-max {
+      right: 0;
+    }
+
+    .control-slider-track {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 20px;
+      height: 14px;
+      border: 1px solid #555;
+      background: linear-gradient(to right, #f1d5d5, #ff0000);
+    }
+
+    .control-slider-track.path-track {
+      background: linear-gradient(to right, #f5e5c4, #c78536);
+    }
+
+    .slider-thumb {
+      position: absolute;
+      top: 6px;
+      width: 24px;
+      height: 36px;
+      border-radius: 7px;
+      border: 1.5px solid #3d5d6e;
+      background: #5ea5cd;
+    }
+
+    .slider-thumb::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 7px;
+      width: 2px;
+      height: 21px;
+      background: #2a4a60;
+      box-shadow: -5px 0 0 #2a4a60, 5px 0 0 #2a4a60;
+    }
+
+    .concentration-thumb {
+      left: calc({{ concentration_pct }}% - 12px);
+    }
+
+    .path-thumb {
+      left: calc({{ path_pct }}% - 12px);
+    }
+
+    .reset-btn {
+      position: absolute;
+      right: 32px;
+      bottom: 20px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid #b36e10;
+      background: radial-gradient(circle at 35% 35%, #ffd08a 0%, #ef9b2b 70%, #d58011 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 29px;
+      color: #fff;
+      font-weight: bold;
+      z-index: 8;
+    }
+
+    /* SMALL SUMMARY */
+
+    .summary-strip {
+      position: absolute;
+      left: 54px;
+      bottom: 16px;
+      width: 244px;
+      height: 62px;
+      border-radius: 14px;
+      border: 2px solid #a0a0a0;
+      background: #eaeaea;
+      display: grid;
+      grid-template-rows: 1fr 1fr;
+      padding: 7px 10px;
+      gap: 5px;
+      z-index: 5;
+    }
+
+    .summary-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .summary-name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #374151;
+    }
+
+    .summary-value {
+      font-family: "Courier New", monospace;
+      color: #111827;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="screen">
+    <div class="topbar">
+      <div class="title">Experiment</div>
+      <div class="step-badge">Step {{ step_id if step_id is not none else "?" }}</div>
+    </div>
+
+    <div class="canvas">
+      <div class="light-source">
+        <div class="light-button"></div>
+      </div>
+
+      <div class="beam-before"></div>
+      <div class="beam-through"></div>
+      <div class="beam-after"></div>
+
+      <div class="cuvette">
+        <div class="liquid"></div>
+        <div class="liquid-surface"></div>
+        <div class="absorber-particles"></div>
+      </div>
+
+      <div class="width-arrow">
+        <div class="left-head"></div>
+        <div class="shaft"></div>
+        <div class="right-head"></div>
+      </div>
+
+      <div class="ruler">
+        <div class="ruler-ticks"></div>
+        <div class="ruler-unit">cm</div>
+      </div>
+      <div class="ruler-label">
+        {{ variables.path_length.display }} {{ variables.path_length.value }}
+      </div>
+
+      <div class="detector-cable"></div>
+      <div class="detector-head"></div>
+
+      <div class="output-panel">
+        <div class="output-screen">{{ target.value }}</div>
+        <div class="output-label">
+          <div class="radio"></div>
+          <div>{{ target.display }}</div>
+        </div>
+      </div>
+
+      <div class="wavelength-panel">
+        <div class="small-control-row">
+          <div class="small-control-name">{{ variables.wavelength.display }}</div>
+          <div class="small-value-box">{{ variables.wavelength.value }} nm</div>
+        </div>
+        <div class="small-slider">
+          <div class="small-slider-track"></div>
+          <div class="small-slider-thumb"></div>
+        </div>
+      </div>
+
+      <div class="control-panel">
+        <div class="control-row">
+          <div class="control-label">{{ variables.concentration.display }}</div>
+          <div class="value-box">{{ variables.concentration.value }}</div>
+          <div class="arrow-btn">◀</div>
+          <div class="slider-zone">
+            <div class="slider-min">{{ variables.concentration.min | round(0) | int }}</div>
+            <div class="slider-max">{{ variables.concentration.max | round(0) | int }}</div>
+            <div class="control-slider-track"></div>
+            <div class="slider-thumb concentration-thumb"></div>
+          </div>
+          <div class="arrow-btn">▶</div>
+        </div>
+
+        <div class="control-row">
+          <div class="control-label">{{ variables.path_length.display }}</div>
+          <div class="value-box">{{ variables.path_length.value }}</div>
+          <div class="arrow-btn">◀</div>
+          <div class="slider-zone">
+            <div class="slider-min">{{ variables.path_length.min | round(0) | int }}</div>
+            <div class="slider-max">{{ variables.path_length.max | round(0) | int }}</div>
+            <div class="control-slider-track path-track"></div>
+            <div class="slider-thumb path-thumb"></div>
+          </div>
+          <div class="arrow-btn">▶</div>
+        </div>
+      </div>
+
+      <div class="summary-strip">
+        <div class="summary-row">
+          <div class="summary-name">{{ variables.wavelength.display }}</div>
+          <div class="summary-value">{{ variables.wavelength.value }} nm</div>
+        </div>
+        <div class="summary-row">
+          <div class="summary-name">{{ target.display }}</div>
+          <div class="summary-value">{{ target.value }}</div>
+        </div>
+      </div>
+
+      <div class="reset-btn">↻</div>
+    </div>
+  </div>
+</body>
+</html>

@@ -206,6 +206,7 @@ class EpisodeRunner:
             final_equation, forced_finish = self._run_forced_finish(
                 observation=observation,
                 history=history_for_prompt,
+                image_paths=image_paths_history,
             )
             if final_equation is not None:
                 finish_reached = True
@@ -242,6 +243,7 @@ class EpisodeRunner:
         self,
         observation: Observation,
         history: List[Dict[str, Any]],
+        image_paths: Optional[List[str]] = None,
     ) -> tuple[Optional[str], bool]:
         """
         Make one additional model call to collect a final equation.
@@ -250,7 +252,8 @@ class EpisodeRunner:
         via the internal _generate() method.
 
         For VisionLanguageAgent / MockVLMAgent: falls back to act() with
-        no images, then tries to extract an equation from the response.
+        image history when available, then tries to extract an equation from
+        the response.
 
         Returns (equation_string, True) on success,
                 (None, False) if no usable equation could be extracted.
@@ -269,11 +272,13 @@ class EpisodeRunner:
                 if equation:
                     return equation, True
 
-            # Path B: VisionLanguageAgent / MockVLMAgent — call act() without images
+            # Path B: VisionLanguageAgent / MockVLMAgent — call act() with image history
             else:
+                images_to_pass = self._window(image_paths or [])
+
                 agent_step, _ = self.agent.act(
                     prompt=final_prompt,
-                    image_paths=None,
+                    image_paths=images_to_pass if images_to_pass else None,
                 )
                 if (
                     agent_step.step_type == "finish"

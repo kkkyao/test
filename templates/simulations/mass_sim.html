@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{{ target.display }} Measurement Experiment</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      width: 900px;
+      height: 500px;
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #1f2a37;
+      background:
+        radial-gradient(circle at 16% 12%, rgba(255,255,255,0.96), transparent 28%),
+        linear-gradient(180deg, #dcebf5 0%, #c9deeb 100%);
+    }
+
+    .screen {
+      width: 900px;
+      height: 500px;
+      padding: 12px 14px;
+      display: grid;
+      grid-template-rows: 46px 1fr;
+      gap: 10px;
+    }
+
+    .topbar {
+      height: 46px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, #ffffff, #f1f6fa);
+      border: 2px solid #b5c5d0;
+      box-shadow: 0 2px 8px rgba(28, 55, 75, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0.4px;
+      color: #1d2939;
+    }
+
+    .step-badge {
+      padding: 7px 13px;
+      border-radius: 999px;
+      background: #243444;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .main {
+      height: 418px;
+      display: grid;
+      grid-template-columns: 238px 1fr 220px;
+      gap: 12px;
+    }
+
+    .panel {
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.93);
+      border: 2px solid #aebfcb;
+      box-shadow: 0 7px 16px rgba(42, 71, 94, 0.14);
+    }
+
+    .panel-header {
+      height: 34px;
+      display: flex;
+      align-items: center;
+      padding: 0 13px;
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 0.3px;
+      color: white;
+      background: linear-gradient(90deg, #2e6f95, #20516f);
+    }
+
+    /* LEFT CONTROLS */
+
+    .controls-body {
+      padding: 12px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.96), rgba(246,251,254,0.96));
+      height: calc(100% - 34px);
+    }
+
+    .control-card {
+      border-radius: 16px;
+      border: 2px solid #c5d3dd;
+      background: #f8fcff;
+      padding: 11px;
+      margin-bottom: 12px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+
+    .control-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .control-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+
+    .control-name {
+      font-size: 17px;
+      font-weight: 900;
+      color: #213547;
+    }
+
+    .control-tag {
+      font-size: 10px;
+      font-weight: 900;
+      color: #6b7b8c;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .readout {
+      height: 34px;
+      border-radius: 9px;
+      border: 2px solid #203141;
+      background:
+        radial-gradient(circle at 50% 35%, rgba(70, 180, 220, 0.22), transparent 62%),
+        #08141d;
+      color: #ecfbff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Courier New", monospace;
+      font-size: 22px;
+      font-weight: 900;
+      box-shadow: inset 0 0 12px rgba(73, 196, 255, 0.22);
+    }
+
+    .slider {
+      position: relative;
+      height: 38px;
+      margin-top: 10px;
+    }
+
+    .slider-track {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      top: 18px;
+      height: 8px;
+      border-radius: 99px;
+      border: 1px solid #8da3b2;
+      background: linear-gradient(90deg, #dce8ef, #f7fbfd);
+    }
+
+    .slider-fill-density {
+      position: absolute;
+      left: 8px;
+      top: 18px;
+      height: 8px;
+      width: {{ (8 + simulation.density_norm * 84) | round(2) }}%;
+      max-width: 92%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #9fb4c3, #536878);
+      opacity: {{ simulation.density_alpha }};
+    }
+
+    .slider-fill-volume {
+      position: absolute;
+      left: 8px;
+      top: 18px;
+      height: 8px;
+      width: {{ (8 + simulation.volume_norm * 84) | round(2) }}%;
+      max-width: 92%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #8cc7ea, #3a8fc3);
+    }
+
+    .slider-knob {
+      position: absolute;
+      top: 10px;
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #ffffff, #d8e5ed);
+      border: 3px solid #58788e;
+      box-shadow: 0 2px 5px rgba(37, 61, 78, 0.25);
+    }
+
+    .knob-density {
+      left: calc({{ (8 + simulation.density_norm * 84) | round(2) }}% - 11px);
+    }
+
+    .knob-volume {
+      left: calc({{ (8 + simulation.volume_norm * 84) | round(2) }}% - 11px);
+    }
+
+    .material-swatch {
+      margin-top: 9px;
+      height: 38px;
+      border-radius: 10px;
+      border: 2px solid #8da0af;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.35), transparent 45%),
+        rgba(74, 88, 102, {{ simulation.density_alpha }});
+      box-shadow: inset -10px -7px 12px rgba(0,0,0,0.14);
+    }
+
+    .volume-cup {
+      position: relative;
+      margin-top: 9px;
+      height: 42px;
+      border-radius: 8px 8px 12px 12px;
+      border: 3px solid #8aa0af;
+      background: rgba(238, 247, 252, 0.88);
+      overflow: hidden;
+    }
+
+    .volume-water {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: {{ simulation.volume_fill_percent }}%;
+      background: linear-gradient(180deg, #9fd4ef, #4c98c8);
+      opacity: 0.9;
+    }
+
+    .volume-lines {
+      position: absolute;
+      top: 5px;
+      bottom: 5px;
+      right: 9px;
+      width: 28px;
+      border-left: 2px solid rgba(45, 68, 85, 0.35);
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          transparent 0,
+          transparent 7px,
+          rgba(45, 68, 85, 0.45) 8px,
+          transparent 9px
+        );
+    }
+
+    /* CENTER LAB */
+
+    .lab {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.97), rgba(244,249,252,0.98));
+    }
+
+    .lab-title {
+      position: absolute;
+      top: 13px;
+      left: 18px;
+      font-size: 16px;
+      font-weight: 900;
+      color: #243444;
+    }
+
+    .lab-backdrop {
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      top: 52px;
+      height: 212px;
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(217, 232, 240, 0.85), transparent 64%),
+        linear-gradient(180deg, #f8fbfd, #edf5fa);
+      border: 1px solid #d6e2ea;
+    }
+
+    .bench {
+      position: absolute;
+      left: 26px;
+      right: 26px;
+      bottom: 32px;
+      height: 34px;
+      border-radius: 9px;
+      background: linear-gradient(180deg, #b77a47, #8a5731);
+      box-shadow: 0 8px 14px rgba(83, 52, 31, 0.22);
+    }
+
+    .scale-base {
+      position: absolute;
+      left: 84px;
+      bottom: 64px;
+      width: 260px;
+      height: 76px;
+      border-radius: 18px 18px 13px 13px;
+      background: linear-gradient(180deg, #dbe5eb, #a8bbc7);
+      border: 3px solid #6d8392;
+      box-shadow: 0 5px 12px rgba(55, 78, 96, 0.22);
+    }
+
+    .scale-platform {
+      position: absolute;
+      left: 66px;
+      bottom: 138px;
+      width: 296px;
+      height: 23px;
+      border-radius: 9px;
+      background: linear-gradient(180deg, #d3dde4, #8fa4b1);
+      border: 3px solid #687d8b;
+    }
+
+    .sample-block {
+      position: absolute;
+      left: 50%;
+      bottom: 161px;
+      width: {{ simulation.block_width }}px;
+      height: {{ simulation.block_height }}px;
+      transform: translateX(-50%);
+      border-radius: 9px 9px 5px 5px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.42), transparent 38%),
+        rgba(74, 88, 102, {{ simulation.density_alpha }});
+      border: 4px solid #344251;
+      box-shadow:
+        inset -12px -10px 18px rgba(0,0,0,0.17),
+        0 9px 12px rgba(42, 58, 72, 0.2);
+    }
+
+    .sample-block::before {
+      content: "";
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      top: 9px;
+      height: 8px;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.34);
+    }
+
+    .scale-screen {
+      position: absolute;
+      left: 104px;
+      bottom: 84px;
+      width: 220px;
+      height: 40px;
+      border-radius: 10px;
+      border: 3px solid #172635;
+      background:
+        radial-gradient(circle at 50% 40%, rgba(69, 194, 255, 0.18), transparent 70%),
+        #08131c;
+      color: #ecfbff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Courier New", monospace;
+      font-size: 20px;
+      font-weight: 900;
+      box-shadow: inset 0 0 13px rgba(67, 206, 255, 0.33);
+    }
+
+    .balance-label {
+      position: absolute;
+      left: 132px;
+      bottom: 39px;
+      font-size: 12px;
+      font-weight: 900;
+      color: #4c6072;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+
+    /* RIGHT METER */
+
+    .meter-body {
+      height: calc(100% - 34px);
+      padding: 13px;
+      background: linear-gradient(180deg, #f9fcfe, #eef6fb);
+    }
+
+    .meter-shell {
+      height: 188px;
+      border-radius: 18px;
+      border: 3px solid #7c91a1;
+      background:
+        linear-gradient(180deg, #eaf2f7, #d0dde6);
+      position: relative;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.85);
+    }
+
+    .meter-name {
+      position: absolute;
+      top: 14px;
+      left: 12px;
+      right: 12px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 900;
+      color: #253647;
+    }
+
+    .meter-display {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      top: 58px;
+      height: 56px;
+      border-radius: 12px;
+      border: 3px solid #162432;
+      background:
+        radial-gradient(circle at 50% 35%, rgba(71, 207, 255, 0.18), transparent 68%),
+        #07121b;
+      color: #ecfbff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Courier New", monospace;
+      font-size: 32px;
+      font-weight: 900;
+      box-shadow: inset 0 0 15px rgba(67, 206, 255, 0.34);
+    }
+
+    .meter-gauge {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 24px;
+      height: 16px;
+      border-radius: 999px;
+      background: #f7fbfd;
+      border: 2px solid #7f94a4;
+      overflow: hidden;
+    }
+
+    .meter-gauge-fill {
+      height: 100%;
+      width: {{ simulation.scale_bar_width }}%;
+      background: linear-gradient(90deg, #79b5d6, #246f9f);
+    }
+
+    .mini-panel {
+      margin-top: 14px;
+      border-radius: 16px;
+      border: 2px solid #c5d3dd;
+      background: #ffffff;
+      padding: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .mini-row {
+      height: 30px;
+      border-radius: 10px;
+      border: 1px solid #d5e1e8;
+      background: #eef6fa;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      padding: 0 10px;
+    }
+
+    .mini-name {
+      font-size: 13px;
+      font-weight: 900;
+      color: #294053;
+    }
+
+    .mini-value {
+      font-size: 14px;
+      font-weight: 900;
+      color: #152433;
+      font-family: "Courier New", monospace;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="screen">
+    <div class="topbar">
+      <div class="title">Experiment</div>
+      <div class="step-badge">Step {{ step_id if step_id is not none else "?" }}</div>
+    </div>
+
+    <div class="main">
+      <section class="panel">
+        <div class="panel-header">Controls</div>
+        <div class="controls-body">
+          <div class="control-card">
+            <div class="control-top">
+              <div class="control-name">{{ variables.density.display }}</div>
+              <div class="control-tag">material</div>
+            </div>
+            <div class="readout">{{ variables.density.value }}</div>
+            <div class="slider">
+              <div class="slider-track"></div>
+              <div class="slider-fill-density"></div>
+              <div class="slider-knob knob-density"></div>
+            </div>
+            <div class="material-swatch"></div>
+          </div>
+
+          <div class="control-card">
+            <div class="control-top">
+              <div class="control-name">{{ variables.volume.display }}</div>
+              <div class="control-tag">sample size</div>
+            </div>
+            <div class="readout">{{ variables.volume.value }}</div>
+            <div class="slider">
+              <div class="slider-track"></div>
+              <div class="slider-fill-volume"></div>
+              <div class="slider-knob knob-volume"></div>
+            </div>
+            <div class="volume-cup">
+              <div class="volume-water"></div>
+              <div class="volume-lines"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel lab">
+        <div class="lab-title">Electronic balance</div>
+        <div class="lab-backdrop"></div>
+
+        <div class="sample-block"></div>
+        <div class="scale-platform"></div>
+        <div class="scale-base"></div>
+        <div class="scale-screen">{{ target.display }} {{ target.value }}</div>
+        <div class="balance-label">balance</div>
+        <div class="bench"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">{{ target.display }} meter</div>
+        <div class="meter-body">
+          <div class="meter-shell">
+            <div class="meter-name">{{ target.display }}</div>
+            <div class="meter-display">{{ target.value }}</div>
+            <div class="meter-gauge">
+              <div class="meter-gauge-fill"></div>
+            </div>
+          </div>
+
+          <div class="mini-panel">
+            <div class="mini-row">
+              <div class="mini-name">{{ variables.density.display }}</div>
+              <div class="mini-value">{{ variables.density.value }}</div>
+            </div>
+            <div class="mini-row">
+              <div class="mini-name">{{ variables.volume.display }}</div>
+              <div class="mini-value">{{ variables.volume.value }}</div>
+            </div>
+            <div class="mini-row">
+              <div class="mini-name">{{ target.display }}</div>
+              <div class="mini-value">{{ target.value }}</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+</html>

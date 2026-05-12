@@ -1,0 +1,4 @@
+experiment_config: experiment_simulation_only_distance.yaml
+env_config:        env_distance_concrete.yaml
+model_config:      model_mock_vlm.yaml
+prompt_config:     prompt_simulation_only.yaml

@@ -1,0 +1,103 @@
+prompt:
+  include_observation_text: true
+
+  system_intro: "You are a scientific explorer interacting with an unknown simulated experiment. At each step you receive one or more simulation screenshots showing the experimental apparatus and instrument readings. You do NOT receive any text describing the current state values — you must read all variable values and history directly from the screenshots. You must respond with exactly one valid JSON object."
+
+  task_template: "Your goal is to discover the equation that determines {target_variable} from the other variables in the environment."
+
+  exploration_lines:
+    - "There are {num_variables} variables available for exploration: {equation_variables}. Only these {num_variables} variables can appear in the final equation."
+    - "Explore the relationship between the variables in order to find the correct equation that models {target_variable} using {equation_variables}."
+    - "Simulation screenshots are provided at every step, ordered oldest to newest. The last image is the current state."
+    - "Read current variable values, historical changes, and instrument readings from the screenshots."
+    - "Use the previous action history to connect interventions to visual changes in the simulation."
+    - "Put any reasoning inside the JSON reasoning field only."
+    - "Stop only when you have gathered enough visual evidence from the simulation screenshots to state a final equation."
+    - "You may take up to {max_steps} steps in total."
+
+  step_type_descriptions:
+    action: "take exactly one valid action to change the simulated experiment"
+    finish: "stop exploring and submit your final equation"
+
+  rules:
+    - "Return exactly one valid JSON object."
+    - "Do not output prose, markdown fences, bullet points, or any text outside the JSON object."
+    - "reasoning must be a non-empty string on every step."
+    - "step_type must be exactly 'action' or 'finish'."
+    - "When step_type is 'action', action must be one valid action object from Available actions; final_equation must be null."
+    - "When step_type is 'finish', action must be null; final_equation must be a non-empty equation string."
+    - "The final equation must use only these {num_variables} variables: {equation_variables}. Do not use any other variable names or numeric constants."
+    - "Do not invent new action_type values, variables, or fields."
+    - "Do not output updated state values."
+    - "Do not infer state values from text. Use the simulation screenshots for state values."
+
+  image_notice: "Simulation screenshots are shown above, ordered oldest to newest. Each screenshot shows the simulated apparatus, input controls, and output instrument readings. The last screenshot shows the current state. Read all current and historical state values from the screenshots."
+
+  output_format_header: "Your answer must follow one of the JSON templates below."
+
+  output_format_action_increase_decrease: |
+    For an action step:
+    {
+      "reasoning": "brief string",
+      "step_type": "action",
+      "action": {
+        "action_type": "increase",
+        "variable": "variable_name"
+      },
+      "final_equation": null
+    }
+
+    The action_type can be "increase" or "decrease".
+    The variable must be one of the valid manipulable variables shown in Available actions.
+
+  output_format_action_set_value: |
+    For an action step:
+    {
+      "reasoning": "brief string",
+      "step_type": "action",
+      "action": {
+        "action_type": "set",
+        "variable": "variable_name",
+        "value": 0
+      },
+      "final_equation": null
+    }
+
+    The value must be numeric.
+    The variable must be one of the valid manipulable variables shown in Available actions.
+
+  output_format_finish: |
+    For a finish step:
+    {
+      "reasoning": "brief string",
+      "step_type": "finish",
+      "action": null,
+      "final_equation": "equation string"
+    }
+
+  forced_finish_template: |
+    You have finished your exploration steps.
+    Based on everything you observed in the simulation screenshots, find the correct equation
+    that models variable {target_variable} using variables {equation_variables}.
+    Model the relationship using only +, -, *, / operators. Do not use coefficients.
+
+    Rules:
+    - Write only the equation on a single line.
+    - There are {num_variables} variables: {equation_variables}. Only these variables can be used.
+    - Format: {target_variable} = <expression using only {equation_variables}>
+    - Do not write anything else — no JSON, no explanation, no markdown.
+
+    Equation:
+
+  section_headers:
+    step_types: "Allowed step types:"
+    rules: "Rules:"
+    observation: "Simulation observation and valid actions:"
+    history: "Previous actions:"
+    output_format: "Output format:"
+
+  history_labels:
+    empty: "No actions have been taken yet. The first screenshot shows the initial state."
+    step_prefix: "Step {step_id}:"
+    step_type: "step_type: {value}"
+    action: "action: {value}"

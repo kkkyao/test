@@ -1,0 +1,51 @@
+environment:
+  target_variable: concentration
+
+  variables:
+    solute_amount:
+      manipulable: true
+      initial_value: 2
+      step_size: 1
+      min_value: 1
+      max_value: 10
+      description: amount of solute added to the tank
+
+    solution_volume:
+      manipulable: true
+      initial_value: 4
+      step_size: 1
+      min_value: 1
+      max_value: 10
+      description: volume of solution in the tank
+
+    concentration:
+      manipulable: false
+      description: concentration of solute in the solution
+
+  equations:
+    concentration: "solute_amount / solution_volume"
+
+representation:
+  naming_mode: concrete
+  metadata_level: rich
+  name_mapping:
+    solute_amount: solute_amount
+    solution_volume: solution_volume
+    concentration: concentration
+
+actions:
+  action_mode: increase_decrease
+
+evaluation:
+  variable_mapping:
+    solute_amount: solute_amount
+    solution_volume: solution_volume
+    concentration: concentration
+  equation_variables:
+    - solute_amount
+    - solution_volume
+
+noise:
+  enabled: false
+  type: null
+  params: {}

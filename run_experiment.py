@@ -167,7 +167,7 @@ def main(
     )
 
     # ── Agent (loaded once, shared across runs) ───────────────────────────────
-    if observation_mode == "text_image":
+    if observation_mode in {"text_image", "simulation_only"}:
         agent = build_agent_text_image(agent_cfg, name_mapping=name_mapping)
     else:
         model_callable = build_model_callable(agent_cfg)
@@ -223,7 +223,7 @@ def main(
             save_interaction_log=logging_cfg.get("save_interaction_log", True),
         )
 
-        # ── Build renderer (text+image needs per-run output dir) ─────────────
+        # ── Build renderer (image modes need per-run output dir) ─────────────
         if observation_mode == "text_image":
             from src.observation.html_chart_renderer import HtmlChartRenderer
             from src.observation.text_image_renderer import TextImageRenderer
@@ -252,8 +252,61 @@ def main(
             # Reset MockVLMAgent replay pointer between runs
             if hasattr(agent, "reset"):
                 agent.reset()
-        else:
+
+        elif observation_mode == "simulation_only":
+            from src.observation.html_simulation_renderer import HtmlSimulationRenderer
+            from src.observation.simulation_image_renderer import SimulationImageRenderer
+
+            simulation_type = visual_cfg.get("simulation_type")
+            if not isinstance(simulation_type, str) or not simulation_type.strip():
+                raise ValueError(
+                    "visual.simulation_type must be provided when "
+                    "visual.observation_mode='simulation_only'"
+                )
+
+            images_output_dir = str(
+                Path(run_output_dir) / visual_cfg.get(
+                    "output_subdir", "simulation_images"
+                )
+            )
+
+            simulation_renderer = HtmlSimulationRenderer(
+                variables=variables,
+                target_variable=target_variable,
+                naming_mode=naming_mode,
+                name_mapping=name_mapping if name_mapping else None,
+                output_dir=images_output_dir,
+                template_dir=visual_cfg.get("template_dir", "templates/simulations"),
+                simulation_type=simulation_type,
+                headless=visual_cfg.get("playwright", {}).get("headless", True),
+                slow_mo=visual_cfg.get("playwright", {}).get("slow_mo", 0),
+                exclude_variables=visual_cfg.get("exclude_variables", []),
+                viewport_width=visual_cfg.get("viewport", {}).get("width", 900),
+                viewport_height=visual_cfg.get("viewport", {}).get("height", 500),
+            )
+
+            renderer = SimulationImageRenderer(
+                variables=variables,
+                action_mode=action_mode,
+                target_variable=target_variable,
+                naming_mode=naming_mode,
+                metadata_level=metadata_level,
+                name_mapping=name_mapping,
+                image_renderer=simulation_renderer,
+            )
+
+            # Reset MockVLMAgent replay pointer between runs
+            if hasattr(agent, "reset"):
+                agent.reset()
+
+        elif observation_mode == "text":
             renderer = text_renderer
+
+        else:
+            raise ValueError(
+                f"Unknown observation_mode: '{observation_mode}'. "
+                f"Must be 'text', 'text_image', or 'simulation_only'."
+            )
 
         runner = EpisodeRunner(
             env=env,

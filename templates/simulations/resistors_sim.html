@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Experiment</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      width: 900px;
+      height: 500px;
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #1f2a37;
+      background:
+        radial-gradient(circle at 16% 12%, rgba(255,255,255,0.96), transparent 28%),
+        linear-gradient(180deg, #dcebf5 0%, #c9deeb 100%);
+    }
+
+    .screen {
+      width: 900px;
+      height: 500px;
+      padding: 12px 14px;
+      display: grid;
+      grid-template-rows: 46px 1fr;
+      gap: 10px;
+    }
+
+    .topbar {
+      height: 46px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, #ffffff, #f1f6fa);
+      border: 2px solid #b5c5d0;
+      box-shadow: 0 2px 8px rgba(28, 55, 75, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0.4px;
+      color: #1d2939;
+    }
+
+    .step-badge {
+      padding: 7px 13px;
+      border-radius: 999px;
+      background: #243444;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .main {
+      height: 418px;
+      display: grid;
+      grid-template-columns: 238px 1fr 220px;
+      gap: 12px;
+    }
+
+    .panel {
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.93);
+      border: 2px solid #aebfcb;
+      box-shadow: 0 7px 16px rgba(42, 71, 94, 0.14);
+    }
+
+    .panel-header {
+      height: 34px;
+      display: flex;
+      align-items: center;
+      padding: 0 13px;
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 0.3px;
+      color: white;
+      background: linear-gradient(90deg, #2e6f95, #20516f);
+    }
+
+    .controls-body {
+      padding: 12px;
+      height: calc(100% - 34px);
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(246,251,254,0.96));
+    }
+
+    .control-card {
+      border-radius: 16px;
+      border: 2px solid #c5d3dd;
+      background: #f8fcff;
+      padding: 11px;
+      margin-bottom: 12px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+
+    .control-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .control-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+
+    .control-name {
+      font-size: 16px;
+      font-weight: 900;
+      color: #213547;
+      max-width: 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .control-tag {
+      font-size: 10px;
+      font-weight: 900;
+      color: #6b7b8c;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .readout {
+      height: 34px;
+      border-radius: 9px;
+      border: 2px solid #203141;
+      background:
+        radial-gradient(circle at 50% 35%, rgba(70, 180, 220, 0.22), transparent 62%),
+        #08141d;
+      color: #ecfbff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Courier New", monospace;
+      font-size: 22px;
+      font-weight: 900;
+      box-shadow: inset 0 0 12px rgba(73, 196, 255, 0.22);
+    }
+
+    .slider {
+      position: relative;
+      height: 38px;
+      margin-top: 10px;
+    }
+
+    .slider-track {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      top: 18px;
+      height: 8px;
+      border-radius: 99px;
+      border: 1px solid #8da3b2;
+      background: linear-gradient(90deg, #dce8ef, #f7fbfd);
+    }
+
+    .slider-fill-r1 {
+      position: absolute;
+      left: 8px;
+      top: 18px;
+      height: 8px;
+      width: {{ (8 + simulation.r1_norm * 84) | round(2) }}%;
+      max-width: 92%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #d4b06d, #a36b34);
+    }
+
+    .slider-fill-r2 {
+      position: absolute;
+      left: 8px;
+      top: 18px;
+      height: 8px;
+      width: {{ (8 + simulation.r2_norm * 84) | round(2) }}%;
+      max-width: 92%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #7fb7d7, #286f9f);
+    }
+
+    .slider-knob {
+      position: absolute;
+      top: 10px;
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #ffffff, #d8e5ed);
+      border: 3px solid #58788e;
+      box-shadow: 0 2px 5px rgba(37, 61, 78, 0.25);
+    }
+
+    .knob-r1 {
+      left: calc({{ (8 + simulation.r1_norm * 84) | round(2) }}% - 11px);
+    }
+
+    .knob-r2 {
+      left: calc({{ (8 + simulation.r2_norm * 84) | round(2) }}% - 11px);
+    }
+
+    /* Center lab */
+
+    .lab {
+      background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(244,249,252,0.98));
+    }
+
+    .lab-title {
+      position: absolute;
+      top: 13px;
+      left: 18px;
+      font-size: 16px;
+      font-weight: 900;
+      color: #243444;
+    }
+
+    .circuit-board {
+      position: absolute;
+      left: 28px;
+      right: 28px;
+      top: 54px;
+      bottom: 32px;
+      border-radius: 18px;
+      border: 2px solid #c7d5df;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(221, 235, 242, 0.9), transparent 62%),
+        linear-gradient(180deg, #f8fbfd, #edf5fa);
+    }
+
+    .wire-loop {
+      position: absolute;
+      left: 66px;
+      top: 108px;
+      width: 306px;
+      height: 162px;
+      border: 9px solid rgba(62, 92, 110, 0.58);
+      border-radius: 24px;
+      background: transparent;
+    }
+
+    .terminal-left {
+      position: absolute;
+      left: 93px;
+      top: 178px;
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: #344251;
+      border: 3px solid #dce6ed;
+    }
+
+    .terminal-right {
+      position: absolute;
+      right: 93px;
+      top: 178px;
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: #344251;
+      border: 3px solid #dce6ed;
+    }
+
+    .resistor-one {
+      position: absolute;
+      left: 116px;
+      top: 157px;
+      width: {{ simulation.r1_width }}px;
+      max-width: 132px;
+      height: 56px;
+      border-radius: 14px;
+      border: 4px solid #5b6f7c;
+      background:
+        linear-gradient(90deg,
+          transparent 0 20%,
+          rgba(162, 94, 54, 0.92) 21% 28%,
+          transparent 29% 50%,
+          rgba(212, 164, 65, 0.92) 51% 58%,
+          transparent 59%
+        ),
+        linear-gradient(180deg, #e0c39b, #b99062);
+      box-shadow: inset -6px -5px 10px rgba(0,0,0,0.15);
+    }
+
+    .resistor-two {
+      position: absolute;
+      left: 250px;
+      top: 157px;
+      width: {{ simulation.r2_width }}px;
+      max-width: 132px;
+      height: 56px;
+      border-radius: 14px;
+      border: 4px solid #5b6f7c;
+      background:
+        linear-gradient(90deg,
+          transparent 0 20%,
+          rgba(45, 105, 160, 0.9) 21% 28%,
+          transparent 29% 50%,
+          rgba(109, 89, 171, 0.86) 51% 58%,
+          transparent 59%
+        ),
+        linear-gradient(180deg, #e0c39b, #b99062);
+      box-shadow: inset -6px -5px 10px rgba(0,0,0,0.15);
+    }
+
+    .label-r1,
+    .label-r2 {
+      position: absolute;
+      top: 221px;
+      font-size: 12px;
+      font-weight: 900;
+      color: #4f6576;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      max-width: 105px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .label-r1 {
+      left: 120px;
+    }
+
+    .label-r2 {
+      left: 256px;
+    }
+
+    .inline-readout {
+      position: absolute;
+      left: 104px;
+      bottom: 48px;
+      width: 220px;
+      height: 50px;
+      border-radius: 10px;
+      border: 3px solid #172635;
+      background:
+        radial-gradient(circle at 50% 40%, rgba(69, 194, 255, 0.18), transparent 70%),
+        #08131c;
+      color: #ecfbff;
+      display: grid;
+      grid-template-rows: 25px 21px;
+      align-items: center;
+      justify-content: center;
+      font-family: "Courier New", monospace;
+      box-shadow: inset 0 0 13px rgba(67, 206, 255, 0.33);
+      padding: 3px 10px;
+      text-align: center;
+    }
+
+    .inline-label {
+      font-size: 14px;
+      font-weight: 900;
+      max-width: 190px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .inline-value {
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    /* Right meter */
+
+    .meter-body {
+      height: calc(100% - 34px);
+      padding: 13px;
+      background: linear-gradient(180deg, #f9fcfe, #eef6fb);
+    }
+
+    .meter-shell {
+      height: 188px;
+      border-radius: 18px;
+      border: 3px solid #7c91a1;
+      background: linear-gradient(180deg, #eaf2f7, #d0dde6);
+      position: relative;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.85);
+    }
+
+    .meter-name {
+      position: absolute;
+      top: 14px;
+      left: 12px;
+      right: 12px;
+      text-align: center;
+      font-size: 17px;
+      font-weight: 900;
+      color: #253647;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .meter-display {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      top: 58px;
+      height: 56px;
+      border-radius: 12px;
+      border: 3px solid #162432;
+      background:
+        radial-gradient(circle at 50% 35%, rgba(71, 207, 255, 0.18), transparent 68%),
+        #07121b;
+      color: #ecfbff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Courier New", monospace;
+      font-size: 30px;
+      font-weight: 900;
+      box-shadow: inset 0 0 15px rgba(67, 206, 255, 0.34);
+    }
+
+    .meter-gauge {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 24px;
+      height: 16px;
+      border-radius: 999px;
+      background: #f7fbfd;
+      border: 2px solid #7f94a4;
+      overflow: hidden;
+    }
+
+    .meter-gauge-fill {
+      height: 100%;
+      width: {{ (10 + simulation.total_norm * 82) | round(2) }}%;
+      background: linear-gradient(90deg, #79b5d6, #246f9f);
+    }
+
+    .mini-panel {
+      margin-top: 14px;
+      border-radius: 16px;
+      border: 2px solid #c5d3dd;
+      background: #ffffff;
+      padding: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .mini-row {
+      height: 30px;
+      border-radius: 10px;
+      border: 1px solid #d5e1e8;
+      background: #eef6fa;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      padding: 0 10px;
+    }
+
+    .mini-name {
+      font-size: 12px;
+      font-weight: 900;
+      color: #294053;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .mini-value {
+      font-size: 14px;
+      font-weight: 900;
+      color: #152433;
+      font-family: "Courier New", monospace;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="screen">
+    <div class="topbar">
+      <div class="title">Experiment</div>
+      <div class="step-badge">Step {{ step_id if step_id is not none else "?" }}</div>
+    </div>
+
+    <div class="main">
+      <section class="panel">
+        <div class="panel-header">Controls</div>
+        <div class="controls-body">
+          <div class="control-card">
+            <div class="control-top">
+              <div class="control-name">{{ variables.resistance_1.display }}</div>
+              <div class="control-tag">resistor 1</div>
+            </div>
+            <div class="readout">{{ variables.resistance_1.value }}</div>
+            <div class="slider">
+              <div class="slider-track"></div>
+              <div class="slider-fill-r1"></div>
+              <div class="slider-knob knob-r1"></div>
+            </div>
+          </div>
+
+          <div class="control-card">
+            <div class="control-top">
+              <div class="control-name">{{ variables.resistance_2.display }}</div>
+              <div class="control-tag">resistor 2</div>
+            </div>
+            <div class="readout">{{ variables.resistance_2.value }}</div>
+            <div class="slider">
+              <div class="slider-track"></div>
+              <div class="slider-fill-r2"></div>
+              <div class="slider-knob knob-r2"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel lab">
+        <div class="lab-title">Series circuit</div>
+        <div class="circuit-board"></div>
+        <div class="wire-loop"></div>
+        <div class="terminal-left"></div>
+        <div class="terminal-right"></div>
+        <div class="resistor-one"></div>
+        <div class="resistor-two"></div>
+        <div class="label-r1">{{ variables.resistance_1.display }}</div>
+        <div class="label-r2">{{ variables.resistance_2.display }}</div>
+
+        <div class="inline-readout">
+          <div class="inline-label">{{ target.display }}</div>
+          <div class="inline-value">{{ target.value }}</div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">Output meter</div>
+        <div class="meter-body">
+          <div class="meter-shell">
+            <div class="meter-name">{{ target.display }}</div>
+            <div class="meter-display">{{ target.value }}</div>
+            <div class="meter-gauge">
+              <div class="meter-gauge-fill"></div>
+            </div>
+          </div>
+
+          <div class="mini-panel">
+            <div class="mini-row">
+              <div class="mini-name">{{ variables.resistance_1.display }}</div>
+              <div class="mini-value">{{ variables.resistance_1.value }}</div>
+            </div>
+            <div class="mini-row">
+              <div class="mini-name">{{ variables.resistance_2.display }}</div>
+              <div class="mini-value">{{ variables.resistance_2.value }}</div>
+            </div>
+            <div class="mini-row">
+              <div class="mini-name">{{ target.display }}</div>
+              <div class="mini-value">{{ target.value }}</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+</html>

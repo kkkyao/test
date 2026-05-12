@@ -1,0 +1,62 @@
+environment:
+  target_variable: absorbance
+
+  variables:
+    wavelength:
+      manipulable: true
+      initial_value: 500
+      step_size: 50
+      min_value: 400
+      max_value: 700
+      description: wavelength of the light source in nanometres
+
+    concentration:
+      manipulable: true
+      initial_value: 2
+      step_size: 1
+      min_value: 1
+      max_value: 10
+      description: amount of solute per volume
+
+    path_length:
+      manipulable: true
+      initial_value: 3
+      step_size: 1
+      min_value: 1
+      max_value: 10
+      description: distance the light travels through the solution
+
+    absorbance:
+      manipulable: false
+      description: amount of light absorbed by the solution
+
+  equations:
+    absorbance: "(wavelength * concentration * path_length) / 50"
+
+representation:
+  naming_mode: concrete
+  metadata_level: rich
+  name_mapping:
+    wavelength: wavelength
+    concentration: concentration
+    path_length: path_length
+    absorbance: absorbance
+
+actions:
+  action_mode: increase_decrease
+
+evaluation:
+  variable_mapping:
+    wavelength: wavelength
+    concentration: concentration
+    path_length: path_length
+    absorbance: absorbance
+  equation_variables:
+    - wavelength
+    - concentration
+    - path_length
+
+noise:
+  enabled: false
+  type: null
+  params: {}

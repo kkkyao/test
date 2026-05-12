@@ -18,20 +18,12 @@ environment:
       max_value: 50
       description: volume of the object in cubic metres
 
-    k:
-      manipulable: true
-      initial_value: 3
-      step_size: 1
-      min_value: 1
-      max_value: 10
-      description: scaling constant
-
     mass:
       manipulable: false
       description: total mass of the object in kilograms
 
   equations:
-    mass: "density * volume * k"
+    mass: "density * volume"
 
 representation:
   naming_mode: abstract
@@ -39,7 +31,6 @@ representation:
   name_mapping:
     density: A
     volume: B
-    k: C
     mass: Y
 
 actions:
@@ -49,12 +40,10 @@ evaluation:
   variable_mapping:
     A: density
     B: volume
-    C: k
     Y: mass
   equation_variables:
     - A
     - B
-    - C
 
 noise:
   enabled: false

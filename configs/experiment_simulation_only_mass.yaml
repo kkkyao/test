@@ -1,0 +1,26 @@
+experiment:
+  name: simulation_only_mass
+  max_steps: 50
+  auto_evaluate: true
+  history_window: 10
+
+visual:
+  observation_mode: simulation_only
+  simulation_type: mass
+  image_history_window: 5
+  output_subdir: simulation_images
+  template_dir: templates/simulations
+
+  viewport:
+    width: 900
+    height: 500
+
+  playwright:
+    headless: true
+    slow_mo: 0
+
+logging:
+  output_dir: outputs/simulation_only_mass
+  save_steps: true
+  save_trajectory: true
+  save_interaction_log: true

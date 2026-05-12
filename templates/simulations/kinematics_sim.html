@@ -1,0 +1,893 @@
+{% set x0_pct = (variables.initial_position.raw_value / target.max * 100) | round(2) %}
+{% set pos_pct = (target.raw_value / target.max * 100) | round(2) %}
+{% set path_left_raw = variables.initial_position.raw_value if variables.initial_position.raw_value <= target.raw_value else target.raw_value %}
+{% set path_width_raw = target.raw_value - variables.initial_position.raw_value if target.raw_value >= variables.initial_position.raw_value else variables.initial_position.raw_value - target.raw_value %}
+{% set path_left_pct = (path_left_raw / target.max * 100) | round(2) %}
+{% set path_width_pct = (path_width_raw / target.max * 100) | round(2) %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{{ target.display }} Measurement Experiment</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      width: 900px;
+      height: 500px;
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #1f2a37;
+      background:
+        radial-gradient(circle at 16% 12%, rgba(255,255,255,0.96), transparent 28%),
+        linear-gradient(180deg, #dcebf5 0%, #c9deeb 100%);
+    }
+
+    .screen {
+      width: 900px;
+      height: 500px;
+      padding: 12px 14px;
+      display: grid;
+      grid-template-rows: 46px 1fr;
+      gap: 10px;
+    }
+
+    .topbar {
+      height: 46px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, #ffffff, #f1f6fa);
+      border: 2px solid #b5c5d0;
+      box-shadow: 0 2px 8px rgba(28, 55, 75, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0.4px;
+      color: #1d2939;
+    }
+
+    .step-badge {
+      padding: 7px 13px;
+      border-radius: 999px;
+      background: #243444;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .main {
+      height: 418px;
+      display: grid;
+      grid-template-columns: 238px 1fr 220px;
+      gap: 12px;
+    }
+
+    .panel {
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.93);
+      border: 2px solid #aebfcb;
+      box-shadow: 0 7px 16px rgba(42, 71, 94, 0.14);
+    }
+
+    .panel-header {
+      height: 34px;
+      display: flex;
+      align-items: center;
+      padding: 0 13px;
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 0.3px;
+      color: white;
+      background: linear-gradient(90deg, #2e6f95, #20516f);
+    }
+
+    /* LEFT CONTROLS */
+
+    .controls-body {
+      padding: 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(246,251,254,0.96));
+      height: calc(100% - 34px);
+    }
+
+    .control-card {
+      border-radius: 15px;
+      border: 2px solid #c5d3dd;
+      background: #f8fcff;
+      padding: 9px 10px;
+      margin-bottom: 9px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+
+    .control-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .control-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 7px;
+    }
+
+    .control-name {
+      min-width: 0;
+      font-size: 15px;
+      font-weight: 900;
+      color: #213547;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .control-tag {
+      flex: 0 0 auto;
+      font-size: 10px;
+      font-weight: 900;
+      color: #6b7b8c;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .readout {
+      height: 31px;
+      border-radius: 9px;
+      border: 2px solid #203141;
+      background:
+        radial-gradient(circle at 50% 35%, rgba(70, 180, 220, 0.22), transparent 62%),
+        #08141d;
+      color: #ecfbff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Courier New", monospace;
+      font-size: 20px;
+      font-weight: 900;
+      box-shadow: inset 0 0 12px rgba(73, 196, 255, 0.22);
+    }
+
+    .slider {
+      position: relative;
+      height: 31px;
+      margin-top: 8px;
+    }
+
+    .slider-track {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      top: 14px;
+      height: 8px;
+      border-radius: 99px;
+      border: 1px solid #8da3b2;
+      background: linear-gradient(90deg, #dce8ef, #f7fbfd);
+    }
+
+    .slider-fill-x0,
+    .slider-fill-velocity,
+    .slider-fill-time {
+      position: absolute;
+      left: 8px;
+      top: 14px;
+      height: 8px;
+      max-width: 92%;
+      border-radius: 99px;
+    }
+
+    .slider-fill-x0 {
+      width: {{ (8 + simulation.x0_norm * 84) | round(2) }}%;
+      background: linear-gradient(90deg, #9ed1e9, #3c8fbd);
+    }
+
+    .slider-fill-velocity {
+      width: {{ (8 + simulation.velocity_norm * 84) | round(2) }}%;
+      background: linear-gradient(90deg, #c9e4a0, #78aa55);
+    }
+
+    .slider-fill-time {
+      width: {{ (8 + simulation.time_norm * 84) | round(2) }}%;
+      background: linear-gradient(90deg, #f0cc8e, #c78536);
+    }
+
+    .slider-knob {
+      position: absolute;
+      top: 6px;
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #ffffff, #d8e5ed);
+      border: 3px solid #58788e;
+      box-shadow: 0 2px 5px rgba(37, 61, 78, 0.25);
+    }
+
+    .knob-x0 {
+      left: calc({{ (8 + simulation.x0_norm * 84) | round(2) }}% - 11px);
+    }
+
+    .knob-velocity {
+      left: calc({{ (8 + simulation.velocity_norm * 84) | round(2) }}% - 11px);
+    }
+
+    .knob-time {
+      left: calc({{ (8 + simulation.time_norm * 84) | round(2) }}% - 11px);
+    }
+
+    .mini-track {
+      position: relative;
+      height: 19px;
+      margin-top: 7px;
+      border-radius: 999px;
+      border: 1px solid #91a5b4;
+      background: #eef6fa;
+      overflow: hidden;
+    }
+
+    .mini-fill {
+      height: 100%;
+      border-radius: 999px;
+    }
+
+    .mini-fill-x0 {
+      width: {{ (10 + simulation.x0_norm * 90) | round(2) }}%;
+      background: linear-gradient(90deg, #a6d4ea, #3a8fbd);
+    }
+
+    .mini-fill-velocity {
+      width: {{ (10 + simulation.velocity_norm * 90) | round(2) }}%;
+      background: linear-gradient(90deg, #cce5a4, #78aa55);
+    }
+
+    .mini-fill-time {
+      width: {{ simulation.time_fill_percent }}%;
+      background: linear-gradient(90deg, #f1cf95, #c78536);
+    }
+
+    /* CENTER LAB */
+
+    .lab {
+      background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(244,249,252,0.98));
+    }
+
+    .lab-title {
+      position: absolute;
+      top: 13px;
+      left: 18px;
+      font-size: 16px;
+      font-weight: 900;
+      color: #243444;
+    }
+
+    .lab-backdrop {
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      top: 52px;
+      height: 244px;
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(217, 232, 240, 0.85), transparent 64%),
+        linear-gradient(180deg, #f8fbfd, #edf5fa);
+      border: 1px solid #d6e2ea;
+    }
+
+    .motion-board {
+      position: absolute;
+      left: 28px;
+      right: 28px;
+      top: 84px;
+      height: 184px;
+      border-radius: 18px;
+      border: 3px solid #7b91a2;
+      background: linear-gradient(180deg, #f4f8fb, #dae7ef);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+
+    .board-badge {
+      position: absolute;
+      top: 16px;
+      height: 28px;
+      min-width: 96px;
+      padding: 0 10px;
+      border-radius: 8px;
+      color: white;
+      font-size: 10px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0.4px;
+      white-space: nowrap;
+      z-index: 9;
+    }
+
+    .start-badge {
+      left: 24px;
+      background: linear-gradient(180deg, #657a8a, #34495a);
+    }
+
+    .position-badge {
+      right: 24px;
+      background: linear-gradient(180deg, #2f7fae, #20516f);
+    }
+
+    .track-area {
+      position: absolute;
+      left: 34px;
+      right: 34px;
+      top: 52px;
+      height: 74px;
+    }
+
+    .cart {
+      position: absolute;
+      top: 0;
+      left: clamp(25px, {{ pos_pct }}%, calc(100% - 25px));
+      transform: translateX(-50%);
+      width: 50px;
+      height: 31px;
+      border-radius: 10px 14px 8px 8px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.42), transparent 40%),
+        linear-gradient(180deg, #5faed3, #2f7fae);
+      border: 3px solid #1f5f84;
+      z-index: 8;
+      box-shadow: 0 5px 8px rgba(31,45,61,0.20);
+    }
+
+    .cart::before {
+      content: "";
+      position: absolute;
+      left: 9px;
+      top: 6px;
+      width: 16px;
+      height: 8px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.58);
+    }
+
+    .wheel {
+      position: absolute;
+      bottom: -8px;
+      width: 13px;
+      height: 13px;
+      border-radius: 999px;
+      background: #243444;
+      border: 3px solid #8fa4b1;
+    }
+
+    .wheel-left {
+      left: 7px;
+    }
+
+    .wheel-right {
+      right: 7px;
+    }
+
+    .track-scale {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 42px;
+      height: 14px;
+      border-radius: 999px;
+      background:
+        repeating-linear-gradient(
+          to right,
+          rgba(32, 49, 65, 0.14) 0,
+          rgba(32, 49, 65, 0.14) 1px,
+          transparent 1px,
+          transparent 10%
+        ),
+        #ffffff;
+      border: 2px solid #8a9dab;
+      overflow: hidden;
+      box-shadow: inset 0 2px 4px rgba(32, 49, 65, 0.10);
+      z-index: 1;
+    }
+
+    .travel-path {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      left: {{ path_left_pct }}%;
+      width: {{ path_width_pct }}%;
+      background: linear-gradient(90deg, #9ed1e9, #2f7fae);
+      opacity: 0.9;
+    }
+
+    .start-marker {
+      position: absolute;
+      top: 32px;
+      left: calc({{ x0_pct }}% - 3px);
+      width: 6px;
+      height: 38px;
+      border-radius: 5px;
+      background: #667887;
+      z-index: 5;
+      box-shadow: 0 2px 5px rgba(31,45,61,0.24);
+    }
+
+    .position-marker {
+      position: absolute;
+      top: 28px;
+      left: calc({{ pos_pct }}% - 3px);
+      width: 6px;
+      height: 46px;
+      border-radius: 5px;
+      background: #243444;
+      z-index: 6;
+      box-shadow: 0 2px 5px rgba(31,45,61,0.30);
+    }
+
+    .scale-labels {
+      position: absolute;
+      left: 34px;
+      right: 34px;
+      top: 116px;
+      display: grid;
+      grid-template-columns: auto 1fr auto 1fr auto;
+      align-items: center;
+      color: #536878;
+      font-size: 11px;
+      font-weight: 900;
+      font-family: "Courier New", monospace;
+    }
+
+    .scale-labels .line {
+      height: 2px;
+      margin: 0 8px;
+      background: rgba(83,104,120,0.35);
+    }
+
+    .motion-values {
+      position: absolute;
+      left: 34px;
+      right: 34px;
+      bottom: 12px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .motion-value-card {
+      height: 34px;
+      border-radius: 11px;
+      border: 2px solid #c5d3dd;
+      background: #ffffff;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 8px;
+      padding: 0 10px;
+      box-shadow: 0 2px 5px rgba(42, 71, 94, 0.08);
+    }
+
+    .motion-value-name {
+      min-width: 0;
+      font-size: 11px;
+      font-weight: 900;
+      color: #536878;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .motion-value-number {
+      font-family: "Courier New", monospace;
+      font-size: 16px;
+      font-weight: 900;
+      color: #152433;
+    }
+
+    .instrument-row {
+      position: absolute;
+      left: 48px;
+      right: 48px;
+      top: 278px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    .instrument-card {
+      height: 48px;
+      border-radius: 12px;
+      border: 2px solid #c5d3dd;
+      background: #ffffff;
+      display: grid;
+      grid-template-rows: 18px 1fr;
+      align-items: center;
+      padding: 4px 8px;
+      box-shadow: 0 2px 5px rgba(42, 71, 94, 0.08);
+    }
+
+    .instrument-name {
+      min-width: 0;
+      font-size: 11px;
+      font-weight: 900;
+      color: #536878;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .instrument-value {
+      font-family: "Courier New", monospace;
+      font-size: 18px;
+      font-weight: 900;
+      color: #152433;
+      text-align: center;
+    }
+
+    .time-bar-wrap {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .time-bar {
+      position: relative;
+      height: 14px;
+      border-radius: 999px;
+      border: 1px solid #8a9dab;
+      background: #eef6fa;
+      overflow: hidden;
+    }
+
+    .time-fill {
+      height: 100%;
+      width: {{ simulation.time_fill_percent }}%;
+      background: linear-gradient(90deg, #f1cf95, #c78536);
+    }
+
+    .time-value {
+      font-family: "Courier New", monospace;
+      font-size: 16px;
+      font-weight: 900;
+      color: #152433;
+    }
+
+    .lab-readout {
+      position: absolute;
+      left: 58px;
+      right: 58px;
+      bottom: 24px;
+      height: 52px;
+      border-radius: 14px;
+      border: 3px solid #172635;
+      background:
+        radial-gradient(circle at 50% 40%, rgba(69, 194, 255, 0.18), transparent 70%),
+        #08131c;
+      color: #ecfbff;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 12px;
+      padding: 0 18px;
+      box-shadow: inset 0 0 13px rgba(67, 206, 255, 0.33);
+    }
+
+    .lab-readout-name {
+      min-width: 0;
+      font-size: 15px;
+      font-weight: 900;
+      color: #aeeeff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .lab-readout-value {
+      font-family: "Courier New", monospace;
+      font-size: 25px;
+      font-weight: 900;
+      color: #ecfbff;
+    }
+
+    .bench {
+      position: absolute;
+      left: 26px;
+      right: 26px;
+      bottom: 14px;
+      height: 12px;
+      border-radius: 8px;
+      background: linear-gradient(180deg, #b77a47, #8a5731);
+      box-shadow: 0 8px 14px rgba(83, 52, 31, 0.18);
+    }
+
+    /* RIGHT METER */
+
+    .meter-body {
+      height: calc(100% - 34px);
+      padding: 13px;
+      background: linear-gradient(180deg, #f9fcfe, #eef6fb);
+    }
+
+    .meter-shell {
+      height: 188px;
+      border-radius: 18px;
+      border: 3px solid #7c91a1;
+      background: linear-gradient(180deg, #eaf2f7, #d0dde6);
+      position: relative;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.85);
+    }
+
+    .meter-name {
+      position: absolute;
+      top: 14px;
+      left: 12px;
+      right: 12px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 900;
+      color: #253647;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .meter-display {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      top: 58px;
+      height: 56px;
+      border-radius: 12px;
+      border: 3px solid #162432;
+      background:
+        radial-gradient(circle at 50% 35%, rgba(71, 207, 255, 0.18), transparent 68%),
+        #07121b;
+      color: #ecfbff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Courier New", monospace;
+      font-size: 31px;
+      font-weight: 900;
+      box-shadow: inset 0 0 15px rgba(67, 206, 255, 0.34);
+    }
+
+    .meter-gauge {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 24px;
+      height: 16px;
+      border-radius: 999px;
+      background: #f7fbfd;
+      border: 2px solid #7f94a4;
+      overflow: hidden;
+    }
+
+    .meter-gauge-fill {
+      height: 100%;
+      width: {{ (8 + simulation.position_norm * 84) | round(2) }}%;
+      background: linear-gradient(90deg, #79b5d6, #246f9f);
+    }
+
+    .mini-panel {
+      margin-top: 14px;
+      border-radius: 16px;
+      border: 2px solid #c5d3dd;
+      background: #ffffff;
+      padding: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .mini-row {
+      height: 30px;
+      border-radius: 10px;
+      border: 1px solid #d5e1e8;
+      background: #eef6fa;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 8px;
+      padding: 0 10px;
+    }
+
+    .mini-name {
+      min-width: 0;
+      font-size: 13px;
+      font-weight: 900;
+      color: #294053;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mini-value {
+      font-size: 14px;
+      font-weight: 900;
+      color: #152433;
+      font-family: "Courier New", monospace;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="screen">
+    <div class="topbar">
+      <div class="title">Experiment</div>
+      <div class="step-badge">Step {{ step_id if step_id is not none else "?" }}</div>
+    </div>
+
+    <div class="main">
+      <section class="panel">
+        <div class="panel-header">Controls</div>
+        <div class="controls-body">
+          <div class="control-card">
+            <div class="control-top">
+              <div class="control-name">{{ variables.initial_position.display }}</div>
+              <div class="control-tag">start</div>
+            </div>
+            <div class="readout">{{ variables.initial_position.value }}</div>
+            <div class="slider">
+              <div class="slider-track"></div>
+              <div class="slider-fill-x0"></div>
+              <div class="slider-knob knob-x0"></div>
+            </div>
+            <div class="mini-track">
+              <div class="mini-fill mini-fill-x0"></div>
+            </div>
+          </div>
+
+          <div class="control-card">
+            <div class="control-top">
+              <div class="control-name">{{ variables.velocity.display }}</div>
+              <div class="control-tag">speed</div>
+            </div>
+            <div class="readout">{{ variables.velocity.value }}</div>
+            <div class="slider">
+              <div class="slider-track"></div>
+              <div class="slider-fill-velocity"></div>
+              <div class="slider-knob knob-velocity"></div>
+            </div>
+            <div class="mini-track">
+              <div class="mini-fill mini-fill-velocity"></div>
+            </div>
+          </div>
+
+          <div class="control-card">
+            <div class="control-top">
+              <div class="control-name">{{ variables.time.display }}</div>
+              <div class="control-tag">elapsed</div>
+            </div>
+            <div class="readout">{{ variables.time.value }}</div>
+            <div class="slider">
+              <div class="slider-track"></div>
+              <div class="slider-fill-time"></div>
+              <div class="slider-knob knob-time"></div>
+            </div>
+            <div class="mini-track">
+              <div class="mini-fill mini-fill-time"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel lab">
+        <div class="lab-title">Motion track</div>
+        <div class="lab-backdrop"></div>
+
+        <div class="motion-board">
+          <div class="board-badge start-badge">
+            Start marker
+          </div>
+          <div class="board-badge position-badge">
+            Current marker
+          </div>
+
+          <div class="track-area">
+            <div class="cart">
+              <div class="wheel wheel-left"></div>
+              <div class="wheel wheel-right"></div>
+            </div>
+
+            <div class="track-scale">
+              <div class="travel-path"></div>
+            </div>
+
+            <div class="start-marker"></div>
+            <div class="position-marker"></div>
+          </div>
+
+          <div class="scale-labels">
+            <span>0</span>
+            <span class="line"></span>
+            <span>{{ (target.max / 2) | round(0) | int }}</span>
+            <span class="line"></span>
+            <span>{{ target.max | round(0) | int }}</span>
+          </div>
+
+          <div class="motion-values">
+            <div class="motion-value-card">
+              <div class="motion-value-name">{{ variables.initial_position.display }}</div>
+              <div class="motion-value-number">{{ variables.initial_position.value }}</div>
+            </div>
+            <div class="motion-value-card">
+              <div class="motion-value-name">{{ target.display }}</div>
+              <div class="motion-value-number">{{ target.value }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="instrument-row">
+          <div class="instrument-card">
+            <div class="instrument-name">{{ variables.initial_position.display }}</div>
+            <div class="instrument-value">{{ variables.initial_position.value }}</div>
+          </div>
+
+          <div class="instrument-card">
+            <div class="instrument-name">{{ variables.velocity.display }}</div>
+            <div class="instrument-value">{{ variables.velocity.value }}</div>
+          </div>
+
+          <div class="instrument-card">
+            <div class="instrument-name">{{ variables.time.display }}</div>
+            <div class="time-bar-wrap">
+              <div class="time-bar">
+                <div class="time-fill"></div>
+              </div>
+              <div class="time-value">{{ variables.time.value }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lab-readout">
+          <div class="lab-readout-name">{{ target.display }}</div>
+          <div class="lab-readout-value">{{ target.value }}</div>
+        </div>
+
+        <div class="bench"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">Output meter</div>
+        <div class="meter-body">
+          <div class="meter-shell">
+            <div class="meter-name">{{ target.display }}</div>
+            <div class="meter-display">{{ target.value }}</div>
+            <div class="meter-gauge">
+              <div class="meter-gauge-fill"></div>
+            </div>
+          </div>
+
+          <div class="mini-panel">
+            <div class="mini-row">
+              <div class="mini-name">{{ variables.initial_position.display }}</div>
+              <div class="mini-value">{{ variables.initial_position.value }}</div>
+            </div>
+            <div class="mini-row">
+              <div class="mini-name">{{ variables.velocity.display }}</div>
+              <div class="mini-value">{{ variables.velocity.value }}</div>
+            </div>
+            <div class="mini-row">
+              <div class="mini-name">{{ variables.time.display }}</div>
+              <div class="mini-value">{{ variables.time.value }}</div>
+            </div>
+            <div class="mini-row">
+              <div class="mini-name">{{ target.display }}</div>
+              <div class="mini-value">{{ target.value }}</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+</html>
