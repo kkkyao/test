@@ -41,7 +41,7 @@ class EpisodeLogger:
     def save_episode(
         self,
         result: Dict[str, Any],
-        evaluation: Optional[Dict[str, Any]] = None,  # ← new
+        evaluation: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, str]:
         """
         Save one episode result to disk.
@@ -53,6 +53,7 @@ class EpisodeLogger:
         evaluation:
             Optional dict returned by EpisodeEvaluator.evaluate().
             When provided, its fields are merged into summary.json.
+            Not used for student_simulation tasks (pass None).
 
         Returns
         -------
@@ -97,13 +98,16 @@ class EpisodeLogger:
         # summary = runner outcome fields + evaluation metrics (if available)
         summary: Dict[str, Any] = {
             "final_equation": result.get("final_equation"),
+            "finish_reason":  result.get("finish_reason"),
             "finish_reached": result.get("finish_reached"),
             "finish_step_id": result.get("finish_step_id"),
             "num_steps":      result.get("num_steps"),
             "parse_error":    result.get("parse_error"),
+            "forced_finish":  result.get("forced_finish"),
+            "image_paths":    result.get("image_paths", []),
         }
         if evaluation is not None:
-            summary["evaluation"] = evaluation   # ← nested under its own key
+            summary["evaluation"] = evaluation
 
         summary_path = self.output_dir / "summary.json"
         self._save_json(summary_path, summary)
@@ -134,6 +138,7 @@ class EpisodeLogger:
                     "reasoning":          step.get("reasoning"),
                     "parsed_action":      step.get("parsed_action"),
                     "final_equation":     step.get("final_equation"),
+                    "finish_reason":      step.get("finish_reason"),
                     "observation_before": step.get("observation_before"),
                     "observation_after":  step.get("observation_after"),
                     "state_before":       step.get("state_before"),

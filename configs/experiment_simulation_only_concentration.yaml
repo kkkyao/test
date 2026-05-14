@@ -1,7 +1,8 @@
 experiment:
-  name: simulation_only_concentration
+  name: simulation_student_concentration
+  task_mode: student_simulation
   max_steps: 50
-  auto_evaluate: true
+  auto_evaluate: false
   history_window: 10
 
 visual:
@@ -20,7 +21,7 @@ visual:
     slow_mo: 0
 
 logging:
-  output_dir: outputs/simulation_only_concentration
+  output_dir: outputs/simulation_student_concentration
   save_steps: true
   save_trajectory: true
   save_interaction_log: true

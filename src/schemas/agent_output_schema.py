@@ -13,12 +13,18 @@ StepType = Literal["action", "finish"]
 class AgentStep:
     """
     Structured single-step output parsed from the model.
+
+    finish steps support two mutually exclusive outcome fields:
+        final_equation   – used by formula_discovery tasks
+        finish_reason    – used by student_simulation tasks
+    Exactly one must be provided when step_type='finish'.
     """
 
     step_type: StepType
     reasoning: Optional[str] = None
     action: Optional[ActionSpec] = None
     final_equation: Optional[str] = None
+    finish_reason: Optional[str] = None
 
     def __post_init__(self) -> None:
         if self.reasoning is not None and not self.reasoning.strip():
@@ -28,9 +34,12 @@ class AgentStep:
             raise ValueError("action must be provided when step_type='action'")
 
         if self.step_type == "finish":
-            if self.final_equation is None or not self.final_equation.strip():
+            has_equation = bool(self.final_equation and self.final_equation.strip())
+            has_reason   = bool(self.finish_reason  and self.finish_reason.strip())
+            if not has_equation and not has_reason:
                 raise ValueError(
-                    "final_equation must be provided when step_type='finish'"
+                    "finish step must provide either final_equation "
+                    "(formula_discovery) or finish_reason (student_simulation)"
                 )
             if self.action is not None:
                 raise ValueError("action must be null when step_type='finish'")

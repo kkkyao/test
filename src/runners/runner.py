@@ -16,26 +16,31 @@ class EpisodeRunner:
     Run one full exploration episode:
     environment -> renderer -> prompt builder -> agent -> trace
 
-    Supports both text-only and text+image pipelines via RendererProtocol
-    and AgentProtocol.  The runner is agnostic to the concrete renderer and
-    agent types: TextRenderer + TextLLMAgent work exactly as before;
-    TextImageRenderer + VisionLanguageAgent (or MockVLMAgent) add screenshot
-    collection and multi-image VLM calls with no changes to this class.
+    task_mode
+    ---------
+    "formula_discovery"  (default)
+        The model is expected to submit a final_equation.
+        Forced-finish attempts to extract an equation from the model.
+
+    "student_simulation"
+        The model explores via screenshots and submits a finish_reason
+        (e.g. "I observed that doubling mass halves acceleration").
+        No equation is required or extracted.
+        The evaluator is not called — pass auto_evaluate=False in config.
 
     Image history
     -------------
     Every time a renderer returns an Observation with a non-None image_path,
     that path is appended to image_paths_history.  Before each agent.act()
     call the list is sliced to the last image_history_window entries (None
-    means keep all).  TextLLMAgent ignores image_paths; VisionLanguageAgent
-    uses them to pass all historical bar-chart screenshots to the VLM.
+    means keep all).
 
     Termination guarantee
     ---------------------
     The episode always ends with a finish step.  If the model does not
     voluntarily call finish (max_steps exhausted or a parse_error broke the
-    loop), one additional call is made with build_final_prompt().  If that
-    also fails the episode is recorded with finish_reached=False.
+    loop), _run_forced_finish() is called once.  If that also fails the
+    episode is recorded with finish_reached=False.
     """
 
     def __init__(
@@ -46,6 +51,7 @@ class EpisodeRunner:
         agent: AgentProtocol,
         max_steps: int,
         image_history_window: Optional[int] = None,
+        task_mode: str = "formula_discovery",
     ) -> None:
         if not isinstance(max_steps, int) or max_steps <= 0:
             raise ValueError("max_steps must be a positive integer")
@@ -56,12 +62,18 @@ class EpisodeRunner:
                     "image_history_window must be a positive integer or None"
                 )
 
+        if task_mode not in {"formula_discovery", "student_simulation"}:
+            raise ValueError(
+                "task_mode must be 'formula_discovery' or 'student_simulation'"
+            )
+
         self.env = env
         self.renderer = renderer
         self.prompt_builder = prompt_builder
         self.agent = agent
         self.max_steps = max_steps
         self.image_history_window = image_history_window
+        self.task_mode = task_mode
 
     def run_episode(self) -> Dict[str, Any]:
         """
@@ -72,13 +84,16 @@ class EpisodeRunner:
         dict with keys:
             steps              : lightweight per-step view
             trajectory         : full TraceStep dicts
-            final_equation     : equation submitted by model, or None
+            final_equation     : equation submitted by model (formula_discovery),
+                                 or None (student_simulation)
+            finish_reason      : reason string submitted by model
+                                 (student_simulation), or None (formula_discovery)
             finish_reached     : whether a finish step was recorded
             finish_step_id     : step index of finish, or None
             num_steps          : total steps executed (excl. forced-finish)
             parse_error        : error message if agent.act() raised ValueError
-            forced_finish      : True when the equation came from the forced
-                                 final prompt rather than a voluntary finish
+            forced_finish      : True when finish came from the forced final
+                                 prompt rather than a voluntary finish
             image_paths        : ordered list of PNG paths generated this episode
                                  (empty list for text-only runs)
         """
@@ -102,6 +117,7 @@ class EpisodeRunner:
         finish_reached = False
         finish_step_id: Optional[int] = None
         final_equation: Optional[str] = None
+        finish_reason: Optional[str] = None
         parse_error: Optional[str] = None
 
         # ── Main exploration loop ─────────────────────────────────────────────
@@ -133,6 +149,7 @@ class EpisodeRunner:
                 finish_reached    = True
                 finish_step_id    = step_id
                 final_equation    = agent_step.final_equation
+                finish_reason     = agent_step.finish_reason
 
             elif agent_step.step_type == "action":
                 env_action = self._translate_action(agent_step.action)
@@ -189,6 +206,7 @@ class EpisodeRunner:
                 state_before=state_before,
                 state_after=state_after,
                 final_equation=agent_step.final_equation,
+                finish_reason=agent_step.finish_reason,
                 prompt=prompt,
                 done=done,
             )
@@ -203,14 +221,16 @@ class EpisodeRunner:
         forced_finish = False
 
         if not finish_reached:
-            final_equation, forced_finish = self._run_forced_finish(
+            forced_eq, forced_reason, forced_finish = self._run_forced_finish(
                 observation=observation,
                 history=history_for_prompt,
                 image_paths=image_paths_history,
             )
-            if final_equation is not None:
+            if forced_eq is not None or forced_reason is not None:
                 finish_reached = True
                 finish_step_id = len(trajectory_steps)
+                final_equation = forced_eq
+                finish_reason  = forced_reason
 
         steps = [self._to_step_view(step) for step in trajectory_steps]
 
@@ -218,6 +238,7 @@ class EpisodeRunner:
             "steps":          steps,
             "trajectory":     [step.to_dict() for step in trajectory_steps],
             "final_equation": final_equation,
+            "finish_reason":  finish_reason,
             "finish_reached": finish_reached,
             "finish_step_id": finish_step_id,
             "num_steps":      len(trajectory_steps),
@@ -244,20 +265,29 @@ class EpisodeRunner:
         observation: Observation,
         history: List[Dict[str, Any]],
         image_paths: Optional[List[str]] = None,
-    ) -> tuple[Optional[str], bool]:
+    ) -> tuple[Optional[str], Optional[str], bool]:
         """
-        Make one additional model call to collect a final equation.
+        Make one additional call to collect a terminal output when max_steps
+        is exhausted or a parse error broke the main loop.
 
-        For TextLLMAgent: uses build_final_prompt() (plain-text, no JSON)
-        via the internal _generate() method.
+        Returns
+        -------
+        (final_equation, finish_reason, forced)
 
-        For VisionLanguageAgent / MockVLMAgent: falls back to act() with
-        image history when available, then tries to extract an equation from
-        the response.
+        formula_discovery
+            Tries to extract a final_equation from the model.
+            Returns (equation, None, True) on success.
 
-        Returns (equation_string, True) on success,
-                (None, False) if no usable equation could be extracted.
+        student_simulation
+            No equation is needed; returns a synthetic finish_reason directly
+            without calling the model.  This avoids a fragile extra model call
+            and keeps forced-finish deterministic.
+            Returns (None, "maximum exploration steps reached", True).
         """
+        if self.task_mode == "student_simulation":
+            return None, "maximum exploration steps reached", True
+
+        # formula_discovery path — original logic
         try:
             final_prompt = self.prompt_builder.build_final_prompt(
                 observation=observation,
@@ -265,12 +295,11 @@ class EpisodeRunner:
             )
 
             # Path A: agent exposes _generate() (TextLLMAgent)
-            # Ask for a plain equation line — no JSON schema required.
             if hasattr(self.agent, "_generate"):
                 raw_response = self.agent._generate(final_prompt)  # type: ignore[attr-defined]
                 equation = self._extract_equation_line(raw_response)
                 if equation:
-                    return equation, True
+                    return equation, None, True
 
             # Path B: VisionLanguageAgent / MockVLMAgent — call act() with image history
             else:
@@ -284,12 +313,12 @@ class EpisodeRunner:
                     agent_step.step_type == "finish"
                     and agent_step.final_equation
                 ):
-                    return agent_step.final_equation, True
+                    return agent_step.final_equation, None, True
 
         except Exception:
             pass
 
-        return None, False
+        return None, None, False
 
     @staticmethod
     def _extract_equation_line(raw_text: str) -> Optional[str]:
@@ -344,5 +373,6 @@ class EpisodeRunner:
             "reasoning":      step.reasoning,
             "parsed_action":  step.parsed_action,
             "final_equation": step.final_equation,
+            "finish_reason":  step.finish_reason,
             "done":           step.done,
         }

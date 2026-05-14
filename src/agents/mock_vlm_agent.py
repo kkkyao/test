@@ -27,11 +27,16 @@ class MockVLMAgent:
         {"step_type": "action", "action_type": "decrease", "variable": "B"}
         {"step_type": "action", "action_type": "set",      "variable": "A", "value": 3.0}
 
-        # finish step
+        # finish step — formula_discovery (requires final_equation)
         {"step_type": "finish", "final_equation": "Y = A * B"}
 
+        # finish step — student_simulation (requires finish_reason)
+        {"step_type": "finish", "finish_reason": "I observed that doubling A doubles Y."}
+
     When the sequence is exhausted:
-    - loop=False (default): returns a finish step with equation "unknown"
+    - loop=False (default): returns a finish step appropriate to the task mode
+      inferred from the sequence (finish_reason if the last finish used it,
+      otherwise final_equation="unknown")
     - loop=True:            cycles back to the first element
 
     The agent also produces a raw_output JSON string that mirrors the
@@ -39,6 +44,7 @@ class MockVLMAgent:
     """
 
     _DEFAULT_FINISH_EQUATION = "unknown"
+    _DEFAULT_FINISH_REASON   = "maximum mock steps reached"
     _DEFAULT_REASONING = "Mock agent step."
 
     def __init__(
@@ -71,15 +77,23 @@ class MockVLMAgent:
                         "must contain 'variable'"
                     )
             if item["step_type"] == "finish":
-                if "final_equation" not in item:
+                has_equation = bool(item.get("final_equation"))
+                has_reason   = bool(item.get("finish_reason"))
+                if not has_equation and not has_reason:
                     raise ValueError(
                         f"action_sequence[{i}] with step_type='finish' "
-                        "must contain 'final_equation'"
+                        "must contain either 'final_equation' or 'finish_reason'"
                     )
 
         self.action_sequence = list(action_sequence)
         self.loop = loop
         self._index = 0
+
+        # Detect which finish style the sequence uses (for exhausted-sequence fallback)
+        self._uses_finish_reason = any(
+            item.get("step_type") == "finish" and item.get("finish_reason")
+            for item in action_sequence
+        )
 
     # -------------------------------------------------------------------------
     # Public API (AgentProtocol)
@@ -123,15 +137,20 @@ class MockVLMAgent:
 
         If the sequence is exhausted:
         - loop=True  → wrap around
-        - loop=False → return a synthetic finish step
+        - loop=False → return a synthetic finish step matching the task mode
         """
         if self._index >= len(self.action_sequence):
             if self.loop:
                 self._index = 0
             else:
-                # Sequence exhausted: force a finish
+                # Sequence exhausted: force a finish appropriate to task mode
+                if self._uses_finish_reason:
+                    return {
+                        "step_type":     "finish",
+                        "finish_reason": self._DEFAULT_FINISH_REASON,
+                    }
                 return {
-                    "step_type": "finish",
+                    "step_type":      "finish",
                     "final_equation": self._DEFAULT_FINISH_EQUATION,
                 }
 
@@ -149,7 +168,8 @@ class MockVLMAgent:
                 step_type="finish",
                 reasoning=reasoning,
                 action=None,
-                final_equation=spec["final_equation"],
+                final_equation=spec.get("final_equation"),
+                finish_reason=spec.get("finish_reason"),
             )
 
         # step_type == "action"
@@ -168,6 +188,7 @@ class MockVLMAgent:
             reasoning=reasoning,
             action=action,
             final_equation=None,
+            finish_reason=None,
         )
 
     def _build_raw_output(self, spec: Dict[str, Any]) -> str:
@@ -182,10 +203,11 @@ class MockVLMAgent:
 
         if step_type == "finish":
             payload: Dict[str, Any] = {
-                "step_type": "finish",
-                "reasoning": reasoning,
-                "action": None,
-                "final_equation": spec["final_equation"],
+                "step_type":      "finish",
+                "reasoning":      reasoning,
+                "action":         None,
+                "final_equation": spec.get("final_equation"),
+                "finish_reason":  spec.get("finish_reason"),
             }
         else:
             action_type = spec["action_type"]
@@ -194,16 +216,17 @@ class MockVLMAgent:
 
             action_payload: Dict[str, Any] = {
                 "action_type": action_type,
-                "variable": variable,
+                "variable":    variable,
             }
             if action_type == "set" and value is not None:
                 action_payload["value"] = value
 
             payload = {
-                "step_type": "action",
-                "reasoning": reasoning,
-                "action": action_payload,
+                "step_type":      "action",
+                "reasoning":      reasoning,
+                "action":         action_payload,
                 "final_equation": None,
+                "finish_reason":  None,
             }
 
         return json.dumps(payload, ensure_ascii=False)

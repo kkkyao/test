@@ -13,7 +13,11 @@ class TraceStep:
 
     step_type is one of:
         "action"  — model took an action (environment updated)
-        "finish"  — model submitted final equation (episode ends)
+        "finish"  — model ended the episode
+
+    finish steps support two mutually exclusive outcome fields:
+        final_equation   – used by formula_discovery tasks
+        finish_reason    – used by student_simulation tasks
     """
 
     step_id: int
@@ -26,6 +30,7 @@ class TraceStep:
     state_before: Optional[Dict[str, Any]] = None
     state_after: Optional[Dict[str, Any]] = None
     final_equation: Optional[str] = None
+    finish_reason: Optional[str] = None
     prompt: Optional[str] = None
     done: bool = False
 
@@ -37,9 +42,12 @@ class TraceStep:
             raise ValueError("raw_model_output must be a non-empty string")
 
         if self.step_type == "finish":
-            if not self.final_equation:
+            has_equation = bool(self.final_equation and self.final_equation.strip())
+            has_reason   = bool(self.finish_reason  and self.finish_reason.strip())
+            if not has_equation and not has_reason:
                 raise ValueError(
-                    "final_equation must be provided when step_type='finish'"
+                    "finish step must provide either final_equation "
+                    "(formula_discovery) or finish_reason (student_simulation)"
                 )
             if not self.done:
                 raise ValueError("done must be True when step_type='finish'")

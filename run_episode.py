@@ -140,9 +140,6 @@ def build_model_callable(agent_config: Dict[str, Any]) -> Callable[[str], str]:
             if hasattr(model, "device"):
                 inputs = {k: v.to(model.device) for k, v in inputs.items()}
 
-            # Build generate kwargs: only pass sampling params when do_sample=True.
-            # Passing temperature when do_sample=False raises a warning/error
-            # in newer versions of transformers.
             generate_kwargs: Dict[str, Any] = {
                 "max_new_tokens": max_new_tokens,
                 "do_sample": do_sample,
@@ -187,9 +184,6 @@ def build_vlm_callable(
     backend = agent_config.get("backend", "mock_vlm")
 
     if backend == "mock_vlm":
-        # Dummy callable: ignores images, returns a fixed finish JSON.
-        # In practice, build_agent_text_image() uses MockVLMAgent directly
-        # and never calls this function.
         def mock_vlm_callable(prompt: str, image_paths: List[str]) -> str:
             return json.dumps({
                 "step_type": "finish",
@@ -254,7 +248,6 @@ def build_vlm_callable(
         print("VLM loaded.")
 
         def hf_qwen_vl_callable(prompt: str, image_paths: List[str]) -> str:
-            # Build multimodal message: images first, then text
             content: List[Dict[str, Any]] = []
             for p in image_paths:
                 content.append({"type": "image", "image": f"file://{p}"})
@@ -275,9 +268,6 @@ def build_vlm_callable(
             )
             inputs = {k: v.to(model.device) for k, v in inputs.items()}
 
-            # Build generate kwargs: only pass sampling params when do_sample=True.
-            # Passing temperature when do_sample=False raises a warning/error
-            # in newer versions of transformers.
             generate_kwargs: Dict[str, Any] = {
                 "max_new_tokens": max_new_tokens,
                 "do_sample": do_sample,
@@ -292,7 +282,6 @@ def build_vlm_callable(
             with torch.no_grad():
                 output_ids = model.generate(**inputs, **generate_kwargs)
 
-            # Trim prompt tokens, decode only generated tokens
             trimmed = output_ids[0][inputs["input_ids"].shape[1]:]
             return processor.decode(trimmed, skip_special_tokens=True).strip()
 
@@ -320,12 +309,7 @@ def build_agent_text_image(
     backend = agent_config.get("backend", "mock_vlm")
 
     if backend == "mock_vlm":
-        # Action sequence: use config value if provided, else default
         raw_seq = agent_config.get("mock_action_sequence", _DEFAULT_MOCK_VLM_SEQUENCE)
-
-        # If name_mapping is active (abstract naming), translate variable names
-        # in the sequence from display names to whatever the config provides.
-        # The sequence in config should already use display names (e.g. A, B, Y).
         action_sequence = list(raw_seq)
 
         return MockVLMAgent(
@@ -343,6 +327,128 @@ def build_agent_text_image(
     raise NotImplementedError(
         f"Unsupported text+image backend '{backend}'. "
         f"Supported: 'mock_vlm', 'hf_qwen_vl'."
+    )
+
+
+def build_renderer(
+    observation_mode: str,
+    variables: Dict[str, Any],
+    action_mode: str,
+    target_variable: str,
+    naming_mode: str,
+    metadata_level: str,
+    name_mapping: Dict[str, str],
+    visual_cfg: Dict[str, Any],
+    base_output_dir: str,
+    exclude_variables: Optional[List[str]] = None,
+) -> Any:
+    """
+    Build and return a renderer for the given observation_mode.
+
+    This is the single source of truth for renderer construction.
+    Both run_episode.main() and run_experiment.main() call this function,
+    so adding a new observation_mode only requires a change here.
+
+    Parameters
+    ----------
+    observation_mode:
+        One of 'text', 'text_image', 'simulation_only'.
+    base_output_dir:
+        Root output directory for this run. Screenshot subdirectories are
+        created inside it using visual_cfg['output_subdir'].
+    exclude_variables:
+        Variable names to omit from bar charts (text_image mode only).
+        Defaults to [] if not provided.
+
+    Returns
+    -------
+    A renderer satisfying RendererProtocol.
+    """
+    if observation_mode == "text":
+        return TextRenderer(
+            variables=variables,
+            action_mode=action_mode,
+            target_variable=target_variable,
+            naming_mode=naming_mode,
+            metadata_level=metadata_level,
+            name_mapping=name_mapping,
+        )
+
+    if observation_mode == "text_image":
+        from src.observation.html_chart_renderer import HtmlChartRenderer
+        from src.observation.text_image_renderer import TextImageRenderer
+
+        images_output_dir = os.path.join(
+            base_output_dir, visual_cfg.get("output_subdir", "images")
+        )
+        text_renderer = TextRenderer(
+            variables=variables,
+            action_mode=action_mode,
+            target_variable=target_variable,
+            naming_mode=naming_mode,
+            metadata_level=metadata_level,
+            name_mapping=name_mapping,
+        )
+        chart_renderer = HtmlChartRenderer(
+            variables=variables,
+            target_variable=target_variable,
+            naming_mode=naming_mode,
+            name_mapping=name_mapping if name_mapping else None,
+            output_dir=images_output_dir,
+            template_path=visual_cfg.get(
+                "template_path", "templates/chart_state_view.html"
+            ),
+            headless=visual_cfg.get("playwright", {}).get("headless", True),
+            slow_mo=visual_cfg.get("playwright", {}).get("slow_mo", 0),
+            normalize_bars=visual_cfg.get("normalize_bars", True),
+            exclude_variables=exclude_variables or [],
+        )
+        return TextImageRenderer(
+            text_renderer=text_renderer,
+            chart_renderer=chart_renderer,
+        )
+
+    if observation_mode == "simulation_only":
+        from src.observation.html_simulation_renderer import HtmlSimulationRenderer
+        from src.observation.simulation_image_renderer import SimulationImageRenderer
+
+        simulation_type = visual_cfg.get("simulation_type")
+        if not isinstance(simulation_type, str) or not simulation_type.strip():
+            raise ValueError(
+                "visual.simulation_type must be provided when "
+                "visual.observation_mode='simulation_only'"
+            )
+
+        images_output_dir = os.path.join(
+            base_output_dir, visual_cfg.get("output_subdir", "simulation_images")
+        )
+        simulation_renderer = HtmlSimulationRenderer(
+            variables=variables,
+            target_variable=target_variable,
+            naming_mode=naming_mode,
+            name_mapping=name_mapping if name_mapping else None,
+            output_dir=images_output_dir,
+            template_dir=visual_cfg.get("template_dir", "templates/simulations"),
+            simulation_type=simulation_type,
+            headless=visual_cfg.get("playwright", {}).get("headless", True),
+            slow_mo=visual_cfg.get("playwright", {}).get("slow_mo", 0),
+            exclude_variables=visual_cfg.get("exclude_variables", []),
+            viewport_width=visual_cfg.get("viewport", {}).get("width", 900),
+            viewport_height=visual_cfg.get("viewport", {}).get("height", 500),
+        )
+        return SimulationImageRenderer(
+            variables=variables,
+            action_mode=action_mode,
+            target_variable=target_variable,
+            naming_mode=naming_mode,
+            metadata_level=metadata_level,
+            name_mapping=name_mapping,
+            image_renderer=simulation_renderer,
+        )
+
+    raise ValueError(
+        f"Unknown observation_mode: '{observation_mode}'. "
+        f"Must be 'text', 'text_image', or 'simulation_only'."
     )
 
 
@@ -372,14 +478,14 @@ def main(
     action_mode     = actions_cfg["action_mode"]
     max_steps       = experiment_cfg["max_steps"]
     auto_evaluate   = experiment_cfg.get("auto_evaluate", False)
+    task_mode       = experiment_cfg.get("task_mode", "formula_discovery")
     naming_mode     = representation_cfg.get("naming_mode", "concrete")
     metadata_level  = representation_cfg.get("metadata_level", "minimal")
     name_mapping    = representation_cfg.get("name_mapping", {})
 
-    # New: observation mode switch (default = "text" to preserve existing behaviour)
     observation_mode = (
-    visual_cfg.get("observation_mode")
-    or representation_cfg.get("observation_mode", "text")
+        visual_cfg.get("observation_mode")
+        or representation_cfg.get("observation_mode", "text")
     )
     image_history_window = visual_cfg.get("image_history_window", None)
 
@@ -393,12 +499,12 @@ def main(
             f"target_variable '{target_variable}' must exist in environment.equations"
         )
 
-    # ── Environment (shared by both modes) ───────────────────────────────────
+    # ── Environment ───────────────────────────────────────────────────────────
     env = EquationEnv(
         variables=variables, equations=equations, action_mode=action_mode
     )
 
-    # ── Prompt builder (shared by both modes) ─────────────────────────────────
+    # ── Prompt builder ────────────────────────────────────────────────────────
     prompt_builder = PromptBuilder(
         prompt_config=config["prompt"],
         target_variable=target_variable,
@@ -409,106 +515,25 @@ def main(
         history_window=experiment_cfg.get("history_window"),
     )
 
-    # ── Renderer + Agent: branch on observation_mode ──────────────────────────
+    # ── Renderer ──────────────────────────────────────────────────────────────
+    renderer = build_renderer(
+        observation_mode=observation_mode,
+        variables=variables,
+        action_mode=action_mode,
+        target_variable=target_variable,
+        naming_mode=naming_mode,
+        metadata_level=metadata_level,
+        name_mapping=name_mapping,
+        visual_cfg=visual_cfg,
+        base_output_dir=output_dir,
+    )
+
+    # ── Agent ─────────────────────────────────────────────────────────────────
     if observation_mode == "text":
-        # ── Original text-only path (unchanged) ──────────────────────────────
-        renderer = TextRenderer(
-            variables=variables,
-            action_mode=action_mode,
-            target_variable=target_variable,
-            naming_mode=naming_mode,
-            metadata_level=metadata_level,
-            name_mapping=name_mapping,
-        )
         model_callable = build_model_callable(agent_cfg)
         agent          = TextLLMAgent(model_callable=model_callable)
-
-    elif observation_mode == "text_image":
-        # ── New text+image path ───────────────────────────────────────────────
-        from src.observation.html_chart_renderer import HtmlChartRenderer
-        from src.observation.text_image_renderer import TextImageRenderer
-
-        template_path = visual_cfg.get(
-            "template_path", "templates/chart_state_view.html"
-        )
-        images_output_dir = os.path.join(
-            output_dir, visual_cfg.get("output_subdir", "images")
-        )
-
-        text_renderer = TextRenderer(
-            variables=variables,
-            action_mode=action_mode,
-            target_variable=target_variable,
-            naming_mode=naming_mode,
-            metadata_level=metadata_level,
-            name_mapping=name_mapping,
-        )
-        chart_renderer = HtmlChartRenderer(
-            variables=variables,
-            target_variable=target_variable,
-            naming_mode=naming_mode,
-            name_mapping=name_mapping if name_mapping else None,
-            output_dir=images_output_dir,
-            template_path=template_path,
-            headless=visual_cfg.get("playwright", {}).get("headless", True),
-            slow_mo=visual_cfg.get("playwright", {}).get("slow_mo", 0),
-            normalize_bars=visual_cfg.get("normalize_bars", True),
-        )
-        renderer = TextImageRenderer(
-            text_renderer=text_renderer,
-            chart_renderer=chart_renderer,
-        )
-        agent = build_agent_text_image(agent_cfg, name_mapping=name_mapping)
-
-    elif observation_mode == "simulation_only":
-        # ── Simulation-only path ──────────────────────────────────────────────
-        from src.observation.html_simulation_renderer import HtmlSimulationRenderer
-        from src.observation.simulation_image_renderer import SimulationImageRenderer
-
-        simulation_type = visual_cfg.get("simulation_type")
-        if not isinstance(simulation_type, str) or not simulation_type.strip():
-            raise ValueError(
-                "visual.simulation_type must be provided when "
-                "visual.observation_mode='simulation_only'"
-            )
-
-        images_output_dir = os.path.join(
-            output_dir,
-            visual_cfg.get("output_subdir", "simulation_images"),
-        )
-
-        simulation_renderer = HtmlSimulationRenderer(
-            variables=variables,
-            target_variable=target_variable,
-            naming_mode=naming_mode,
-            name_mapping=name_mapping if name_mapping else None,
-            output_dir=images_output_dir,
-            template_dir=visual_cfg.get("template_dir", "templates/simulations"),
-            simulation_type=simulation_type,
-            headless=visual_cfg.get("playwright", {}).get("headless", True),
-            slow_mo=visual_cfg.get("playwright", {}).get("slow_mo", 0),
-            exclude_variables=visual_cfg.get("exclude_variables", []),
-            viewport_width=visual_cfg.get("viewport", {}).get("width", 900),
-            viewport_height=visual_cfg.get("viewport", {}).get("height", 500),
-        )
-
-        renderer = SimulationImageRenderer(
-            variables=variables,
-            action_mode=action_mode,
-            target_variable=target_variable,
-            naming_mode=naming_mode,
-            metadata_level=metadata_level,
-            name_mapping=name_mapping,
-            image_renderer=simulation_renderer,
-        )
-
-        agent = build_agent_text_image(agent_cfg, name_mapping=name_mapping)
-
     else:
-        raise ValueError(
-            f"Unknown observation_mode: '{observation_mode}'. "
-            f"Must be 'text', 'text_image', or 'simulation_only'."
-        )
+        agent = build_agent_text_image(agent_cfg, name_mapping=name_mapping)
 
     # ── Runner ────────────────────────────────────────────────────────────────
     runner = EpisodeRunner(
@@ -518,6 +543,7 @@ def main(
         agent=agent,
         max_steps=max_steps,
         image_history_window=image_history_window,
+        task_mode=task_mode,
     )
 
     # ── Logger ────────────────────────────────────────────────────────────────
@@ -532,7 +558,7 @@ def main(
     result = runner.run_episode()
 
     evaluation = None
-    if auto_evaluate:
+    if auto_evaluate and task_mode == "formula_discovery":
         ground_truth     = equations[target_variable]
         variable_mapping = evaluation_cfg.get("variable_mapping")
         evaluator = EpisodeEvaluator(
@@ -550,11 +576,16 @@ def main(
         print(f"Env override:     {env_config}")
     if model_config:
         print(f"Model override:   {model_config}")
+    print(f"Task mode:        {task_mode}")
     print(f"Observation mode: {observation_mode}")
     print(f"Target variable:  {target_variable}")
     print(f"Finish reached:   {result.get('finish_reached')}")
     print(f"Total steps:      {result.get('num_steps')}")
-    print(f"Final equation:   {result.get('final_equation')}")
+
+    if task_mode == "student_simulation":
+        print(f"Finish reason:    {result.get('finish_reason')}")
+    else:
+        print(f"Final equation:   {result.get('final_equation')}")
 
     image_paths = result.get("image_paths", [])
     if image_paths:

@@ -26,6 +26,7 @@ class HtmlSimulationRenderer:
     - kinematics
     - beers
     - beers_wavelength
+    - concentration
 
     Directory layout inside output_dir
     -----------------------------------
@@ -47,6 +48,7 @@ class HtmlSimulationRenderer:
         "kinematics",
         "beers",
         "beers_wavelength",
+        "concentration",
     }
 
     _REQUIRED_STATE_KEYS = {
@@ -88,6 +90,11 @@ class HtmlSimulationRenderer:
             "concentration",
             "path_length",
             "absorbance",
+        ],
+        "concentration": [
+            "solute_amount",
+            "solution_volume",
+            "concentration",
         ],
     }
 
@@ -226,6 +233,9 @@ class HtmlSimulationRenderer:
 
         if self.simulation_type == "beers_wavelength":
             return self._build_beers_wavelength_render_data(state, step_id)
+
+        if self.simulation_type == "concentration":
+            return self._build_concentration_render_data(state, step_id)
 
         raise ValueError(f"Unsupported simulation_type='{self.simulation_type}'")
 
@@ -485,6 +495,40 @@ class HtmlSimulationRenderer:
             },
         )
 
+
+    def _build_concentration_render_data(
+        self,
+        state: Dict[str, Any],
+        step_id: Optional[int],
+    ) -> Dict[str, Any]:
+        solute_amount = self._value(state, "solute_amount")
+        solution_volume = self._value(state, "solution_volume")
+        concentration = self._value(state, "concentration")
+
+        amount_norm = self._norm_var("solute_amount", solute_amount)
+        volume_norm = self._norm_var("solution_volume", solution_volume)
+        concentration_norm = self._norm_target("concentration", concentration)
+
+        return self._base_render_data(
+            step_id=step_id,
+            title="Concentration Experiment",
+            variables={
+                "solute_amount": self._payload("solute_amount", solute_amount),
+                "solution_volume": self._payload("solution_volume", solution_volume),
+            },
+            target=self._payload("concentration", concentration, is_target=True),
+            simulation={
+                "amount_norm": amount_norm,
+                "volume_norm": volume_norm,
+                "concentration_norm": concentration_norm,
+                "solution_alpha": round(0.12 + concentration_norm * 0.68, 3),
+                "water_fill_percent": round(18 + volume_norm * 70, 2),
+                "solute_stream_opacity": round(0.28 + amount_norm * 0.64, 3),
+                "meter_bar_width": round(8 + concentration_norm * 84, 2),
+            },
+        )
+
+
     # -------------------------------------------------------------------------
     # Shared render-data helpers
     # -------------------------------------------------------------------------
@@ -668,6 +712,12 @@ class HtmlSimulationRenderer:
                 * self._max("path_length")
                 / 50.0
             )
+            return 0.0, max(hi, current_value, 1.0)
+
+        if self.simulation_type == "concentration":
+            lo_volume, _ = self._variable_range("solution_volume", current_value)
+            min_volume = max(lo_volume, 1e-9)
+            hi = self._max("solute_amount") / min_volume
             return 0.0, max(hi, current_value, 1.0)
 
         return 0.0, max(1.0, current_value)

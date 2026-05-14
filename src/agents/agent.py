@@ -168,6 +168,7 @@ class TextLLMAgent:
             reasoning=reasoning,
             action=action,
             final_equation=data.get("final_equation"),
+            finish_reason=data.get("finish_reason"),
         )
 
     @staticmethod

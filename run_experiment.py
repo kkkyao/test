@@ -8,11 +8,10 @@ from typing import Any, Dict, List, Optional
 
 import wandb
 
-from run_episode import build_agent_text_image, build_model_callable
+from run_episode import build_agent_text_image, build_model_callable, build_renderer
 from src.agents.agent import TextLLMAgent
 from src.envs.env import EquationEnv
 from src.evaluation.evaluator import EpisodeEvaluator
-from src.observation.renderer import TextRenderer
 from src.prompts.prompt_builder import PromptBuilder
 from src.runners.runner import EpisodeRunner
 from src.tracing.logger import EpisodeLogger
@@ -48,6 +47,24 @@ def compute_aggregate(all_evaluations: List[Dict[str, Any]]) -> Dict[str, Any]:
     }
 
 
+def compute_aggregate_simulation(all_results: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """
+    Aggregate metrics for student_simulation runs.
+    No equation evaluation — only exploration and finish statistics.
+    """
+    n = len(all_results)
+    if n == 0:
+        return {}
+
+    return {
+        "n_runs":             n,
+        "finish_rate":        sum(1 for r in all_results if r["finish_reached"]) / n,
+        "forced_finish_rate": sum(1 for r in all_results if r.get("forced_finish")) / n,
+        "parse_error_rate":   sum(1 for r in all_results if r.get("parse_error")) / n,
+        "mean_total_steps":   statistics.mean(r["num_steps"] for r in all_results),
+    }
+
+
 def main(
     config_path: str,
     n_runs: int,
@@ -77,6 +94,7 @@ def main(
     equations        = environment_cfg["equations"]
     action_mode      = actions_cfg["action_mode"]
     max_steps        = experiment_cfg["max_steps"]
+    task_mode        = experiment_cfg.get("task_mode", "formula_discovery")
     naming_mode      = representation_cfg.get("naming_mode", "concrete")
     metadata_level   = representation_cfg.get("metadata_level", "minimal")
     name_mapping     = representation_cfg.get("name_mapping", {})
@@ -85,22 +103,6 @@ def main(
     observation_mode     = visual_cfg.get("observation_mode", "text")
     image_history_window = visual_cfg.get("image_history_window", None)
 
-    # ------------------------------------------------------------------
-    # IMPORTANT CHANGE:
-    # Use --run_name to create a separate local output directory.
-    #
-    # Before:
-    #   base_output_dir = logging_cfg.get("output_dir", "outputs/default_run")
-    #
-    # Problem:
-    #   Every experiment was saved into the same directory from config,
-    #   e.g. outputs/beers_text_default, so different experiments could overwrite
-    #   each other's aggregate.json and run_XX folders.
-    #
-    # Now:
-    #   --run_name kinematics_concrete_qwen25_3b
-    #   -> outputs/kinematics_concrete_qwen25_3b/
-    # ------------------------------------------------------------------
     output_name = run_name or experiment_cfg.get("name", "default_run")
     base_output_dir = str(Path("outputs") / output_name)
     Path(base_output_dir).mkdir(parents=True, exist_ok=True)
@@ -118,6 +120,7 @@ def main(
             "n_runs":            n_runs,
             "model_name":        agent_cfg.get("model_name"),
             "backend":           agent_cfg.get("backend"),
+            "task_mode":         task_mode,
             "observation_mode":  observation_mode,
             "naming_mode":       naming_mode,
             "metadata_level":    metadata_level,
@@ -137,6 +140,7 @@ def main(
             agent_cfg.get("model_name", "unknown"),
             naming_mode,
             observation_mode,
+            task_mode,
             experiment_cfg.get("name", "experiment"),
         ],
     )
@@ -145,15 +149,6 @@ def main(
         variables=variables,
         equations=equations,
         action_mode=action_mode,
-    )
-
-    text_renderer = TextRenderer(
-        variables=variables,
-        action_mode=action_mode,
-        target_variable=target_variable,
-        naming_mode=naming_mode,
-        metadata_level=metadata_level,
-        name_mapping=name_mapping,
     )
 
     prompt_builder = PromptBuilder(
@@ -173,30 +168,32 @@ def main(
         model_callable = build_model_callable(agent_cfg)
         agent = TextLLMAgent(model_callable=model_callable)
 
-    ground_truth = equations[target_variable]
-    variable_mapping = evaluation_cfg.get("variable_mapping")
-    evaluator = EpisodeEvaluator(
-        ground_truth_equation=ground_truth,
-        variable_mapping=variable_mapping,
-    )
+    # ── Evaluator — only for formula_discovery ────────────────────────────────
+    evaluator: Optional[EpisodeEvaluator] = None
+    if task_mode == "formula_discovery":
+        ground_truth     = equations[target_variable]
+        variable_mapping = evaluation_cfg.get("variable_mapping")
+        evaluator = EpisodeEvaluator(
+            ground_truth_equation=ground_truth,
+            variable_mapping=variable_mapping,
+        )
 
-    episode_table = wandb.Table(columns=[
-        "run_id",
-        "success",
-        "equation_correct",
-        "finish_called",
-        "termination_reason",
-        "total_steps",
-        "steps_to_success",
-        "final_equation",
-        "state_coverage_ratio",
-        "redundancy_penalty",
-        "variable_isolation_score",
-        "discovery_efficiency",
-        "error_message",
-    ])
+    # ── W&B episode table — schema differs by task_mode ───────────────────────
+    if task_mode == "formula_discovery":
+        episode_table = wandb.Table(columns=[
+            "run_id", "success", "equation_correct", "finish_called",
+            "termination_reason", "total_steps", "steps_to_success",
+            "final_equation", "state_coverage_ratio", "redundancy_penalty",
+            "variable_isolation_score", "discovery_efficiency", "error_message",
+        ])
+    else:  # student_simulation
+        episode_table = wandb.Table(columns=[
+            "run_id", "finish_reached", "forced_finish",
+            "finish_reason", "total_steps", "parse_error",
+        ])
 
-    all_evaluations: List[Dict[str, Any]] = []
+    all_evaluations: List[Dict[str, Any]] = []   # formula_discovery only
+    all_results: List[Dict[str, Any]] = []        # student_simulation only
 
     print("\n=== Experiment setup ===")
     print(f"Config:           {config_path}")
@@ -206,6 +203,7 @@ def main(
         print(f"Model override:   {model_config}")
     print(f"Run name:         {output_name}")
     print(f"Output dir:       {base_output_dir}")
+    print(f"Task mode:        {task_mode}")
     print(f"Observation mode: {observation_mode}")
     print(f"Target variable:  {target_variable}")
     print(f"Naming mode:      {naming_mode}")
@@ -223,90 +221,23 @@ def main(
             save_interaction_log=logging_cfg.get("save_interaction_log", True),
         )
 
-        # ── Build renderer (image modes need per-run output dir) ─────────────
-        if observation_mode == "text_image":
-            from src.observation.html_chart_renderer import HtmlChartRenderer
-            from src.observation.text_image_renderer import TextImageRenderer
+        # ── Renderer (rebuilt each run so screenshots go to the right subdir) ─
+        renderer = build_renderer(
+            observation_mode=observation_mode,
+            variables=variables,
+            action_mode=action_mode,
+            target_variable=target_variable,
+            naming_mode=naming_mode,
+            metadata_level=metadata_level,
+            name_mapping=name_mapping,
+            visual_cfg=visual_cfg,
+            base_output_dir=run_output_dir,
+            exclude_variables=chart_exclude,
+        )
 
-            images_output_dir = str(
-                Path(run_output_dir) / visual_cfg.get("output_subdir", "images")
-            )
-            chart_renderer = HtmlChartRenderer(
-                variables=variables,
-                target_variable=target_variable,
-                naming_mode=naming_mode,
-                name_mapping=name_mapping if name_mapping else None,
-                output_dir=images_output_dir,
-                template_path=visual_cfg.get(
-                    "template_path", "templates/chart_state_view.html"
-                ),
-                headless=visual_cfg.get("playwright", {}).get("headless", True),
-                slow_mo=visual_cfg.get("playwright", {}).get("slow_mo", 0),
-                normalize_bars=visual_cfg.get("normalize_bars", True),
-                exclude_variables=chart_exclude,
-            )
-            renderer = TextImageRenderer(
-                text_renderer=text_renderer,
-                chart_renderer=chart_renderer,
-            )
-            # Reset MockVLMAgent replay pointer between runs
-            if hasattr(agent, "reset"):
-                agent.reset()
-
-        elif observation_mode == "simulation_only":
-            from src.observation.html_simulation_renderer import HtmlSimulationRenderer
-            from src.observation.simulation_image_renderer import SimulationImageRenderer
-
-            simulation_type = visual_cfg.get("simulation_type")
-            if not isinstance(simulation_type, str) or not simulation_type.strip():
-                raise ValueError(
-                    "visual.simulation_type must be provided when "
-                    "visual.observation_mode='simulation_only'"
-                )
-
-            images_output_dir = str(
-                Path(run_output_dir) / visual_cfg.get(
-                    "output_subdir", "simulation_images"
-                )
-            )
-
-            simulation_renderer = HtmlSimulationRenderer(
-                variables=variables,
-                target_variable=target_variable,
-                naming_mode=naming_mode,
-                name_mapping=name_mapping if name_mapping else None,
-                output_dir=images_output_dir,
-                template_dir=visual_cfg.get("template_dir", "templates/simulations"),
-                simulation_type=simulation_type,
-                headless=visual_cfg.get("playwright", {}).get("headless", True),
-                slow_mo=visual_cfg.get("playwright", {}).get("slow_mo", 0),
-                exclude_variables=visual_cfg.get("exclude_variables", []),
-                viewport_width=visual_cfg.get("viewport", {}).get("width", 900),
-                viewport_height=visual_cfg.get("viewport", {}).get("height", 500),
-            )
-
-            renderer = SimulationImageRenderer(
-                variables=variables,
-                action_mode=action_mode,
-                target_variable=target_variable,
-                naming_mode=naming_mode,
-                metadata_level=metadata_level,
-                name_mapping=name_mapping,
-                image_renderer=simulation_renderer,
-            )
-
-            # Reset MockVLMAgent replay pointer between runs
-            if hasattr(agent, "reset"):
-                agent.reset()
-
-        elif observation_mode == "text":
-            renderer = text_renderer
-
-        else:
-            raise ValueError(
-                f"Unknown observation_mode: '{observation_mode}'. "
-                f"Must be 'text', 'text_image', or 'simulation_only'."
-            )
+        # Reset MockVLMAgent pointer at the start of each run
+        if hasattr(agent, "reset") and observation_mode in {"text_image", "simulation_only"}:
+            agent.reset()
 
         runner = EpisodeRunner(
             env=env,
@@ -315,69 +246,119 @@ def main(
             agent=agent,
             max_steps=max_steps,
             image_history_window=image_history_window,
+            task_mode=task_mode,
         )
 
         result = runner.run_episode()
-        evaluation = evaluator.evaluate(result)
-        saved_paths = logger.save_episode(result, evaluation=evaluation)
-        all_evaluations.append(evaluation)
 
-        artifact = wandb.Artifact(
-            name=f"episode-{output_name}-{run_id:02d}",
-            type="episode_data",
-            metadata={
-                "run_id":         run_id,
-                "model":          agent_cfg.get("model_name"),
-                "naming_mode":    naming_mode,
-                "termination":    evaluation["termination_reason"],
-                "success":        evaluation["success"],
-                "final_equation": evaluation["final_equation"],
-            },
-        )
+        # ── Per-run logging: diverges by task_mode ────────────────────────────
+        if task_mode == "formula_discovery":
+            evaluation = evaluator.evaluate(result)
+            saved_paths = logger.save_episode(result, evaluation=evaluation)
+            all_evaluations.append(evaluation)
 
-        for artifact_name, file_path in saved_paths.items():
-            artifact.add_file(file_path, name=f"{artifact_name}.json")
+            artifact = wandb.Artifact(
+                name=f"episode-{output_name}-{run_id:02d}",
+                type="episode_data",
+                metadata={
+                    "run_id":         run_id,
+                    "model":          agent_cfg.get("model_name"),
+                    "naming_mode":    naming_mode,
+                    "termination":    evaluation["termination_reason"],
+                    "success":        evaluation["success"],
+                    "final_equation": evaluation["final_equation"],
+                },
+            )
+            for artifact_name, file_path in saved_paths.items():
+                artifact.add_file(file_path, name=f"{artifact_name}.json")
+            wandb.log_artifact(artifact)
 
-        wandb.log_artifact(artifact)
+            wandb.log(
+                {
+                    "success":                  int(evaluation["success"]),
+                    "equation_correct":         int(evaluation["equation_correct"]),
+                    "finish_called":            int(evaluation["finish_called"]),
+                    "total_steps":              evaluation["total_steps"],
+                    "steps_to_success":         evaluation["steps_to_success"] or 0,
+                    "state_coverage_ratio":     evaluation["state_coverage_ratio"],
+                    "redundancy_penalty":       evaluation["redundancy_penalty"],
+                    "variable_isolation_score": evaluation["variable_isolation_score"],
+                    "discovery_efficiency":     evaluation["discovery_efficiency"],
+                },
+                step=run_id,
+            )
 
-        wandb.log(
-            {
-                "success":                  int(evaluation["success"]),
-                "equation_correct":         int(evaluation["equation_correct"]),
-                "finish_called":            int(evaluation["finish_called"]),
-                "total_steps":              evaluation["total_steps"],
-                "steps_to_success":         evaluation["steps_to_success"] or 0,
-                "state_coverage_ratio":     evaluation["state_coverage_ratio"],
-                "redundancy_penalty":       evaluation["redundancy_penalty"],
-                "variable_isolation_score": evaluation["variable_isolation_score"],
-                "discovery_efficiency":     evaluation["discovery_efficiency"],
-            },
-            step=run_id,
-        )
+            episode_table.add_data(
+                run_id,
+                evaluation["success"],
+                evaluation["equation_correct"],
+                evaluation["finish_called"],
+                evaluation["termination_reason"],
+                evaluation["total_steps"],
+                evaluation["steps_to_success"],
+                evaluation["final_equation"],
+                evaluation["state_coverage_ratio"],
+                evaluation["redundancy_penalty"],
+                evaluation["variable_isolation_score"],
+                evaluation["discovery_efficiency"],
+                evaluation["error_message"],
+            )
 
-        episode_table.add_data(
-            run_id,
-            evaluation["success"],
-            evaluation["equation_correct"],
-            evaluation["finish_called"],
-            evaluation["termination_reason"],
-            evaluation["total_steps"],
-            evaluation["steps_to_success"],
-            evaluation["final_equation"],
-            evaluation["state_coverage_ratio"],
-            evaluation["redundancy_penalty"],
-            evaluation["variable_isolation_score"],
-            evaluation["discovery_efficiency"],
-            evaluation["error_message"],
-        )
+            print(
+                f"  success={evaluation['success']}  "
+                f"steps={evaluation['total_steps']}  "
+                f"reason={evaluation['termination_reason']}"
+            )
 
-        print(
-            f"  success={evaluation['success']}  "
-            f"steps={evaluation['total_steps']}  "
-            f"reason={evaluation['termination_reason']}"
-        )
+        else:  # student_simulation
+            saved_paths = logger.save_episode(result, evaluation=None)
+            all_results.append(result)
 
-    aggregate = compute_aggregate(all_evaluations)
+            artifact = wandb.Artifact(
+                name=f"episode-{output_name}-{run_id:02d}",
+                type="episode_data",
+                metadata={
+                    "run_id":         run_id,
+                    "model":          agent_cfg.get("model_name"),
+                    "finish_reached": result["finish_reached"],
+                    "finish_reason":  result.get("finish_reason"),
+                    "num_steps":      result["num_steps"],
+                },
+            )
+            for artifact_name, file_path in saved_paths.items():
+                artifact.add_file(file_path, name=f"{artifact_name}.json")
+            wandb.log_artifact(artifact)
+
+            wandb.log(
+                {
+                    "finish_reached": int(result["finish_reached"]),
+                    "forced_finish":  int(bool(result.get("forced_finish"))),
+                    "total_steps":    result["num_steps"],
+                    "parse_error":    int(bool(result.get("parse_error"))),
+                },
+                step=run_id,
+            )
+
+            episode_table.add_data(
+                run_id,
+                result["finish_reached"],
+                bool(result.get("forced_finish")),
+                result.get("finish_reason"),
+                result["num_steps"],
+                result.get("parse_error"),
+            )
+
+            print(
+                f"  finish_reached={result['finish_reached']}  "
+                f"steps={result['num_steps']}  "
+                f"finish_reason={result.get('finish_reason')}"
+            )
+
+    # ── Aggregate ─────────────────────────────────────────────────────────────
+    if task_mode == "formula_discovery":
+        aggregate = compute_aggregate(all_evaluations)
+    else:
+        aggregate = compute_aggregate_simulation(all_results)
 
     aggregate_path = Path(base_output_dir) / "aggregate.json"
     with aggregate_path.open("w", encoding="utf-8") as f:
@@ -389,16 +370,20 @@ def main(
         if isinstance(value, (int, float)) and value is not None:
             wandb.summary[key] = value
 
-    wandb.summary["termination_breakdown"] = aggregate["termination_breakdown"]
+    if task_mode == "formula_discovery" and "termination_breakdown" in aggregate:
+        wandb.summary["termination_breakdown"] = aggregate["termination_breakdown"]
     wandb.summary["local_output_dir"] = base_output_dir
 
     print("\n=== Experiment complete ===")
-    print(f"  success_rate: {aggregate['success_rate']:.2%}")
-    print(f"  finish_rate:  {aggregate['finish_rate']:.2%}")
-    print(f"  mean_steps:   {aggregate['mean_total_steps']:.1f}")
-
-    if aggregate["mean_steps_to_success"] is not None:
-        print(f"  mean_steps_to_success: {aggregate['mean_steps_to_success']:.1f}")
+    if task_mode == "formula_discovery":
+        print(f"  success_rate: {aggregate['success_rate']:.2%}")
+        print(f"  finish_rate:  {aggregate['finish_rate']:.2%}")
+        print(f"  mean_steps:   {aggregate['mean_total_steps']:.1f}")
+        if aggregate["mean_steps_to_success"] is not None:
+            print(f"  mean_steps_to_success: {aggregate['mean_steps_to_success']:.1f}")
+    else:
+        print(f"  finish_rate:  {aggregate['finish_rate']:.2%}")
+        print(f"  mean_steps:   {aggregate['mean_total_steps']:.1f}")
 
     print(f"  aggregate saved to: {aggregate_path}")
     print(f"  episode files saved under: {base_output_dir}/run_XX/")
