@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from src.agents.protocols import AgentProtocol, RendererProtocol
 from src.envs.env import EquationEnv
@@ -35,6 +35,13 @@ class EpisodeRunner:
     call the list is sliced to the last image_history_window entries (None
     means keep all).
 
+    Parse error retry
+    -----------------
+    When agent.act() raises a ValueError (parse error), the runner retries
+    up to max_parse_retries times.  On each retry the exact schema error
+    message is appended to the prompt so the model can self-correct.
+    Only the final failure is recorded in parse_error and breaks the loop.
+
     Termination guarantee
     ---------------------
     The episode always ends with a finish step.  If the model does not
@@ -52,6 +59,7 @@ class EpisodeRunner:
         max_steps: int,
         image_history_window: Optional[int] = None,
         task_mode: str = "formula_discovery",
+        max_parse_retries: int = 1,
     ) -> None:
         if not isinstance(max_steps, int) or max_steps <= 0:
             raise ValueError("max_steps must be a positive integer")
@@ -67,6 +75,9 @@ class EpisodeRunner:
                 "task_mode must be 'formula_discovery' or 'student_simulation'"
             )
 
+        if not isinstance(max_parse_retries, int) or max_parse_retries < 0:
+            raise ValueError("max_parse_retries must be a non-negative integer")
+
         self.env = env
         self.renderer = renderer
         self.prompt_builder = prompt_builder
@@ -74,6 +85,7 @@ class EpisodeRunner:
         self.max_steps = max_steps
         self.image_history_window = image_history_window
         self.task_mode = task_mode
+        self.max_parse_retries = max_parse_retries
 
     def run_episode(self) -> Dict[str, Any]:
         """
@@ -91,7 +103,7 @@ class EpisodeRunner:
             finish_reached     : whether a finish step was recorded
             finish_step_id     : step index of finish, or None
             num_steps          : total steps executed (excl. forced-finish)
-            parse_error        : error message if agent.act() raised ValueError
+            parse_error        : error message if all retries failed
             forced_finish      : True when finish came from the forced final
                                  prompt rather than a voluntary finish
             image_paths        : ordered list of PNG paths generated this episode
@@ -133,13 +145,13 @@ class EpisodeRunner:
             # Apply image_history_window before passing to agent
             images_to_pass = self._window(image_paths_history)
 
-            try:
-                agent_step, raw_output = self.agent.act(
-                    prompt=prompt,
-                    image_paths=images_to_pass if images_to_pass else None,
-                )
-            except ValueError as exc:
-                parse_error = str(exc)
+            agent_step, raw_output, step_parse_error = self._act_with_retry(
+                prompt=prompt,
+                image_paths=images_to_pass if images_to_pass else None,
+            )
+
+            if step_parse_error:
+                parse_error = step_parse_error
                 break
 
             if agent_step.step_type == "finish":
@@ -250,6 +262,47 @@ class EpisodeRunner:
     # -------------------------------------------------------------------------
     # Private helpers
     # -------------------------------------------------------------------------
+
+    def _act_with_retry(
+        self,
+        prompt: str,
+        image_paths: Optional[List[str]],
+    ) -> Tuple[Optional[Any], str, Optional[str]]:
+        """
+        Call agent.act(), retrying up to max_parse_retries times on ValueError.
+
+        On each retry the exact schema error is appended to the prompt so the
+        model can see what it did wrong and self-correct.
+
+        Returns
+        -------
+        (agent_step, raw_output, parse_error)
+            parse_error is None on success.
+            agent_step is None only when all attempts failed.
+        """
+        last_error: Optional[str] = None
+
+        for attempt in range(self.max_parse_retries + 1):
+            current_prompt = prompt
+            if attempt > 0 and last_error:
+                current_prompt = (
+                    prompt
+                    + f"\n\n[CORRECTION NEEDED] Your previous response caused a "
+                    f"JSON schema error: {last_error}\n"
+                    f"Please output a valid JSON object that follows the format exactly. "
+                    f"Make sure every required field is present."
+                )
+
+            try:
+                agent_step, raw_output = self.agent.act(
+                    prompt=current_prompt,
+                    image_paths=image_paths,
+                )
+                return agent_step, raw_output, None
+            except ValueError as exc:
+                last_error = str(exc)
+
+        return None, "", last_error
 
     def _window(self, image_paths: List[str]) -> List[str]:
         """

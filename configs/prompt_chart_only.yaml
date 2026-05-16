@@ -41,6 +41,7 @@ prompt:
     - "When step_type is 'finish', action must be null; final_equation must be a non-empty equation string."
     - "The final equation must use only these {num_variables} variables: {equation_variables}. Do not use any other variable names or numeric constants."
     - "Do not invent new action_type values, variables, or fields."
+    - "The 'action' object must always contain BOTH 'action_type' AND 'variable'. Never omit 'variable'."
 
   # Injected before the (empty) observation text when image_path is present.
   image_notice: "Bar chart images are shown above, ordered oldest to newest.
@@ -56,10 +57,14 @@ prompt:
       "step_type": "action",
       "action": {
         "action_type": "increase",
-        "variable": "variable_name"
+        "variable": "variable_name_here"
       },
       "final_equation": null
     }
+
+    The action_type may be either "increase" or "decrease".
+    Replace "variable_name_here" with one of the valid variable names from Available actions.
+    Both "action_type" and "variable" are required — never omit "variable".
 
   output_format_action_set_value: |
     For an action step:
@@ -68,11 +73,14 @@ prompt:
       "step_type": "action",
       "action": {
         "action_type": "set",
-        "variable": "variable_name",
+        "variable": "variable_name_here",
         "value": 0
       },
       "final_equation": null
     }
+
+    Replace "variable_name_here" with one of the valid variable names from Available actions.
+    Both "action_type" and "variable" are required — never omit "variable".
 
   output_format_finish: |
     For a finish step:
