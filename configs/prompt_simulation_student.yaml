@@ -54,6 +54,8 @@ prompt:
     - "When step_type is 'action', action must be one valid action object from Available actions; finish_reason must be null."
     - "When step_type is 'finish', action must be null; finish_reason must be a non-empty string explaining why the simulated student stops exploring."
     - "Do not invent new action_type values, variables, or fields."
+    - "In this prompt, the only valid action_type values are 'increase' and 'decrease'. Never use 'set'."
+    - "For increase/decrease actions, do not include a 'value' field."
     - "Do not output current state values."
     - "Do not output predicted updated state values."
     - "Do not output a final equation."
@@ -80,23 +82,9 @@ prompt:
       "finish_reason": null
     }
 
-    The action_type may be either "increase" or "decrease".
-    Replace "variable_name_here" with one of the valid input variable names from Available actions.
-    Both "action_type" and "variable" are required — never omit "variable".
-
-  output_format_action_set_value: |
-    For an action step:
-    {
-      "reasoning": "brief string",
-      "step_type": "action",
-      "action": {
-        "action_type": "set",
-        "variable": "variable_name_here",
-        "value": 0
-      },
-      "finish_reason": null
-    }
-
+    The only valid action_type values in this mode are "increase" and "decrease".
+    Do not use "set" in increase/decrease mode.
+    Do not include a "value" field in increase/decrease mode.
     Replace "variable_name_here" with one of the valid input variable names from Available actions.
     Both "action_type" and "variable" are required — never omit "variable".
 
