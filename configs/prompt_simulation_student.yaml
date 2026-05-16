@@ -58,6 +58,7 @@ prompt:
     - "Do not output predicted updated state values."
     - "Do not output a final equation."
     - "The environment will update the state after your action."
+    - "The 'action' object must always contain BOTH 'action_type' AND 'variable'. Never omit 'variable'."
 
   image_notice: "Simulation screenshots are provided as the visual observation for this step.
     Each screenshot shows the simulated experiment at one step.
@@ -74,13 +75,14 @@ prompt:
       "step_type": "action",
       "action": {
         "action_type": "increase",
-        "variable": "variable_name"
+        "variable": "variable_name_here"
       },
       "finish_reason": null
     }
 
     The action_type may be either "increase" or "decrease".
-    The variable must be one of the valid input variables from Available actions.
+    Replace "variable_name_here" with one of the valid input variable names from Available actions.
+    Both "action_type" and "variable" are required — never omit "variable".
 
   output_format_action_set_value: |
     For an action step:
@@ -89,13 +91,14 @@ prompt:
       "step_type": "action",
       "action": {
         "action_type": "set",
-        "variable": "variable_name",
+        "variable": "variable_name_here",
         "value": 0
       },
       "finish_reason": null
     }
 
-    The variable and value must match one of the valid actions allowed by the environment.
+    Replace "variable_name_here" with one of the valid input variable names from Available actions.
+    Both "action_type" and "variable" are required — never omit "variable".
 
   output_format_finish: |
     For a finish step:

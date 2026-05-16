@@ -30,6 +30,7 @@ prompt:
     - "Do not invent new action_type values, variables, or fields."
     - "Do not output updated state values."
     - "Do not infer state values from text. Use the simulation screenshots for state values."
+    - "The 'action' object must always contain BOTH 'action_type' AND 'variable'. Never omit 'variable'."
 
   image_notice: "Simulation screenshots are shown above, ordered oldest to newest. Each screenshot shows the simulated apparatus, input controls, and output instrument readings. The last screenshot shows the current state. Read all current and historical state values from the screenshots."
 
@@ -42,13 +43,14 @@ prompt:
       "step_type": "action",
       "action": {
         "action_type": "increase",
-        "variable": "variable_name"
+        "variable": "variable_name_here"
       },
       "final_equation": null
     }
 
-    The action_type can be "increase" or "decrease".
-    The variable must be one of the valid manipulable variables shown in Available actions.
+    The action_type may be either "increase" or "decrease".
+    Replace "variable_name_here" with one of the valid manipulable variable names from Available actions.
+    Both "action_type" and "variable" are required — never omit "variable".
 
   output_format_action_set_value: |
     For an action step:
@@ -57,14 +59,14 @@ prompt:
       "step_type": "action",
       "action": {
         "action_type": "set",
-        "variable": "variable_name",
+        "variable": "variable_name_here",
         "value": 0
       },
       "final_equation": null
     }
 
-    The value must be numeric.
-    The variable must be one of the valid manipulable variables shown in Available actions.
+    Replace "variable_name_here" with one of the valid manipulable variable names from Available actions.
+    Both "action_type" and "variable" are required — never omit "variable".
 
   output_format_finish: |
     For a finish step:
