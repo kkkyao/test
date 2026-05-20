@@ -101,13 +101,7 @@ class HtmlChartRenderer:
         )
         self._template = self._jinja_env.get_template(template_path_abs.name)
 
-        # Playwright browser — launched once and reused across all screenshots.
-        # Call close() when the renderer is no longer needed.
-        self._playwright = sync_playwright().start()
-        self._browser = self._playwright.chromium.launch(
-            headless=self.headless,
-            slow_mo=self.slow_mo,
-        )
+
 
     # -------------------------------------------------------------------------
     # Public API
@@ -261,49 +255,54 @@ class HtmlChartRenderer:
         html_path.write_text(html_content, encoding="utf-8")
         return str(html_path.resolve())
 
-    def close(self) -> None:
-        """
-        Release the shared Playwright browser and stop the Playwright instance.
-        Call this once when the renderer is no longer needed (e.g. after all
-        runs in an experiment are complete).
-        """
-        try:
-            self._browser.close()
-        except Exception:
-            pass
-        try:
-            self._playwright.stop()
-        except Exception:
-            pass
-
-    def __del__(self) -> None:
-        self.close()
-
     def _take_screenshot(
         self,
         html_path: str,
         step_id: Optional[int],
+        _max_retries: int = 3,
     ) -> str:
         """
-        Open the HTML file in the shared browser and save a screenshot.
-        A fresh page is opened and closed for each screenshot so that
-        state does not leak between steps.
+        Open the HTML file in a headless Chromium browser and save a screenshot.
+
+        A fresh sync_playwright context is used for each call so that this
+        renderer is safe to instantiate inside an asyncio loop (e.g. between
+        runs managed by wandb).  The browser is launched and closed within
+        each call, keeping resource usage bounded.
+
+        Retries up to _max_retries times on playwright errors (e.g. the
+        intermittent "Unable to capture screenshot" protocol error).
         """
         filename = (
             f"step_{step_id:04d}.png" if step_id is not None else "step_none.png"
         )
         image_path = self._base_dir / filename
-
         file_uri = Path(html_path).as_uri()
 
-        page = self._browser.new_page(viewport={"width": 900, "height": 500})
-        try:
-            page.goto(file_uri, wait_until="networkidle")
-            page.screenshot(path=str(image_path), full_page=False)
-        finally:
-            page.close()
+        last_exc: Optional[Exception] = None
+        for attempt in range(_max_retries):
+            try:
+                with sync_playwright() as pw:
+                    browser = pw.chromium.launch(
+                        headless=self.headless,
+                        slow_mo=self.slow_mo,
+                    )
+                    page = browser.new_page(viewport={"width": 900, "height": 500})
+                    try:
+                        page.goto(file_uri, wait_until="networkidle")
+                        page.screenshot(path=str(image_path), full_page=False)
+                    finally:
+                        page.close()
+                        browser.close()
+                return str(image_path.resolve())
+            except Exception as exc:
+                last_exc = exc
+                if attempt < _max_retries - 1:
+                    import time
+                    time.sleep(1)
 
-        return str(image_path.resolve())
+        raise RuntimeError(
+            f"Screenshot failed after {_max_retries} attempts: {last_exc}"
+        ) from last_exc
 
     # -------------------------------------------------------------------------
     # Naming helpers
