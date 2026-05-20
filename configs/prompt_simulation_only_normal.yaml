@@ -1,0 +1,131 @@
+prompt:
+  # ───────────────────────────────────────────────────────────────────────────
+  # Prompt for Simulation-only / Normal-exploration mode
+  #
+  # Purpose:
+  #   Make a VLM explore an unknown simulated system by reading simulation
+  #   screenshots.  No student persona.  No final equation required.
+  #
+  # Modality: Simulation-only
+  #   - include_observation_text: true, BUT observation.text produced by
+  #     SimulationImageRenderer contains only variable names, the target
+  #     variable, and available actions — NO numeric state values.
+  #   - action history text is retained (no state values).
+  #   - Simulation screenshots are ordered oldest to newest;
+  #     last screenshot = current state.
+  #
+  # Task: Normal exploration (not student, not equation)
+  #   - The model acts as a generic scientific explorer.
+  #   - finish means "stop exploring", not "submit equation".
+  #
+  # include_observation_text: true
+  #   observation.text is included but contains no numeric state values.
+  #   This keeps the available-actions list visible to the model.
+  # ───────────────────────────────────────────────────────────────────────────
+
+  include_observation_text: true
+
+  system_intro: "You are a scientific explorer investigating an unknown simulated system.
+    At each step, you receive one or more simulation screenshots showing the experiment.
+    You do not receive text describing the current numeric state values.
+    Use the screenshots as your visual record of all observations.
+    Your goal is to explore the environment by conducting experiments.
+    You must respond with exactly one valid JSON object."
+
+  task_template: "Your goal is to explore the simulated environment by varying
+    the input variables and observing the results in the screenshots."
+
+  exploration_lines:
+    - "There are {num_variables} variables in the environment: {equation_variables}."
+    - "At each step, choose one action to change the simulation and observe the result."
+    - "Simulation screenshots are provided at every step and are ordered from oldest to newest."
+    - "The last screenshot is the current state."
+    - "The action history lists previous actions only; it does not provide state values."
+    - "Read state values from the screenshots, not from text."
+    - "Put any reasoning inside the JSON reasoning field only."
+    - "Stop when you think you have sufficiently explored the environment."
+    - "You may take up to {max_steps} steps in total."
+
+  step_type_descriptions:
+    action: "take exactly one valid action to change the simulation and observe the result"
+    finish: "stop exploring the simulated environment"
+
+  rules:
+    - "Return exactly one valid JSON object."
+    - "Do not output prose, markdown fences, bullet points, or any text outside the JSON object."
+    - "reasoning must be a non-empty string on every step."
+    - "step_type must be exactly 'action' or 'finish'."
+    - "When step_type is 'action', action must be one valid action object from Available
+      actions; finish_reason must be null."
+    - "When step_type is 'finish', action must be null; finish_reason must be a non-empty
+      string explaining why you stop exploring."
+    - "Do not invent new action_type values, variables, or fields."
+    - "The only valid action_type values are 'increase' and 'decrease'. Never use 'set'."
+    - "For increase/decrease actions, do not include a 'value' field."
+    - "Do not output current state values."
+    - "Do not output predicted updated state values."
+    - "Do not output a final equation."
+    - "The environment will update the state after your action."
+    - "The 'action' object must always contain BOTH 'action_type' AND 'variable'.
+      Never omit 'variable'."
+
+  image_notice: "Simulation screenshots are provided as the visual observation for this step.
+    Each screenshot shows the simulated experiment at one step.
+    Screenshots are ordered from oldest to newest.
+    The last screenshot is the current state.
+    The action history lists previous actions only and does not provide state values."
+
+  output_format_header: "Your answer must follow one of the JSON templates below."
+
+  output_format_action_increase_decrease: |
+    For an action step:
+    {
+      "reasoning": "brief string",
+      "step_type": "action",
+      "action": {
+        "action_type": "increase",
+        "variable": "variable_name_here"
+      },
+      "finish_reason": null
+    }
+
+    The only valid action_type values in this mode are "increase" and "decrease".
+    Do not use "set". Do not include a "value" field.
+    Replace "variable_name_here" with one of the valid input variable names from Available actions.
+    Both "action_type" and "variable" are required — never omit "variable".
+
+  output_format_finish: |
+    For a finish step:
+    {
+      "reasoning": "brief string",
+      "step_type": "finish",
+      "action": null,
+      "finish_reason": "brief reason for stopping exploration"
+    }
+
+  forced_finish_template: |
+    You have reached the maximum number of exploration steps.
+    Stop exploring.
+
+    Return only this JSON object:
+    {
+      "reasoning": "brief string",
+      "step_type": "finish",
+      "action": null,
+      "finish_reason": "maximum number of exploration steps reached"
+    }
+
+  section_headers:
+    step_types: "Allowed step types:"
+    rules: "Rules:"
+    observation: "Simulation observation:"
+    history: "Previous actions:"
+    output_format: "Output format:"
+
+  # History is intentionally action-only.
+  # Do NOT add visible_state_before or visible_state_after here.
+  history_labels:
+    empty: "No actions have been taken yet. The first screenshot shows the initial state."
+    step_prefix: "Step {step_id}:"
+    step_type: "step_type: {value}"
+    action: "action: {value}"

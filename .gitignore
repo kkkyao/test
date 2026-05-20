@@ -40,3 +40,15 @@ download_run_files.py
 download_run_table_csvs.py
 download_wandb_episode_jsons.py
 list_wandb_artifacts.py
+# Downloaded W&B artifacts / local experiment downloads
+wandb_downloads*/
+wandb_episode_jsons*/
+wandb_export_*.csv
+failed_*_episode_artifacts.txt
+missing_*_episode_files.txt
+
+# Local W&B download scripts
+download_wandb*.py
+
+# Windows metadata files
+*:Zone.Identifier

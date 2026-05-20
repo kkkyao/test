@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
 from src.agents.agent import TextLLMAgent
@@ -13,6 +14,59 @@ from src.prompts.prompt_builder import PromptBuilder
 from src.runners.runner import EpisodeRunner
 from src.tracing.logger import EpisodeLogger
 from src.utils.config_loader import load_config
+
+
+def load_config_with_file_overrides(
+    config_path: str,
+    *,
+    experiment_config: Optional[str] = None,
+    env_config: Optional[str] = None,
+    model_config: Optional[str] = None,
+    prompt_config: Optional[str] = None,
+) -> Dict[str, Any]:
+    """
+    Load the main config while allowing CLI overrides for all four config pointers.
+
+    load_config() already supports env/model overrides. If experiment/prompt are
+    overridden here, create a temporary main config in the same directory as the
+    original main config so relative paths keep resolving exactly as before.
+    """
+    if experiment_config is None and prompt_config is None:
+        return load_config(
+            config_path,
+            env_config_override=env_config,
+            model_config_override=model_config,
+        )
+
+    try:
+        import yaml
+    except ImportError as e:
+        raise ImportError(
+            "PyYAML is required for --experiment_config / --prompt_config overrides. "
+            "Install with: pip install pyyaml"
+        ) from e
+
+    base_path = Path(config_path)
+    with base_path.open("r", encoding="utf-8") as f:
+        main_cfg = yaml.safe_load(f) or {}
+
+    if experiment_config is not None:
+        main_cfg["experiment_config"] = experiment_config
+    if prompt_config is not None:
+        main_cfg["prompt_config"] = prompt_config
+
+    tmp_path = base_path.parent / f".tmp_{base_path.stem}_overrides_{os.getpid()}.yaml"
+    try:
+        with tmp_path.open("w", encoding="utf-8") as f:
+            yaml.safe_dump(main_cfg, f, sort_keys=False, allow_unicode=True)
+
+        return load_config(
+            str(tmp_path),
+            env_config_override=env_config,
+            model_config_override=model_config,
+        )
+    finally:
+        tmp_path.unlink(missing_ok=True)
 
 
 # ── Default mock action sequence used when none is supplied in config ─────────
@@ -456,11 +510,15 @@ def main(
     config_path: str,
     env_config: str | None = None,
     model_config: str | None = None,
+    experiment_config: str | None = None,
+    prompt_config: str | None = None,
 ) -> None:
-    config = load_config(
+    config = load_config_with_file_overrides(
         config_path,
-        env_config_override=env_config,
-        model_config_override=model_config,
+        experiment_config=experiment_config,
+        env_config=env_config,
+        model_config=model_config,
+        prompt_config=prompt_config,
     )
 
     experiment_cfg     = config["experiment"]
@@ -572,10 +630,14 @@ def main(
     # ── Summary ───────────────────────────────────────────────────────────────
     print("\n=== Episode finished ===")
     print(f"Config:           {config_path}")
+    if experiment_config:
+        print(f"Experiment override: {experiment_config}")
     if env_config:
-        print(f"Env override:     {env_config}")
+        print(f"Env override:        {env_config}")
     if model_config:
-        print(f"Model override:   {model_config}")
+        print(f"Model override:      {model_config}")
+    if prompt_config:
+        print(f"Prompt override:     {prompt_config}")
     print(f"Task mode:        {task_mode}")
     print(f"Observation mode: {observation_mode}")
     print(f"Target variable:  {target_variable}")
@@ -622,5 +684,21 @@ if __name__ == "__main__":
         help="Override the model_config from main config. "
              "E.g. configs/model_qwen35_4b.yaml",
     )
+    parser.add_argument(
+        "--experiment_config", type=str, default=None,
+        help="Override the experiment_config from main config. "
+             "E.g. configs/experiment_chart_only.yaml",
+    )
+    parser.add_argument(
+        "--prompt_config", type=str, default=None,
+        help="Override the prompt_config from main config. "
+             "E.g. configs/prompt_chart_only.yaml",
+    )
     args = parser.parse_args()
-    main(args.config, env_config=args.env_config, model_config=args.model_config)
+    main(
+        args.config,
+        env_config=args.env_config,
+        model_config=args.model_config,
+        experiment_config=args.experiment_config,
+        prompt_config=args.prompt_config,
+    )

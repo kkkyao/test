@@ -1,0 +1,118 @@
+prompt:
+  # ───────────────────────────────────────────────────────────────────────────
+  # Prompt for Text-only / Normal-exploration mode
+  #
+  # Purpose:
+  #   Make an LLM explore an unknown system through interactive text-based
+  #   experimentation.  No student persona.  No final equation required.
+  #
+  # Modality: Text-only
+  #   - observation.text contains full current state values.
+  #   - history renders visible_state_before and visible_state_after so the
+  #     model has a complete numeric log across steps.
+  #   - No images are provided.
+  #
+  # Task: Normal exploration (not student, not equation)
+  #   - The model acts as a generic scientific explorer.
+  #   - finish means "stop exploring", not "submit equation".
+  #
+  # include_observation_text: true
+  #   The current state values are provided as text at every step.
+  # ───────────────────────────────────────────────────────────────────────────
+
+  include_observation_text: true
+
+  system_intro: "You are a scientific explorer investigating an unknown interactive system.
+    At each step, you receive a text description of the current state values and
+    a numeric log of all previous observations.
+    Your goal is to explore the environment by conducting experiments.
+    You must respond with exactly one valid JSON object."
+
+  task_template: "Your goal is to explore the environment by systematically varying
+    the input variables and observing the results."
+
+  exploration_lines:
+    - "There are {num_variables} variables in the environment: {equation_variables}."
+    - "At each step, choose one action to change the environment and observe the result."
+    - "Vary one variable at a time while keeping the others fixed to isolate each
+      variable's effect."
+    - "Use the numeric log in the history to guide your next action."
+    - "Put any reasoning inside the JSON reasoning field only."
+    - "Stop when you think you have sufficiently explored the environment."
+    - "You may take up to {max_steps} steps in total."
+
+  step_type_descriptions:
+    action: "take exactly one valid action to change the environment and observe the result"
+    finish: "stop exploring the environment"
+
+  rules:
+    - "Return exactly one valid JSON object."
+    - "Do not output prose, markdown fences, bullet points, or any text outside the JSON object."
+    - "reasoning must be a non-empty string on every step."
+    - "step_type must be exactly 'action' or 'finish'."
+    - "When step_type is 'action', action must be one valid action object from Available
+      actions; finish_reason must be null."
+    - "When step_type is 'finish', action must be null; finish_reason must be a non-empty
+      string explaining why you stop exploring."
+    - "Do not invent new action_type values, variables, or fields."
+    - "The only valid action_type values are 'increase' and 'decrease'. Never use 'set'."
+    - "For increase/decrease actions, do not include a 'value' field."
+    - "Do not output a final equation."
+    - "The 'action' object must always contain BOTH 'action_type' AND 'variable'.
+      Never omit 'variable'."
+
+  output_format_header: "Your answer must follow one of the JSON templates below."
+
+  output_format_action_increase_decrease: |
+    For an action step:
+    {
+      "reasoning": "brief string",
+      "step_type": "action",
+      "action": {
+        "action_type": "increase",
+        "variable": "variable_name_here"
+      },
+      "finish_reason": null
+    }
+
+    The only valid action_type values are "increase" and "decrease".
+    Do not use "set". Do not include a "value" field.
+    Replace "variable_name_here" with one of the valid input variable names from Available actions.
+    Both "action_type" and "variable" are required — never omit "variable".
+
+  output_format_finish: |
+    For a finish step:
+    {
+      "reasoning": "brief string",
+      "step_type": "finish",
+      "action": null,
+      "finish_reason": "brief reason for stopping exploration"
+    }
+
+  forced_finish_template: |
+    You have reached the maximum number of exploration steps.
+    Stop exploring.
+
+    Return only this JSON object:
+    {
+      "reasoning": "brief string",
+      "step_type": "finish",
+      "action": null,
+      "finish_reason": "maximum number of exploration steps reached"
+    }
+
+  section_headers:
+    step_types: "Allowed step types:"
+    rules: "Rules:"
+    observation: "Current observation:"
+    history: "Exploration history:"
+    output_format: "Output format:"
+
+  history_labels:
+    empty: "No actions have been taken yet."
+    step_prefix: "Step {step_id}:"
+    step_type: "step_type: {value}"
+    reasoning: "reasoning: {value}"
+    action: "action: {value}"
+    visible_state_before: "state before: {value}"
+    visible_state_after: "state after: {value}"

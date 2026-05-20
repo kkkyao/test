@@ -1,0 +1,11 @@
+experiment:
+  name: text_only_normal
+  task_mode: student_simulation
+  max_steps: 50
+  auto_evaluate: false
+  history_window: 10
+logging:
+  output_dir: outputs/text_only_normal
+  save_steps: true
+  save_trajectory: true
+  save_interaction_log: true
