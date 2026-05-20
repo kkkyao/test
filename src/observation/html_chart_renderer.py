@@ -101,6 +101,14 @@ class HtmlChartRenderer:
         )
         self._template = self._jinja_env.get_template(template_path_abs.name)
 
+        # Playwright browser — launched once and reused across all screenshots.
+        # Call close() when the renderer is no longer needed.
+        self._playwright = sync_playwright().start()
+        self._browser = self._playwright.chromium.launch(
+            headless=self.headless,
+            slow_mo=self.slow_mo,
+        )
+
     # -------------------------------------------------------------------------
     # Public API
     # -------------------------------------------------------------------------
@@ -253,13 +261,33 @@ class HtmlChartRenderer:
         html_path.write_text(html_content, encoding="utf-8")
         return str(html_path.resolve())
 
+    def close(self) -> None:
+        """
+        Release the shared Playwright browser and stop the Playwright instance.
+        Call this once when the renderer is no longer needed (e.g. after all
+        runs in an experiment are complete).
+        """
+        try:
+            self._browser.close()
+        except Exception:
+            pass
+        try:
+            self._playwright.stop()
+        except Exception:
+            pass
+
+    def __del__(self) -> None:
+        self.close()
+
     def _take_screenshot(
         self,
         html_path: str,
         step_id: Optional[int],
     ) -> str:
         """
-        Open the HTML file in a headless Chromium browser and save a screenshot.
+        Open the HTML file in the shared browser and save a screenshot.
+        A fresh page is opened and closed for each screenshot so that
+        state does not leak between steps.
         """
         filename = (
             f"step_{step_id:04d}.png" if step_id is not None else "step_none.png"
@@ -268,15 +296,12 @@ class HtmlChartRenderer:
 
         file_uri = Path(html_path).as_uri()
 
-        with sync_playwright() as pw:
-            browser = pw.chromium.launch(
-                headless=self.headless,
-                slow_mo=self.slow_mo,
-            )
-            page = browser.new_page(viewport={"width": 900, "height": 500})
+        page = self._browser.new_page(viewport={"width": 900, "height": 500})
+        try:
             page.goto(file_uri, wait_until="networkidle")
             page.screenshot(path=str(image_path), full_page=False)
-            browser.close()
+        finally:
+            page.close()
 
         return str(image_path.resolve())
 
