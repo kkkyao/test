@@ -93,6 +93,33 @@ def main() -> None:
         help="Debug option: only run first N cases.",
     )
 
+    # W&B options
+    parser.add_argument(
+        "--wandb_project",
+        type=str,
+        default=None,
+        help="W&B project name. If omitted, W&B logging is disabled.",
+    )
+    parser.add_argument(
+        "--wandb_entity",
+        type=str,
+        default=None,
+        help="Optional W&B entity/team name.",
+    )
+    parser.add_argument(
+        "--wandb_run_name",
+        type=str,
+        default=None,
+        help="Optional W&B run name. Defaults to --run_name.",
+    )
+    parser.add_argument(
+        "--wandb_mode",
+        type=str,
+        default=None,
+        choices=["online", "offline", "disabled"],
+        help="Optional W&B mode.",
+    )
+
     args = parser.parse_args()
 
     config = load_yaml(args.config)
@@ -107,7 +134,9 @@ def main() -> None:
     benchmark_name = config["benchmark"].get("name", "visual_benchmark")
     run_name = args.run_name or benchmark_name
 
-    output_root = Path(config.get("logging", {}).get("output_dir", "outputs/visual_benchmark"))
+    output_root = Path(
+        config.get("logging", {}).get("output_dir", "outputs/visual_benchmark")
+    )
     output_dir = output_root / run_name
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -115,6 +144,10 @@ def main() -> None:
         config=config,
         output_dir=str(output_dir),
         max_cases=args.max_cases,
+        wandb_project=args.wandb_project,
+        wandb_entity=args.wandb_entity,
+        wandb_run_name=args.wandb_run_name or run_name,
+        wandb_mode=args.wandb_mode,
     )
     runner.run()
 
