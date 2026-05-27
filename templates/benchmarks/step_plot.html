@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>{{ title }}</title>
+  <style>
+    body {
+      margin: 0;
+      background: #ffffff;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #111827;
+    }
+
+    .container {
+      width: {{ width }}px;
+      height: {{ height }}px;
+      box-sizing: border-box;
+      padding: 14px 18px;
+      background: #ffffff;
+    }
+
+    .title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: #4b5563;
+      margin-bottom: 6px;
+    }
+
+    svg {
+      background: #f9fafb;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+    }
+
+    .axis {
+      stroke: #111827;
+      stroke-width: 1.5;
+    }
+
+    .grid {
+      stroke: #e5e7eb;
+      stroke-width: 1;
+    }
+
+    .tick-label {
+      font-size: 12px;
+      fill: #374151;
+    }
+
+    .target-tick {
+      font-weight: 700;
+      fill: #dc2626;
+    }
+
+    .point-label {
+      font-size: 12px;
+      font-weight: 700;
+      fill: #111827;
+      paint-order: stroke;
+      stroke: #ffffff;
+      stroke-width: 3px;
+      stroke-linejoin: round;
+    }
+
+    .line-path {
+      fill: none;
+      stroke: #2563eb;
+      stroke-width: 3;
+    }
+
+    .point {
+      stroke: #ffffff;
+      stroke-width: 2;
+    }
+
+    .legend {
+      font-size: 13px;
+      fill: #374151;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="title">{{ title }} — Step {{ step_id }}</div>
+    <div class="subtitle">
+      X-axis: variables. Y-axis: {{ y_axis_label }}. Target variable: {{ target_variable }}.
+    </div>
+
+    <svg width="{{ width - 36 }}" height="{{ height - 78 }}">
+      <!-- Grid + y ticks -->
+      {% for tick in y_ticks %}
+        <line
+          class="grid"
+          x1="{{ y_axis_x }}"
+          y1="{{ tick.y }}"
+          x2="{{ y_axis_x + plot_width }}"
+          y2="{{ tick.y }}"
+        />
+        <text
+          class="tick-label"
+          x="{{ y_axis_x - 12 }}"
+          y="{{ tick.y + 4 }}"
+          text-anchor="end"
+        >
+          {{ tick.label }}
+        </text>
+      {% endfor %}
+
+      <!-- Axes -->
+      <line
+        class="axis"
+        x1="{{ y_axis_x }}"
+        y1="{{ margin_top }}"
+        x2="{{ y_axis_x }}"
+        y2="{{ x_axis_y }}"
+      />
+      <line
+        class="axis"
+        x1="{{ y_axis_x }}"
+        y1="{{ x_axis_y }}"
+        x2="{{ y_axis_x + plot_width }}"
+        y2="{{ x_axis_y }}"
+      />
+
+      <!-- X ticks -->
+      {% for tick in x_ticks %}
+        <line
+          class="axis"
+          x1="{{ tick.x }}"
+          y1="{{ x_axis_y }}"
+          x2="{{ tick.x }}"
+          y2="{{ x_axis_y + 6 }}"
+        />
+        <text
+          class="tick-label {% if tick.is_target %}target-tick{% endif %}"
+          x="{{ tick.x }}"
+          y="{{ x_axis_y + 24 }}"
+          text-anchor="middle"
+        >
+          {{ tick.label }}
+        </text>
+      {% endfor %}
+
+      <text
+        class="tick-label"
+        x="{{ y_axis_x + plot_width / 2 }}"
+        y="{{ x_axis_y + 58 }}"
+        text-anchor="middle"
+      >
+        Variables
+      </text>
+
+      <text
+        class="tick-label"
+        transform="translate(20 {{ margin_top + plot_height / 2 }}) rotate(-90)"
+        text-anchor="middle"
+      >
+        Normalized value
+      </text>
+
+      <!-- Line path only for line plot -->
+      {% if plot_type == "line" %}
+        <path class="line-path" d="{{ path }}" />
+      {% endif %}
+
+      <!-- Points -->
+      {% for p in points %}
+        <circle
+          class="point"
+          cx="{{ p.x }}"
+          cy="{{ p.y }}"
+          r="{% if p.is_target %}7{% else %}6{% endif %}"
+          fill="{{ p.color }}"
+        />
+        <text
+          class="point-label"
+          x="{{ p.x + 8 }}"
+          y="{{ p.y - 8 }}"
+        >
+          {{ p.value_label }}
+        </text>
+      {% endfor %}
+
+      <!-- Legend -->
+      <circle cx="{{ y_axis_x + plot_width - 210 }}" cy="{{ margin_top + 18 }}" r="6" fill="#2563eb" />
+      <text class="legend" x="{{ y_axis_x + plot_width - 195 }}" y="{{ margin_top + 23 }}">
+        input variable
+      </text>
+
+      <circle cx="{{ y_axis_x + plot_width - 210 }}" cy="{{ margin_top + 42 }}" r="6" fill="#dc2626" />
+      <text class="legend" x="{{ y_axis_x + plot_width - 195 }}" y="{{ margin_top + 47 }}">
+        target variable
+      </text>
+    </svg>
+  </div>
+</body>
+</html>

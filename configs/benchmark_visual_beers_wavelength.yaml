@@ -1,0 +1,146 @@
+benchmark:
+  name: visual_beers_wavelength_benchmark
+  seed: 42
+  n_sequences: 5
+  sequence_length: 5
+  round_digits: 4
+
+  modalities:
+    - text
+    - bar
+    - line
+    - scatter
+    - simulation
+
+  variables:
+    input_variables:
+      - wavelength
+      - concentration
+      - path_length
+
+    target_variable: absorbance
+
+    specs:
+      wavelength:
+        min_value: 400
+        max_value: 700
+        initial_value: 500
+        step: 50
+        decimals: 0
+
+      concentration:
+        min_value: 1
+        max_value: 5
+        initial_value: 2
+        step: 1
+        decimals: 0
+
+      path_length:
+        min_value: 1
+        max_value: 5
+        initial_value: 2
+        step: 1
+        decimals: 0
+
+      absorbance:
+        min_value: 0
+        max_value: 350
+        initial_value: 40
+        decimals: 2
+
+  # Matched to HtmlSimulationRenderer's beers_wavelength target scaling.
+  formula: "absorbance = wavelength * concentration * path_length / 50.0"
+
+  tasks:
+    - id: read_last_target
+      type: value_at_step
+      variable: target
+      step: last
+      answer_type: number
+      question: "What is the value of {target} at step {step}?"
+
+    - id: target_change_amount
+      type: change_amount
+      variable: target
+      from_step: 0
+      to_step: last
+      answer_type: number
+      question: "By how much does {target} change from step {from_step} to step {to_step}?"
+
+    - id: target_change_direction
+      type: change_direction
+      variable: target
+      from_step: 0
+      to_step: last
+      answer_type: category
+      question: "Does {target} increase, decrease, or stay the same from step {from_step} to step {to_step}?"
+
+    - id: changed_variable_0_to_1
+      type: changed_variable
+      from_step: 0
+      to_step: 1
+      answer_type: category
+      question: "Which input variable changed from step {from_step} to step {to_step}?"
+
+    - id: max_target_step
+      type: max_step
+      variable: target
+      answer_type: step
+      question: "At which step is {target} the highest?"
+
+    - id: largest_target_drop_step
+      type: largest_drop_step
+      variable: target
+      answer_type: step_or_none
+      question: "At which step does {target} show the largest drop compared with the previous step? If it never drops, answer none."
+
+visual:
+  playwright:
+    headless: true
+    slow_mo: 0
+
+  bar:
+    template_path: templates/chart_state_view.html
+    normalize_bars: true
+    exclude_variables: []
+
+  line:
+    template_path: templates/benchmarks/step_plot.html
+    width: 900
+    height: 520
+    normalize_y: true
+
+  scatter:
+    template_path: templates/benchmarks/step_plot.html
+    width: 900
+    height: 520
+    normalize_y: true
+
+  simulation:
+    simulation_type: beers_wavelength
+    template_dir: templates/simulations
+    exclude_variables: []
+    viewport:
+      width: 900
+      height: 500
+
+scoring:
+  tolerance: 0.01
+
+agent:
+  # Use mock_benchmark first to test the pipeline.
+  backend: mock_benchmark
+
+  # For real VLM run, override:
+  # backend: hf_qwen_vl
+  # model_name: Qwen/Qwen2.5-VL-3B-Instruct
+  # dtype: bfloat16
+  # device_map: auto
+  # trust_remote_code: true
+  # generation:
+  #   max_new_tokens: 128
+  #   temperature: 0.0
+  #   do_sample: false
+
+logging:
+  output_dir: outputs/visual_benchmark
