@@ -1,6 +1,7 @@
 experiment:
   name: simulation_only_mass
   max_steps: 50
+  max_parse_retries: 3
   auto_evaluate: true
   history_window: 10
 

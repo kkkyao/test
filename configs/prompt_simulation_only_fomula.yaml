@@ -27,6 +27,8 @@ prompt:
     - "When step_type is 'action', action must be one valid action object from Available actions; final_equation must be null."
     - "When step_type is 'finish', action must be null; final_equation must be a non-empty equation string."
     - "The final equation must use only these {num_variables} variables: {equation_variables}. Do not use any other variable names or numeric constants."
+    - "Write final_equation using plain ASCII only: variable names connected by +, -, *, /. Do not use LaTeX notation, backslashes, Greek symbols, or fraction syntax."
+    - "Valid final_equation example: A = epsilon * c * l."
     - "Do not invent new action_type values, variables, or fields."
     - "In this prompt, the only valid action_type values are 'increase' and 'decrease'. Never use 'set'."
     - "For increase/decrease actions, do not include a 'value' field."

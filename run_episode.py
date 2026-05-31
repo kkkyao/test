@@ -341,6 +341,13 @@ def build_vlm_callable(
 
         return hf_qwen_vl_callable
 
+    if backend in {"hf_internvl", "hf_llava_ov"}:
+        raise RuntimeError(
+            f"Unsupported backend: '{backend}'. "
+            "InternVL and LLaVA-OV are out of scope for this project. "
+            "Use 'hf_qwen_vl' (Qwen2.5-VL) or 'mock_vlm'."
+        )
+
     raise NotImplementedError(
         f"Unsupported VLM backend '{backend}'. "
         f"Supported: 'mock_vlm', 'hf_qwen_vl'."
@@ -376,6 +383,13 @@ def build_agent_text_image(
         return VisionLanguageAgent(
             model_callable=vlm_callable,
             strip_markdown_fences=True,
+        )
+
+    if backend in {"hf_internvl", "hf_llava_ov"}:
+        raise RuntimeError(
+            f"Unsupported backend: '{backend}'. "
+            "InternVL and LLaVA-OV are out of scope for this project. "
+            "Use 'hf_qwen_vl' (Qwen2.5-VL) or 'mock_vlm'."
         )
 
     raise NotImplementedError(
@@ -534,9 +548,10 @@ def main(
     variables       = environment_cfg["variables"]
     equations       = environment_cfg["equations"]
     action_mode     = actions_cfg["action_mode"]
-    max_steps       = experiment_cfg["max_steps"]
-    auto_evaluate   = experiment_cfg.get("auto_evaluate", False)
-    task_mode       = experiment_cfg.get("task_mode", "formula_discovery")
+    max_steps          = experiment_cfg["max_steps"]
+    auto_evaluate      = experiment_cfg.get("auto_evaluate", False)
+    task_mode          = experiment_cfg.get("task_mode", "formula_discovery")
+    max_parse_retries  = experiment_cfg.get("max_parse_retries", 1)
     naming_mode     = representation_cfg.get("naming_mode", "concrete")
     metadata_level  = representation_cfg.get("metadata_level", "minimal")
     name_mapping    = representation_cfg.get("name_mapping", {})
@@ -602,6 +617,7 @@ def main(
         max_steps=max_steps,
         image_history_window=image_history_window,
         task_mode=task_mode,
+        max_parse_retries=max_parse_retries,
     )
 
     # ── Logger ────────────────────────────────────────────────────────────────

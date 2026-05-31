@@ -1,6 +1,7 @@
 experiment:
   name: beers_abstract
   max_steps: 50
+  max_parse_retries: 3
   history_window: null
   auto_evaluate: true
 

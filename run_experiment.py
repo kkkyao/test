@@ -101,59 +101,6 @@ def compute_aggregate(all_evaluations: List[Dict[str, Any]]) -> Dict[str, Any]:
     }
 
 
-def load_config_with_file_overrides(
-    config_path: str,
-    *,
-    experiment_config: Optional[str] = None,
-    env_config: Optional[str] = None,
-    model_config: Optional[str] = None,
-    prompt_config: Optional[str] = None,
-) -> Dict[str, Any]:
-    """
-    Load the main config while allowing CLI overrides for all four config pointers.
-
-    load_config() already supports env/model overrides. If experiment/prompt are
-    overridden here, create a temporary main config in the same directory as the
-    original main config so relative paths keep resolving exactly as before.
-    """
-    if experiment_config is None and prompt_config is None:
-        return load_config(
-            config_path,
-            env_config_override=env_config,
-            model_config_override=model_config,
-        )
-
-    try:
-        import yaml
-    except ImportError as e:
-        raise ImportError(
-            "PyYAML is required for --experiment_config / --prompt_config overrides. "
-            "Install with: pip install pyyaml"
-        ) from e
-
-    base_path = Path(config_path)
-    with base_path.open("r", encoding="utf-8") as f:
-        main_cfg = yaml.safe_load(f) or {}
-
-    if experiment_config is not None:
-        main_cfg["experiment_config"] = experiment_config
-    if prompt_config is not None:
-        main_cfg["prompt_config"] = prompt_config
-
-    tmp_path = base_path.parent / f".tmp_{base_path.stem}_overrides_{os.getpid()}.yaml"
-    try:
-        with tmp_path.open("w", encoding="utf-8") as f:
-            yaml.safe_dump(main_cfg, f, sort_keys=False, allow_unicode=True)
-
-        return load_config(
-            str(tmp_path),
-            env_config_override=env_config,
-            model_config_override=model_config,
-        )
-    finally:
-        tmp_path.unlink(missing_ok=True)
-
-
 def compute_aggregate_simulation(all_results: List[Dict[str, Any]]) -> Dict[str, Any]:
     """
     Aggregate metrics for student_simulation runs.
@@ -204,8 +151,9 @@ def main(
     variables        = environment_cfg["variables"]
     equations        = environment_cfg["equations"]
     action_mode      = actions_cfg["action_mode"]
-    max_steps        = experiment_cfg["max_steps"]
-    task_mode        = experiment_cfg.get("task_mode", "formula_discovery")
+    max_steps         = experiment_cfg["max_steps"]
+    task_mode         = experiment_cfg.get("task_mode", "formula_discovery")
+    max_parse_retries = experiment_cfg.get("max_parse_retries", 1)
     naming_mode      = representation_cfg.get("naming_mode", "concrete")
     metadata_level   = representation_cfg.get("metadata_level", "minimal")
     name_mapping     = representation_cfg.get("name_mapping", {})
@@ -362,6 +310,7 @@ def main(
             max_steps=max_steps,
             image_history_window=image_history_window,
             task_mode=task_mode,
+            max_parse_retries=max_parse_retries,
         )
 
         result = runner.run_episode()

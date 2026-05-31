@@ -1,0 +1,243 @@
+priority,modality,formula,setup,model,total_episodes,parse_error_episodes,parse_error_rate,suggested_n_runs,reason
+1,Text-only,mass,abstract,model_mistral_7b,10,7,0.7,30,parse_error_rate=70.0% (>5%) or parse_error_episodes=7 (≥2)
+1,Text-only,ohm,abstract,model_mistral_7b,9,5,0.5556,30,parse_error_rate=55.6% (>5%) or parse_error_episodes=5 (≥2)
+1,Text-only,distance,abbrev,model_mistral_7b,10,5,0.5,30,parse_error_rate=50.0% (>5%) or parse_error_episodes=5 (≥2)
+1,Text-only,kinematics,abstract,model_mistral_7b,10,5,0.5,30,parse_error_rate=50.0% (>5%) or parse_error_episodes=5 (≥2)
+1,Text-only,kinematics,abstract,model_qwen35_9b,10,5,0.5,30,parse_error_rate=50.0% (>5%) or parse_error_episodes=5 (≥2)
+1,Text-only,kinematics,abstract,model_qwen35_4b,10,4,0.4,30,parse_error_rate=40.0% (>5%) or parse_error_episodes=4 (≥2)
+1,Text-only,beers,abbrev,model_mistral_7b,10,3,0.3,30,parse_error_rate=30.0% (>5%) or parse_error_episodes=3 (≥2)
+1,Text-only,beers,abstract,model_mistral_7b,10,3,0.3,30,parse_error_rate=30.0% (>5%) or parse_error_episodes=3 (≥2)
+1,Text-only,beers,concrete,model_mistral_7b,10,3,0.3,30,parse_error_rate=30.0% (>5%) or parse_error_episodes=3 (≥2)
+1,Text-only,mass,abbrev,model_mistral_7b,10,3,0.3,30,parse_error_rate=30.0% (>5%) or parse_error_episodes=3 (≥2)
+1,Text-only,resistors,abstract,model_mistral_7b,10,3,0.3,30,parse_error_rate=30.0% (>5%) or parse_error_episodes=3 (≥2)
+1,Chart-only,beers,abbrev,model_qwen25_vl_3b,10,2,0.2,30,parse_error_rate=20.0% (>5%) or parse_error_episodes=2 (≥2)
+1,Chart-only,kinematics,abbrev,model_qwen25_vl_7b,10,2,0.2,30,parse_error_rate=20.0% (>5%) or parse_error_episodes=2 (≥2)
+1,Text-only,distance,abstract,model_mistral_7b,10,2,0.2,30,parse_error_rate=20.0% (>5%) or parse_error_episodes=2 (≥2)
+1,Text-only,kinematics,abbrev,model_mistral_7b,10,2,0.2,30,parse_error_rate=20.0% (>5%) or parse_error_episodes=2 (≥2)
+1,Text-only,mass,concrete,model_mistral_7b,10,2,0.2,30,parse_error_rate=20.0% (>5%) or parse_error_episodes=2 (≥2)
+1,Text-only,ohm,concrete,model_mistral_7b,10,2,0.2,30,parse_error_rate=20.0% (>5%) or parse_error_episodes=2 (≥2)
+1,Text-only,resistors,abbrev,model_mistral_7b,10,2,0.2,30,parse_error_rate=20.0% (>5%) or parse_error_episodes=2 (≥2)
+1,Chart-only,beers,concrete,model_qwen25_vl_3b,10,1,0.1,30,parse_error_rate=10.0% (>5%) or parse_error_episodes=1 (≥2)
+1,Chart-only,distance,concrete,model_qwen25_vl_3b,10,1,0.1,30,parse_error_rate=10.0% (>5%) or parse_error_episodes=1 (≥2)
+1,Simulation-only,beers,abbrev,model_qwen25_vl_3b,10,1,0.1,30,parse_error_rate=10.0% (>5%) or parse_error_episodes=1 (≥2)
+1,Simulation-only,kinematics,abbrev,model_qwen25_vl_7b,10,1,0.1,30,parse_error_rate=10.0% (>5%) or parse_error_episodes=1 (≥2)
+1,Simulation-only,kinematics,abstract,model_qwen25_vl_3b,10,1,0.1,30,parse_error_rate=10.0% (>5%) or parse_error_episodes=1 (≥2)
+1,Text+image,beers,concrete,model_qwen25_vl_3b,10,1,0.1,30,parse_error_rate=10.0% (>5%) or parse_error_episodes=1 (≥2)
+1,Text+image,ohm,abstract,model_qwen25_vl_3b,10,1,0.1,30,parse_error_rate=10.0% (>5%) or parse_error_episodes=1 (≥2)
+1,Text-only,kinematics,concrete,model_mistral_7b,10,1,0.1,30,parse_error_rate=10.0% (>5%) or parse_error_episodes=1 (≥2)
+1,Text-only,ohm,abbrev,model_mistral_7b,10,1,0.1,30,parse_error_rate=10.0% (>5%) or parse_error_episodes=1 (≥2)
+1,Text-only,resistors,concrete,model_mistral_7b,10,1,0.1,30,parse_error_rate=10.0% (>5%) or parse_error_episodes=1 (≥2)
+3,Chart-only,beers,abbrev,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Chart-only,beers,abstract,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Chart-only,beers,abstract,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Chart-only,beers,concrete,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Chart-only,distance,abbrev,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Chart-only,distance,abbrev,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Chart-only,distance,abstract,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Chart-only,distance,abstract,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Chart-only,distance,concrete,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Chart-only,kinematics,abbrev,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Chart-only,kinematics,abstract,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Chart-only,kinematics,abstract,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Chart-only,kinematics,concrete,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Chart-only,kinematics,concrete,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Chart-only,mass,abbrev,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Chart-only,mass,abbrev,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Chart-only,mass,abstract,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Chart-only,mass,abstract,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Chart-only,mass,concrete,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Chart-only,mass,concrete,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Chart-only,ohm,abbrev,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Chart-only,ohm,abbrev,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Chart-only,ohm,abstract,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Chart-only,ohm,abstract,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Chart-only,ohm,concrete,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Chart-only,ohm,concrete,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Chart-only,resistors,abbrev,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Chart-only,resistors,abbrev,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Chart-only,resistors,abstract,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Chart-only,resistors,abstract,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Chart-only,resistors,concrete,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Chart-only,resistors,concrete,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,beers,abbrev,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,beers,abstract,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,beers,abstract,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,beers,concrete,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,beers,concrete,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,distance,abbrev,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,distance,abbrev,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,distance,abstract,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,distance,abstract,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,distance,concrete,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,distance,concrete,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,kinematics,abbrev,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,kinematics,abstract,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,kinematics,concrete,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,kinematics,concrete,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,mass,abbrev,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,mass,abbrev,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,mass,abstract,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,mass,abstract,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,mass,concrete,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,mass,concrete,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,ohm,abbrev,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,ohm,abbrev,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,ohm,abstract,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,ohm,abstract,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,ohm,concrete,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,ohm,concrete,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,resistors,abbrev,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,resistors,abbrev,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,resistors,abstract,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,resistors,abstract,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,resistors,concrete,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Simulation-only,resistors,concrete,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Student-simulation,beers_wavelength,unknown,model_qwen25_vl_3b,40,0,0.0,0,no parse errors observed
+3,Student-simulation,beers_wavelength,unknown,model_qwen25_vl_7b,40,0,0.0,0,no parse errors observed
+3,Student-simulation,beers_wavelength,unknown,model_qwen35_4b,20,0,0.0,0,no parse errors observed
+3,Student-simulation,beers_wavelength,unknown,model_qwen35_9b,20,0,0.0,0,no parse errors observed
+3,Student-simulation,concentration,unknown,model_qwen25_vl_3b,40,0,0.0,0,no parse errors observed
+3,Student-simulation,concentration,unknown,model_qwen25_vl_7b,40,0,0.0,0,no parse errors observed
+3,Student-simulation,concentration,unknown,model_qwen35_4b,20,0,0.0,0,no parse errors observed
+3,Student-simulation,concentration,unknown,model_qwen35_9b,20,0,0.0,0,no parse errors observed
+3,Text+image,beers,abbrev,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Text+image,beers,abbrev,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Text+image,beers,abstract,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Text+image,beers,abstract,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Text+image,beers,concrete,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Text+image,distance,abbrev,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Text+image,distance,abbrev,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Text+image,distance,abstract,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Text+image,distance,abstract,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Text+image,distance,concrete,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Text+image,distance,concrete,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Text+image,kinematics,abbrev,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Text+image,kinematics,abbrev,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Text+image,kinematics,abstract,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Text+image,kinematics,abstract,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Text+image,kinematics,concrete,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Text+image,kinematics,concrete,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Text+image,mass,abbrev,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Text+image,mass,abbrev,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Text+image,mass,abstract,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Text+image,mass,abstract,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Text+image,mass,concrete,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Text+image,mass,concrete,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Text+image,ohm,abbrev,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Text+image,ohm,abbrev,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Text+image,ohm,abstract,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Text+image,ohm,concrete,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Text+image,ohm,concrete,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Text+image,resistors,abbrev,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Text+image,resistors,abbrev,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Text+image,resistors,abstract,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Text+image,resistors,abstract,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Text+image,resistors,concrete,model_qwen25_vl_3b,10,0,0.0,0,no parse errors observed
+3,Text+image,resistors,concrete,model_qwen25_vl_7b,10,0,0.0,0,no parse errors observed
+3,Text-only,beers,abbrev,model_gemma3_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,beers,abbrev,model_llama31_8b,10,0,0.0,0,no parse errors observed
+3,Text-only,beers,abbrev,model_qwen25_3b,10,0,0.0,0,no parse errors observed
+3,Text-only,beers,abbrev,model_qwen25_7b,10,0,0.0,0,no parse errors observed
+3,Text-only,beers,abbrev,model_qwen35_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,beers,abbrev,model_qwen35_9b,10,0,0.0,0,no parse errors observed
+3,Text-only,beers,abstract,model_gemma3_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,beers,abstract,model_llama31_8b,10,0,0.0,0,no parse errors observed
+3,Text-only,beers,abstract,model_qwen25_3b,10,0,0.0,0,no parse errors observed
+3,Text-only,beers,abstract,model_qwen25_7b,10,0,0.0,0,no parse errors observed
+3,Text-only,beers,abstract,model_qwen35_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,beers,abstract,model_qwen35_9b,10,0,0.0,0,no parse errors observed
+3,Text-only,beers,concrete,model_gemma3_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,beers,concrete,model_llama31_8b,10,0,0.0,0,no parse errors observed
+3,Text-only,beers,concrete,model_qwen25_3b,10,0,0.0,0,no parse errors observed
+3,Text-only,beers,concrete,model_qwen25_7b,10,0,0.0,0,no parse errors observed
+3,Text-only,beers,concrete,model_qwen35_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,beers,concrete,model_qwen35_9b,10,0,0.0,0,no parse errors observed
+3,Text-only,distance,abbrev,model_gemma3_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,distance,abbrev,model_llama31_8b,10,0,0.0,0,no parse errors observed
+3,Text-only,distance,abbrev,model_qwen25_3b,10,0,0.0,0,no parse errors observed
+3,Text-only,distance,abbrev,model_qwen25_7b,10,0,0.0,0,no parse errors observed
+3,Text-only,distance,abbrev,model_qwen35_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,distance,abbrev,model_qwen35_9b,10,0,0.0,0,no parse errors observed
+3,Text-only,distance,abstract,model_gemma3_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,distance,abstract,model_llama31_8b,10,0,0.0,0,no parse errors observed
+3,Text-only,distance,abstract,model_qwen25_3b,10,0,0.0,0,no parse errors observed
+3,Text-only,distance,abstract,model_qwen25_7b,10,0,0.0,0,no parse errors observed
+3,Text-only,distance,abstract,model_qwen35_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,distance,abstract,model_qwen35_9b,10,0,0.0,0,no parse errors observed
+3,Text-only,distance,concrete,model_gemma3_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,distance,concrete,model_llama31_8b,10,0,0.0,0,no parse errors observed
+3,Text-only,distance,concrete,model_mistral_7b,10,0,0.0,0,no parse errors observed
+3,Text-only,distance,concrete,model_qwen25_3b,10,0,0.0,0,no parse errors observed
+3,Text-only,distance,concrete,model_qwen25_7b,10,0,0.0,0,no parse errors observed
+3,Text-only,distance,concrete,model_qwen35_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,distance,concrete,model_qwen35_9b,10,0,0.0,0,no parse errors observed
+3,Text-only,kinematics,abbrev,model_gemma3_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,kinematics,abbrev,model_llama31_8b,10,0,0.0,0,no parse errors observed
+3,Text-only,kinematics,abbrev,model_qwen25_3b,10,0,0.0,0,no parse errors observed
+3,Text-only,kinematics,abbrev,model_qwen25_7b,10,0,0.0,0,no parse errors observed
+3,Text-only,kinematics,abbrev,model_qwen35_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,kinematics,abbrev,model_qwen35_9b,10,0,0.0,0,no parse errors observed
+3,Text-only,kinematics,abstract,model_gemma3_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,kinematics,abstract,model_llama31_8b,10,0,0.0,0,no parse errors observed
+3,Text-only,kinematics,abstract,model_qwen25_3b,10,0,0.0,0,no parse errors observed
+3,Text-only,kinematics,abstract,model_qwen25_7b,10,0,0.0,0,no parse errors observed
+3,Text-only,kinematics,concrete,model_gemma3_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,kinematics,concrete,model_llama31_8b,10,0,0.0,0,no parse errors observed
+3,Text-only,kinematics,concrete,model_qwen25_3b,10,0,0.0,0,no parse errors observed
+3,Text-only,kinematics,concrete,model_qwen25_7b,10,0,0.0,0,no parse errors observed
+3,Text-only,kinematics,concrete,model_qwen35_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,kinematics,concrete,model_qwen35_9b,10,0,0.0,0,no parse errors observed
+3,Text-only,mass,abbrev,model_gemma3_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,mass,abbrev,model_llama31_8b,10,0,0.0,0,no parse errors observed
+3,Text-only,mass,abbrev,model_qwen25_3b,10,0,0.0,0,no parse errors observed
+3,Text-only,mass,abbrev,model_qwen25_7b,10,0,0.0,0,no parse errors observed
+3,Text-only,mass,abbrev,model_qwen35_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,mass,abbrev,model_qwen35_9b,10,0,0.0,0,no parse errors observed
+3,Text-only,mass,abstract,model_gemma3_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,mass,abstract,model_llama31_8b,10,0,0.0,0,no parse errors observed
+3,Text-only,mass,abstract,model_qwen25_3b,10,0,0.0,0,no parse errors observed
+3,Text-only,mass,abstract,model_qwen25_7b,10,0,0.0,0,no parse errors observed
+3,Text-only,mass,abstract,model_qwen35_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,mass,abstract,model_qwen35_9b,10,0,0.0,0,no parse errors observed
+3,Text-only,mass,concrete,model_gemma3_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,mass,concrete,model_llama31_8b,10,0,0.0,0,no parse errors observed
+3,Text-only,mass,concrete,model_qwen25_3b,10,0,0.0,0,no parse errors observed
+3,Text-only,mass,concrete,model_qwen25_7b,10,0,0.0,0,no parse errors observed
+3,Text-only,mass,concrete,model_qwen35_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,mass,concrete,model_qwen35_9b,10,0,0.0,0,no parse errors observed
+3,Text-only,ohm,abbrev,model_gemma3_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,ohm,abbrev,model_llama31_8b,10,0,0.0,0,no parse errors observed
+3,Text-only,ohm,abbrev,model_qwen25_3b,10,0,0.0,0,no parse errors observed
+3,Text-only,ohm,abbrev,model_qwen25_7b,10,0,0.0,0,no parse errors observed
+3,Text-only,ohm,abbrev,model_qwen35_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,ohm,abbrev,model_qwen35_9b,10,0,0.0,0,no parse errors observed
+3,Text-only,ohm,abstract,model_gemma3_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,ohm,abstract,model_llama31_8b,10,0,0.0,0,no parse errors observed
+3,Text-only,ohm,abstract,model_qwen25_3b,10,0,0.0,0,no parse errors observed
+3,Text-only,ohm,abstract,model_qwen25_7b,10,0,0.0,0,no parse errors observed
+3,Text-only,ohm,abstract,model_qwen35_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,ohm,abstract,model_qwen35_9b,10,0,0.0,0,no parse errors observed
+3,Text-only,ohm,concrete,model_gemma3_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,ohm,concrete,model_llama31_8b,10,0,0.0,0,no parse errors observed
+3,Text-only,ohm,concrete,model_qwen25_3b,10,0,0.0,0,no parse errors observed
+3,Text-only,ohm,concrete,model_qwen25_7b,10,0,0.0,0,no parse errors observed
+3,Text-only,ohm,concrete,model_qwen35_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,ohm,concrete,model_qwen35_9b,10,0,0.0,0,no parse errors observed
+3,Text-only,resistors,abbrev,model_gemma3_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,resistors,abbrev,model_llama31_8b,10,0,0.0,0,no parse errors observed
+3,Text-only,resistors,abbrev,model_qwen25_3b,10,0,0.0,0,no parse errors observed
+3,Text-only,resistors,abbrev,model_qwen25_7b,10,0,0.0,0,no parse errors observed
+3,Text-only,resistors,abbrev,model_qwen35_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,resistors,abbrev,model_qwen35_9b,10,0,0.0,0,no parse errors observed
+3,Text-only,resistors,abstract,model_gemma3_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,resistors,abstract,model_llama31_8b,10,0,0.0,0,no parse errors observed
+3,Text-only,resistors,abstract,model_qwen25_3b,10,0,0.0,0,no parse errors observed
+3,Text-only,resistors,abstract,model_qwen25_7b,10,0,0.0,0,no parse errors observed
+3,Text-only,resistors,abstract,model_qwen35_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,resistors,abstract,model_qwen35_9b,10,0,0.0,0,no parse errors observed
+3,Text-only,resistors,concrete,model_gemma3_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,resistors,concrete,model_llama31_8b,10,0,0.0,0,no parse errors observed
+3,Text-only,resistors,concrete,model_qwen25_3b,10,0,0.0,0,no parse errors observed
+3,Text-only,resistors,concrete,model_qwen25_7b,10,0,0.0,0,no parse errors observed
+3,Text-only,resistors,concrete,model_qwen35_4b,10,0,0.0,0,no parse errors observed
+3,Text-only,resistors,concrete,model_qwen35_9b,10,0,0.0,0,no parse errors observed

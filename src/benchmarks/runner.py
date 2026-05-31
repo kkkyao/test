@@ -161,6 +161,13 @@ class VisualBenchmarkRunner:
             self.model_callable = build_model_callable(self.agent_cfg)
             return
 
+        if self.backend in {"hf_internvl", "hf_llava_ov"}:
+            raise RuntimeError(
+                f"Unsupported backend: '{self.backend}'. "
+                "InternVL and LLaVA-OV are out of scope for this project. "
+                "Use 'hf_qwen_vl' (Qwen2.5-VL), 'mock_vlm', 'hf_qwen', or 'mock_benchmark'."
+            )
+
         raise ValueError(
             f"Unsupported benchmark backend: {self.backend}. "
             "Use mock_benchmark, hf_qwen_vl, mock_vlm, hf_qwen, or mock."

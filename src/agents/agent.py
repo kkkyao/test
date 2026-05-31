@@ -9,6 +9,30 @@ from src.schemas.agent_output_schema import AgentStep
 
 _VALID_STEP_TYPES = {"action", "finish"}
 
+# Characters that are valid after a backslash in a JSON string literal.
+# JSON spec: " \ / b f n r t u  (u must be followed by 4 hex digits)
+_VALID_JSON_ESCAPE_CHARS = frozenset('"\\\/bfnrtu')
+
+
+class ParseError(ValueError):
+    """
+    ValueError subclass raised when model output cannot be parsed or
+    validated against the agent output schema.
+
+    Carries the raw model output and cleaned (JSON-extracted) output so
+    callers can log the full text without truncation.
+    """
+
+    def __init__(
+        self,
+        message: str,
+        raw_output: str = "",
+        cleaned_output: str = "",
+    ) -> None:
+        super().__init__(message)
+        self.raw_output = raw_output
+        self.cleaned_output = cleaned_output
+
 
 class TextLLMAgent:
     """
@@ -80,36 +104,46 @@ class TextLLMAgent:
         raw_text: str,
         strip_markdown_fences: bool = True,
     ) -> AgentStep:
+        """
+        Parse raw model output into an AgentStep.
+
+        Raises ParseError (a ValueError subclass) on any parsing or schema
+        failure.  The exception carries:
+          .raw_output     – the original model output string (full, untruncated)
+          .cleaned_output – the JSON candidate extracted by _clean_output
+        """
         cleaned = TextLLMAgent._clean_output(raw_text, strip_markdown_fences)
+
+        def _fail(msg: str) -> None:
+            raise ParseError(msg, raw_output=raw_text, cleaned_output=cleaned)
 
         try:
             data = json.loads(cleaned)
         except json.JSONDecodeError as e:
-            # Include a short, readable excerpt of what we tried to parse.
-            # The full raw output is already stored in TraceStep.raw_model_output,
-            # so there is no need to dump the entire string into the error message.
             excerpt = cleaned[:300].replace("\n", "\\n")
-            raise ValueError(
+            raise ParseError(
                 f"[json_decode] model output is not valid JSON "
-                f"(error: {e.msg} at pos {e.pos}): {excerpt!r}"
+                f"(error: {e.msg} at pos {e.pos}): {excerpt!r}",
+                raw_output=raw_text,
+                cleaned_output=cleaned,
             ) from e
 
         if not isinstance(data, dict):
-            raise ValueError("[schema] model output JSON must be an object")
+            _fail("[schema] model output JSON must be an object")
 
         if "hypothesis" in data:
-            raise ValueError("[schema] model output JSON must not contain 'hypothesis'")
+            _fail("[schema] model output JSON must not contain 'hypothesis'")
 
         if "step_type" not in data:
-            raise ValueError("[schema] model output JSON must contain 'step_type'")
+            _fail("[schema] model output JSON must contain 'step_type'")
 
         if not isinstance(data["step_type"], str):
-            raise ValueError("[schema] 'step_type' must be a string")
+            _fail("[schema] 'step_type' must be a string")
 
         step_type = data["step_type"]
 
         if step_type not in _VALID_STEP_TYPES:
-            raise ValueError(
+            _fail(
                 f"[schema] invalid step_type: '{step_type}'. "
                 f"Must be one of: {sorted(_VALID_STEP_TYPES)}"
             )
@@ -117,45 +151,41 @@ class TextLLMAgent:
         # reasoning is required on every step
         reasoning = data.get("reasoning")
         if not isinstance(reasoning, str) or not reasoning.strip():
-            raise ValueError("[schema] 'reasoning' must be a non-empty string on every step")
+            _fail("[schema] 'reasoning' must be a non-empty string on every step")
 
         # step_type-specific constraints
         if step_type == "action" and data.get("action") is None:
-            raise ValueError("[schema] 'action' must be provided when step_type='action'")
+            _fail("[schema] 'action' must be provided when step_type='action'")
 
         if step_type == "finish" and data.get("action") is not None:
-            raise ValueError("[schema] 'action' must be null when step_type='finish'")
+            _fail("[schema] 'action' must be null when step_type='finish'")
 
         action = None
         if data.get("action") is not None:
             if not isinstance(data["action"], dict):
-                raise ValueError("[schema] 'action' must be an object or null")
+                _fail("[schema] 'action' must be an object or null")
 
             action_data = data["action"]
 
             if "action_type" not in action_data:
-                raise ValueError("[schema] 'action.action_type' is required when action is provided")
+                _fail("[schema] 'action.action_type' is required when action is provided")
 
             if "variable" not in action_data:
-                raise ValueError("[schema] 'action.variable' is required when action is provided")
+                _fail("[schema] 'action.variable' is required when action is provided")
 
             action_type = action_data.get("action_type")
 
             if action_type in {"increase", "decrease"} and "value" in action_data:
-                raise ValueError(
+                _fail(
                     "[schema] 'action.value' must not be present when action_type is "
                     "'increase' or 'decrease'"
                 )
 
             if action_type == "set":
                 if "value" not in action_data:
-                    raise ValueError(
-                        "[schema] 'action.value' is required when action_type='set'"
-                    )
+                    _fail("[schema] 'action.value' is required when action_type='set'")
                 if not isinstance(action_data.get("value"), (int, float)):
-                    raise ValueError(
-                        "[schema] 'action.value' must be numeric when action_type='set'"
-                    )
+                    _fail("[schema] 'action.value' must be numeric when action_type='set'")
 
             action = ActionSpec(
                 action_type=action_type,
@@ -263,19 +293,21 @@ class TextLLMAgent:
 
     @staticmethod
     def _repair(text: str) -> str:
-        """
+        r"""
         Apply lightweight fixes for JSON formatting mistakes that
-        7B instruction-tuned models (e.g. Mistral-7B) commonly produce.
+        instruction-tuned models commonly produce.
 
         Fixes applied (in order):
         1. Escape literal (unescaped) newlines, carriage returns, and tabs
-           that appear inside quoted string values.  This is the most common
-           cause of JSONDecodeError when the extracted candidate looks valid
-           in a W&B table but still fails json.loads.
-        2. Remove trailing commas before } or ]  (e.g.  {"a": 1,} ).
-        3. Replace Python-style None / True / False with JSON null / true / false.
+           inside quoted string values.
+        2. Fix invalid JSON backslash escape sequences inside string values.
+           JSON only allows: \" \\ \/ \b \f \n \r \t \uXXXX.
+           Any other \X (e.g. \epsilon, \frac, \cdot from LaTeX) is made safe
+           by doubling the backslash: \epsilon -> \\epsilon.
+        3. Remove trailing commas before } or ].
+        4. Replace Python-style None / True / False with JSON null / true / false.
         """
-        # 1. Escape literal control characters inside quoted strings.
+        # Steps 1 + 2: character-by-character pass over string values.
         in_string = False
         escape_next = False
         repaired: list[str] = []
@@ -283,11 +315,16 @@ class TextLLMAgent:
         for ch in text:
             if escape_next:
                 escape_next = False
+                if in_string and ch not in _VALID_JSON_ESCAPE_CHARS:
+                    # The preceding backslash (already in repaired) starts an
+                    # invalid escape sequence.  Double it so that e.g.
+                    # \epsilon becomes \\epsilon (valid JSON -> value \epsilon).
+                    repaired[-1] = "\\\\"
                 repaired.append(ch)
                 continue
             if ch == "\\" and in_string:
                 escape_next = True
-                repaired.append(ch)
+                repaired.append(ch)  # may be replaced above if next char is invalid
                 continue
             if ch == '"':
                 in_string = not in_string
@@ -307,10 +344,10 @@ class TextLLMAgent:
 
         fixed = "".join(repaired)
 
-        # 2. Trailing commas
+        # Step 3. Trailing commas
         fixed = re.sub(r",(\s*[}\]])", r"\1", fixed)
 
-        # 3. Python literals
+        # Step 4. Python literals
         fixed = re.sub(r"\bNone\b", "null", fixed)
         fixed = re.sub(r"\bTrue\b", "true", fixed)
         fixed = re.sub(r"\bFalse\b", "false", fixed)
