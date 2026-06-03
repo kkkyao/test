@@ -52,3 +52,14 @@ download_wandb*.py
 
 # Windows metadata files
 *:Zone.Identifier
+
+# Claude Code local settings (personal tool config, not for sharing)
+.claude/
+
+# Experiment result data (large, re-downloadable / re-computable)
+wandb_visual_benchmark_downloads/
+hmm_results_beers_wavelength/
+hmm_results_beers_wavelength_metadata_fixed/
+hmm_results_numpy_human_vs_model/
+processed_model_student_traces/
+processed_model_student_traces_metadata_fixed/

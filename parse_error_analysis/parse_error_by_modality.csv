@@ -1,6 +1,0 @@
-modality,total_episodes,parse_error_episodes,parse_error_rate
-Chart-only,360,6,0.0167
-Simulation-only,360,3,0.0083
-Student-simulation,240,0,0.0
-Text+image,360,2,0.0056
-Text-only,1259,59,0.0469

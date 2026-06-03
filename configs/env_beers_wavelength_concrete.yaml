@@ -60,3 +60,6 @@ noise:
   enabled: false
   type: null
   params: {}
+
+display:
+  output_bar_range: [0, 1500]

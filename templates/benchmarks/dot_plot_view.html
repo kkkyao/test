@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dot Plot — Step {{ step_id }}</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: {{ width }}px;
+      height: {{ height }}px;
+      background: #ffffff;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #1a1a1a;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 28px 8px;
+      border-bottom: 2px solid #e8e8e8;
+      flex: 0 0 auto;
+    }
+    .header-title { font-size: 14px; font-weight: 600; color: #333; }
+    .header-meta  { font-size: 12px; color: #888; }
+
+    .panel {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-label {
+      flex: 0 0 26px;
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: #f5f7fa;
+      color: #4a90d9;
+      border-bottom: 1px solid #dce8f5;
+    }
+
+    .chart-wrapper {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    svg { display: block; }
+
+    .axis       { stroke: #555; stroke-width: 1.5; fill: none; }
+    .grid-line  { stroke: #e8e8e8; stroke-width: 1; }
+    .tick-label { font-size: 12px; fill: #666; }
+    .var-label  { font-size: 15px; fill: #333; font-weight: 700; }
+    .dot-label  {
+      font-size: 13px; font-weight: 700; fill: #1d4ed8;
+      paint-order: stroke; stroke: #ffffff;
+      stroke-width: 3px; stroke-linejoin: round;
+    }
+    .axis-title { font-size: 11px; fill: #888; }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="header-title">Current State</div>
+  <div class="header-meta">Step <strong>{{ step_id }}</strong></div>
+</div>
+
+<div class="panel">
+  <div class="panel-label">Controls — vertical dot chart</div>
+
+  <div class="chart-wrapper">
+    <svg width="{{ svg_w }}" height="{{ svg_h }}">
+
+      <!-- Horizontal grid lines + Y-axis tick labels -->
+      {% for tick in y_ticks %}
+      <line class="grid-line"
+        x1="{{ plot_x }}" y1="{{ tick.y }}"
+        x2="{{ plot_x + plot_w }}" y2="{{ tick.y }}"
+      />
+      <text class="tick-label"
+        x="{{ plot_x - 10 }}" y="{{ tick.y + 4 }}"
+        text-anchor="end">{{ tick.label }}</text>
+      {% endfor %}
+
+      <!-- Y axis -->
+      <line class="axis"
+        x1="{{ plot_x }}" y1="{{ plot_y }}"
+        x2="{{ plot_x }}" y2="{{ plot_y + plot_h }}"
+      />
+
+      <!-- X axis -->
+      <line class="axis"
+        x1="{{ plot_x }}" y1="{{ plot_y + plot_h }}"
+        x2="{{ plot_x + plot_w }}" y2="{{ plot_y + plot_h }}"
+      />
+
+      <!-- Y axis title -->
+      <text class="axis-title"
+        transform="translate(14 {{ plot_y + plot_h / 2 }}) rotate(-90)"
+        text-anchor="middle">Value (1–10)</text>
+
+      <!-- Variable name labels on x-axis -->
+      {% for p in points %}
+      <text class="var-label"
+        x="{{ p.x }}" y="{{ plot_y + plot_h + 28 }}"
+        text-anchor="middle">{{ p.name }}</text>
+      {% endfor %}
+
+      <!-- Reference lines from x-axis up to each dot (subtle) -->
+      {% for p in points %}
+      <line
+        x1="{{ p.x }}" y1="{{ p.y }}"
+        x2="{{ p.x }}" y2="{{ plot_y + plot_h }}"
+        stroke="#d0d8e4" stroke-width="1" stroke-dasharray="4 4"
+      />
+      {% endfor %}
+
+      <!-- Dots -->
+      {% for p in points %}
+      <circle
+        cx="{{ p.x }}" cy="{{ p.y }}"
+        r="10"
+        fill="#4a90d9"
+        stroke="#ffffff" stroke-width="2"
+      />
+      <!-- Value label (OCR-assisted only) -->
+      {% if show_values %}
+      <text class="dot-label"
+        x="{{ p.x }}" y="{{ p.y - 16 }}"
+        text-anchor="middle">{{ p.value_label }}</text>
+      {% endif %}
+      {% endfor %}
+
+    </svg>
+  </div>
+</div>
+
+</body>
+</html>

@@ -118,6 +118,7 @@ class VisualBenchmarkRunner:
                     "raw_output": raw_output,
                     "image_paths": image_paths,
                     "states": case.states,
+                    "pair_id": case.pair_id,
                 }
 
                 results.append(result)
@@ -204,7 +205,7 @@ class VisualBenchmarkRunner:
     # ------------------------------------------------------------------
 
     def _aggregate(self, results: List[Dict[str, Any]]) -> Dict[str, Any]:
-        return {
+        agg = {
             "overall": self._aggregate_subset(results),
             "by_modality": self._aggregate_by(results, ["modality"]),
             "by_task_type": self._aggregate_by(results, ["task_type"]),
@@ -212,7 +213,120 @@ class VisualBenchmarkRunner:
                 results,
                 ["modality", "task_type"],
             ),
+            "paired_accuracy": self._aggregate_paired(results),
+            "ocr_gain": self._aggregate_ocr_gain(results),
         }
+        return agg
+
+    # ------------------------------------------------------------------
+    # Paired Acc++ (Acc+)
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _aggregate_paired(results: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """
+        Acc++: a pair is correct only if BOTH positive and negative cases are correct.
+
+        Groups cases by pair_id; skips cases without pair_id.
+        Reports Acc++ overall and by base_modality.
+        """
+        from collections import defaultdict
+
+        pairs: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
+        for row in results:
+            pid = row.get("pair_id")
+            if pid:
+                pairs[pid].append(row)
+
+        if not pairs:
+            return []
+
+        pair_results: List[Dict[str, Any]] = []
+        for pid, rows in pairs.items():
+            all_correct = all(bool(r["correct"]) for r in rows)
+            pair_results.append({
+                "pair_id": pid,
+                "pair_correct": all_correct,
+                "modality": rows[0].get("modality", ""),
+                "task_type": rows[0].get("task_type", "").replace("_assertion", ""),
+                "n_cases": len(rows),
+            })
+
+        def _summarise(subset: List[Dict[str, Any]]) -> Dict[str, Any]:
+            n = len(subset)
+            return {
+                "n_pairs": n,
+                "acc_pp": sum(r["pair_correct"] for r in subset) / n if n else 0.0,
+            }
+
+        by_modality: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
+        for pr in pair_results:
+            mod = pr["modality"]
+            by_modality[mod].append(pr)
+
+        return [
+            {
+                "scope": "overall",
+                **_summarise(pair_results),
+            }
+        ] + [
+            {
+                "scope": f"modality/{mod}",
+                "modality": mod,
+                **_summarise(rows),
+            }
+            for mod, rows in sorted(by_modality.items())
+        ]
+
+    # ------------------------------------------------------------------
+    # OCR Gain
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _aggregate_ocr_gain(results: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """
+        OCR Gain = accuracy(xxx_ocr) - accuracy(xxx_nocr) for each base viz.
+
+        Only computed for results that use the abstract visual encoding modalities
+        (modality names ending in _ocr or _nocr).
+        """
+        from collections import defaultdict
+
+        ocr_rows: Dict[str, List[bool]] = defaultdict(list)
+        nocr_rows: Dict[str, List[bool]] = defaultdict(list)
+
+        for row in results:
+            mod: str = row.get("modality", "")
+            if mod.endswith("_ocr"):
+                base = mod[: -len("_ocr")]
+                ocr_rows[base].append(bool(row["correct"]))
+            elif mod.endswith("_nocr"):
+                base = mod[: -len("_nocr")]
+                nocr_rows[base].append(bool(row["correct"]))
+
+        all_bases = sorted(set(ocr_rows) | set(nocr_rows))
+        gains = []
+        for base in all_bases:
+            ocr_acc = sum(ocr_rows[base]) / len(ocr_rows[base]) if ocr_rows[base] else None
+            nocr_acc = (
+                sum(nocr_rows[base]) / len(nocr_rows[base]) if nocr_rows[base] else None
+            )
+            gain = (
+                round(ocr_acc - nocr_acc, 6)
+                if ocr_acc is not None and nocr_acc is not None
+                else None
+            )
+            gains.append(
+                {
+                    "base_modality": base,
+                    "n_ocr": len(ocr_rows[base]),
+                    "n_nocr": len(nocr_rows[base]),
+                    "ocr_accuracy": ocr_acc,
+                    "nocr_accuracy": nocr_acc,
+                    "ocr_gain": gain,
+                }
+            )
+        return gains
 
     def _aggregate_by(
         self,
@@ -551,6 +665,7 @@ class VisualBenchmarkRunner:
             "raw_output",
             "image_paths",
             "states",
+            "pair_id",
         ]
 
         with path.open("w", encoding="utf-8", newline="") as f:

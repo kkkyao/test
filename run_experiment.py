@@ -161,6 +161,7 @@ def main(
 
     observation_mode     = visual_cfg.get("observation_mode", "text")
     image_history_window = visual_cfg.get("image_history_window", None)
+    display_cfg          = config.get("display", {})
 
     output_name = run_name or experiment_cfg.get("name", "default_run")
     base_output_dir = str(Path("outputs") / output_name)
@@ -296,6 +297,7 @@ def main(
             visual_cfg=visual_cfg,
             base_output_dir=run_output_dir,
             exclude_variables=chart_exclude,
+            display_cfg=display_cfg,
         )
 
         # Reset MockVLMAgent pointer at the start of each run

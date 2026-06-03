@@ -16,7 +16,7 @@
 
     body {
       width: 900px;
-      height: 500px;
+      height: 650px;
       background: #ffffff;
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
       color: #1a1a1a;
@@ -25,14 +25,14 @@
       overflow: hidden;
     }
 
-    /* ── Header ─────────────────────────────────────────────────── */
-    .header {
+    /* ── Page header ────────────────────────────────────────────── */
+    .page-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 28px 10px;
+      padding: 12px 28px 10px;
       border-bottom: 2px solid #e8e8e8;
-      flex-shrink: 0;
+      flex: 0 0 auto;
     }
 
     .header-title {
@@ -51,13 +51,60 @@
       margin-left: 18px;
     }
 
-    /* ── Chart area ─────────────────────────────────────────────── */
+    /* ── Panels ─────────────────────────────────────────────────── */
+    /*
+     * Controls panel (top): 60% of space below header/above footer.
+     * Outputs panel  (bottom): 40%.
+     * min-height: 0 lets flex children shrink below intrinsic height.
+     */
+    .controls-panel {
+      flex: 6;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .outputs-panel {
+      flex: 4;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      border-top: 3px solid #d0d0d0;
+    }
+
+    /* ── Panel label row ────────────────────────────────────────── */
+    .panel-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex: 0 0 28px;
+      padding: 0 28px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .controls-panel .panel-label {
+      background: #f5f7fa;
+      color: #4a90d9;
+      border-bottom: 1px solid #dce8f5;
+    }
+
+    .outputs-panel .panel-label {
+      background: #fff8f2;
+      color: #e07b2a;
+      border-bottom: 1px solid #f5e0ce;
+    }
+
+    /* ── Controls chart area ────────────────────────────────────── */
     .chart-area {
       flex: 1;
+      min-height: 0;
       display: flex;
       align-items: flex-end;
       justify-content: center;
-      padding: 28px 48px 0;
+      padding: 14px 48px 0;
       gap: 0;
     }
 
@@ -85,27 +132,16 @@
       width: 100%;
       min-height: 4px;
       border-radius: 4px 4px 0 0;
-      transition: height 0.2s ease;
     }
 
-    /* default input variable colour */
-    .bar-body.input {
-      background: #4a90d9;
-    }
-
-    /* target variable colour */
-    .bar-body.target {
-      background: #e07b2a;
-    }
+    .bar-body.input  { background: #4a90d9; }
 
     /* ── X-axis label row ───────────────────────────────────────── */
     .axis-row {
       display: flex;
       align-items: flex-start;
       justify-content: center;
-      flex-shrink: 0;
-      gap: 0;
-      margin-top: 0;
+      flex: 0 0 36px;
       padding: 0 48px;
       border-top: 2px solid #cccccc;
     }
@@ -113,24 +149,60 @@
     .axis-label {
       flex: 1;
       max-width: 140px;
-      padding: 7px 10px 0;
-      font-size: 14px;
+      padding: 5px 10px 0;
+      font-size: 13px;
       font-weight: 600;
       color: #444;
       text-align: center;
     }
 
-    .axis-label.target {
-      color: #e07b2a;
+    /* ── Output readout area ────────────────────────────────────── */
+    .readout-area {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 48px;
     }
 
-    /* ── Footer ─────────────────────────────────────────────────── */
-    .footer {
+    .readout-card {
+      border: 2px solid #e07b2a;
+      border-radius: 10px;
+      padding: 14px 48px 16px;
       display: flex;
-      flex-shrink: 0;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      background: #fffaf6;
+      min-width: 180px;
+    }
+
+    .readout-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #b05a10;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .readout-value {
+      font-size: 42px;
+      font-weight: 800;
+      color: #e07b2a;
+      letter-spacing: -0.01em;
+      line-height: 1;
+    }
+
+    /* ── Footer / legend ────────────────────────────────────────── */
+    .page-footer {
+      display: flex;
+      flex: 0 0 auto;
       justify-content: flex-end;
+      align-items: center;
       gap: 20px;
-      padding: 8px 28px 12px;
+      padding: 6px 28px 10px;
+      border-top: 1px solid #eeeeee;
       font-size: 11px;
       color: #bbb;
     }
@@ -147,18 +219,14 @@
       border-radius: 2px;
     }
 
-    .legend-swatch.input {
-      background: #4a90d9;
-    }
-
-    .legend-swatch.target {
-      background: #e07b2a;
-    }
+    .legend-swatch.input  { background: #4a90d9; }
+    .legend-swatch.target { background: #e07b2a; border: 1px solid #e07b2a; border-radius: 50%; }
   </style>
 </head>
 <body>
-  <!-- ── Header ─────────────────────────────────────────────────── -->
-  <div class="header">
+
+  <!-- ── Page header ─────────────────────────────────────────── -->
+  <div class="page-header">
     <div class="header-title">Current State</div>
     <div class="header-meta">
       <span>Step <strong>{{ step_id if step_id is not none else "—" }}</strong></span>
@@ -166,44 +234,62 @@
     </div>
   </div>
 
-  <!-- ── Chart ──────────────────────────────────────────────────── -->
+  <!-- ── Controls panel (top) ────────────────────────────────── -->
   <!--
-    bars is a list of dicts:
-      { name: str, value: float, norm_height: float (0–1), is_target: bool }
-    The chart area is 100% height; each bar's pixel height is
-    norm_height * chart-area-height, achieved via a flex trick below.
+    input_bars: list of {name, value, norm_height}
+    Each bar's height = position within that variable's own configured range.
+    Heights across different input bars are NOT on a shared absolute scale.
   -->
-  <div class="chart-area">
-    {% for bar in bars %}
-      <div class="bar-col">
-        <div class="bar-value">{{ "%.3g" | format(bar.value) }}</div>
-        <div
-          class="bar-body {{ 'target' if bar.is_target else 'input' }}"
-          style="height: {{ [bar.norm_height * 100, 1] | max }}%;"
-        ></div>
-      </div>
-    {% endfor %}
+  <div class="controls-panel">
+    <div class="panel-label">Controls</div>
+    <div class="chart-area">
+      {% for bar in input_bars %}
+        <div class="bar-col">
+          <div class="bar-value">{{ "%.3g" | format(bar.value) }}</div>
+          <div
+            class="bar-body input"
+            style="height: {{ [bar.norm_height * 100, 1] | max }}%;"
+          ></div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="axis-row">
+      {% for bar in input_bars %}
+        <div class="axis-label">{{ bar.name }}</div>
+      {% endfor %}
+    </div>
   </div>
 
-  <!-- ── X-axis labels ──────────────────────────────────────────── -->
-  <div class="axis-row">
-    {% for bar in bars %}
-      <div class="axis-label {{ 'target' if bar.is_target else '' }}">
-        {{ bar.name }}
-      </div>
-    {% endfor %}
+  <!-- ── Outputs panel (bottom) ──────────────────────────────── -->
+  <!--
+    output_bars: list of {name, value}
+    Target variable is shown as a large numeric measurement readout.
+    No bar normalization; no visual scale range.
+    Read the target value directly from the number in the card.
+  -->
+  <div class="outputs-panel">
+    <div class="panel-label">Output / Measurement</div>
+    <div class="readout-area">
+      {% if output_bars %}
+        <div class="readout-card">
+          <div class="readout-label">{{ output_bars[0].name }}</div>
+          <div class="readout-value">{{ "%.4g" | format(output_bars[0].value) }}</div>
+        </div>
+      {% endif %}
+    </div>
   </div>
 
-  <!-- ── Footer / legend ────────────────────────────────────────── -->
-  <div class="footer">
+  <!-- ── Footer / legend ─────────────────────────────────────── -->
+  <div class="page-footer">
     <div class="legend-item">
       <div class="legend-swatch input"></div>
-      <span>input variable</span>
+      <span>controllable variable</span>
     </div>
     <div class="legend-item">
       <div class="legend-swatch target"></div>
-      <span>target ({{ target_display }})</span>
+      <span>target readout ({{ target_display }})</span>
     </div>
   </div>
+
 </body>
 </html>

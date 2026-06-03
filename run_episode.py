@@ -409,6 +409,7 @@ def build_renderer(
     visual_cfg: Dict[str, Any],
     base_output_dir: str,
     exclude_variables: Optional[List[str]] = None,
+    display_cfg: Optional[Dict[str, Any]] = None,
 ) -> Any:
     """
     Build and return a renderer for the given observation_mode.
@@ -449,6 +450,14 @@ def build_renderer(
         images_output_dir = os.path.join(
             base_output_dir, visual_cfg.get("output_subdir", "images")
         )
+
+        # output_bar_range: visual-only display range for the Outputs panel.
+        # Configured via display.output_bar_range in the env config.
+        # Does not affect env dynamics, action space, or target computation.
+        _display = display_cfg or {}
+        _obr = _display.get("output_bar_range", [0, 600])
+        output_bar_lo, output_bar_hi = float(_obr[0]), float(_obr[1])
+
         text_renderer = TextRenderer(
             variables=variables,
             action_mode=action_mode,
@@ -470,6 +479,8 @@ def build_renderer(
             slow_mo=visual_cfg.get("playwright", {}).get("slow_mo", 0),
             normalize_bars=visual_cfg.get("normalize_bars", True),
             exclude_variables=exclude_variables or [],
+            output_bar_lo=output_bar_lo,
+            output_bar_hi=output_bar_hi,
         )
         return TextImageRenderer(
             text_renderer=text_renderer,
@@ -561,6 +572,7 @@ def main(
         or representation_cfg.get("observation_mode", "text")
     )
     image_history_window = visual_cfg.get("image_history_window", None)
+    display_cfg          = config.get("display", {})
 
     output_dir           = logging_cfg.get("output_dir", "outputs/default_run")
     save_steps           = logging_cfg.get("save_steps", True)
@@ -599,6 +611,7 @@ def main(
         name_mapping=name_mapping,
         visual_cfg=visual_cfg,
         base_output_dir=output_dir,
+        display_cfg=display_cfg,
     )
 
     # ── Agent ─────────────────────────────────────────────────────────────────

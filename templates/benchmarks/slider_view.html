@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Slider View — Step {{ step_id }}</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: {{ width }}px;
+      height: {{ height }}px;
+      background: #ffffff;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      color: #1a1a1a;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 28px 8px;
+      border-bottom: 2px solid #e8e8e8;
+      flex: 0 0 auto;
+    }
+    .header-title { font-size: 14px; font-weight: 600; color: #333; }
+    .header-meta  { font-size: 12px; color: #888; }
+
+    .panel {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-label {
+      flex: 0 0 26px;
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: #f5f7fa;
+      color: #4a90d9;
+      border-bottom: 1px solid #dce8f5;
+    }
+
+    .sliders-area {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 18px 60px;
+      gap: 0;
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      height: 72px;
+    }
+
+    .var-label {
+      width: 48px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #333;
+      text-align: right;
+      padding-right: 20px;
+      flex-shrink: 0;
+    }
+
+    .track-container {
+      flex: 1;
+      position: relative;
+      height: 36px;
+      display: flex;
+      align-items: center;
+    }
+
+    .endpoint-label {
+      font-size: 12px;
+      color: #888;
+      font-weight: 500;
+      flex-shrink: 0;
+      width: 20px;
+      text-align: center;
+    }
+    .endpoint-left  { margin-right: 10px; }
+    .endpoint-right { margin-left: 10px; }
+
+    .track-inner {
+      flex: 1;
+      position: relative;
+      height: 36px;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Track line */
+    .track-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: #d1d5db;
+      border-radius: 2px;
+    }
+
+    /* Filled portion left of knob */
+    .track-fill {
+      position: absolute;
+      left: 0;
+      height: 4px;
+      background: #4a90d9;
+      border-radius: 2px 0 0 2px;
+    }
+
+    /* Tick marks */
+    .tick {
+      position: absolute;
+      width: 1.5px;
+      height: 8px;
+      background: #9ca3af;
+      transform: translateX(-50%) translateY(-50%);
+      top: 50%;
+    }
+
+    /* Knob */
+    .knob {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background: #4a90d9;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    }
+
+    /* OCR value label above knob */
+    .knob-label {
+      position: absolute;
+      font-size: 13px;
+      font-weight: 700;
+      color: #1d4ed8;
+      transform: translateX(-50%);
+      top: -2px;
+      white-space: nowrap;
+    }
+
+    .page-footer {
+      flex: 0 0 auto;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 20px;
+      padding: 5px 28px 8px;
+      border-top: 1px solid #eee;
+      font-size: 11px;
+      color: #bbb;
+    }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .legend-knob {
+      width: 12px; height: 12px;
+      background: #4a90d9;
+      border-radius: 50%;
+      border: 1.5px solid #fff;
+      box-shadow: 0 0 0 1px #4a90d9;
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="header-title">Current State</div>
+  <div class="header-meta">Step <strong>{{ step_id }}</strong></div>
+</div>
+
+<div class="panel">
+  <div class="panel-label">Controls — range 1 to 10</div>
+
+  <div class="sliders-area">
+    {% for s in sliders %}
+    <div class="slider-row">
+      <div class="var-label">{{ s.name }}</div>
+      <span class="endpoint-label endpoint-left">1</span>
+
+      <div class="track-inner">
+        <!-- Track background -->
+        <div class="track-line"></div>
+
+        <!-- Filled portion -->
+        <div class="track-fill" style="width: {{ s.fill_pct }}%;"></div>
+
+        <!-- Tick marks at each integer 1–10 -->
+        {% for tick in s.ticks %}
+        <div class="tick" style="left: {{ tick.pct }}%;"></div>
+        {% endfor %}
+
+        <!-- Knob -->
+        <div class="knob" style="left: {{ s.knob_pct }}%;"></div>
+
+        <!-- Value label (OCR-assisted only) -->
+        {% if show_values %}
+        <div class="knob-label" style="left: {{ s.knob_pct }}%;">{{ s.value_label }}</div>
+        {% endif %}
+      </div>
+
+      <span class="endpoint-label endpoint-right">10</span>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="page-footer">
+  <div class="legend-item">
+    <div class="legend-knob"></div>
+    <span>knob position = variable value (1–10)</span>
+  </div>
+</div>
+
+</body>
+</html>

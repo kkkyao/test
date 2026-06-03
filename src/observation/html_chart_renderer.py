@@ -61,6 +61,8 @@ class HtmlChartRenderer:
         normalize_bars: bool = True,
         bar_value_range: Optional[Dict[str, tuple]] = None,
         exclude_variables: Optional[List[str]] = None,
+        output_bar_lo: float = 0.0,
+        output_bar_hi: float = 600.0,
     ) -> None:
         if not isinstance(variables, dict) or not variables:
             raise ValueError("variables must be a non-empty dictionary")
@@ -86,6 +88,21 @@ class HtmlChartRenderer:
         self.normalize_bars = normalize_bars
         self.bar_value_range: Dict[str, tuple] = dict(bar_value_range or {})
         self.exclude_variables: set = set(exclude_variables or [])
+
+        # Viewport dimensions used by Playwright (previously hardcoded in
+        # _take_screenshot). 650px height accommodates two stacked panels.
+        self._viewport_width: int = 900
+        self._viewport_height: int = 650
+
+        # Visual-only display range for the Outputs panel bar chart.
+        # Used solely for bar height normalization — does NOT affect env
+        # dynamics, action space, or target computation.
+        # A bar at 100% (full height) means value >= output_bar_hi; it does NOT
+        # mean the value equals the true theoretical maximum of the target.
+        # Values above output_bar_hi are clipped to 100% by _normalise(); the
+        # raw numeric value label above the bar always shows the true value.
+        self._output_bar_lo: float = float(output_bar_lo)
+        self._output_bar_hi: float = float(output_bar_hi)
 
         # Output directories
         self._base_dir = Path(output_dir).resolve()
@@ -147,53 +164,90 @@ class HtmlChartRenderer:
         step_id: Optional[int],
     ) -> Dict[str, Any]:
         """
-        Convert raw state into the dict that Jinja2 template expects.
+        Split visible state into two panels:
 
-        bars: list of {name, value, norm_height, is_target}
-        Variables listed in self.exclude_variables are skipped entirely.
+        input_bars  (Controls panel, top)
+            Variables with manipulable=True in the env config.
+            Normalized per-variable using config min_value/max_value when
+            normalize_bars=True, or using input-only dyn_min/dyn_max when
+            normalize_bars=False.  The target variable never participates in
+            the input-panel dyn range calculation.
+
+        output_bars  (Outputs panel, bottom)
+            Only self.target_variable.
+            Normalized against self._output_bar_lo / self._output_bar_hi,
+            which is a visual-only display range configured via
+            display.output_bar_range in the env config.  This range does NOT
+            affect env dynamics, action space, or target computation.
+            Values above output_bar_hi are clipped to 100% height by
+            _normalise(); the raw label above the bar shows the true value.
+
+        Non-manipulable, non-target variables (e.g. transmittance in Beer's
+        law) are silently omitted from both panels even when not listed in
+        exclude_variables.  bar_value_range overrides apply only to input
+        variables.
         """
-        # Filter out excluded variables before computing ranges
+        # 1. Remove excluded variables.
         visible_state = {
             k: v for k, v in state.items()
             if k not in self.exclude_variables
         }
 
-        numeric_values = [
-            float(v) for v in visible_state.values() if isinstance(v, (int, float))
-        ]
-
-        # Dynamic range: min / max across all visible values in this step.
-        if numeric_values:
-            dyn_min = min(numeric_values)
-            dyn_max = max(numeric_values)
-        else:
-            dyn_min, dyn_max = 0.0, 1.0
-
-        bars: List[Dict[str, Any]] = []
-
+        # 2. Split: manipulable → Controls; target → Outputs; others → ignored.
+        input_state: Dict[str, Any] = {}
+        output_state: Dict[str, Any] = {}
         for var_name, raw_value in visible_state.items():
+            cfg = self.variables.get(var_name, {})
+            if cfg.get("manipulable", False):
+                input_state[var_name] = raw_value
+            elif var_name == self.target_variable:
+                output_state[var_name] = raw_value
+
+        # 3. Compute dyn range for input panel (input variables only —
+        #    target is never included here).
+        input_numeric = [
+            float(v) for v in input_state.values() if isinstance(v, (int, float))
+        ]
+        if input_numeric:
+            input_dyn_min = min(input_numeric)
+            input_dyn_max = max(input_numeric)
+        else:
+            input_dyn_min, input_dyn_max = 0.0, 1.0
+
+        # 4. Build input_bars (Controls panel).
+        input_bars: List[Dict[str, Any]] = []
+        for var_name, raw_value in input_state.items():
             if not isinstance(raw_value, (int, float)):
-                continue  # skip non-numeric state entries
-
+                continue
             value = float(raw_value)
-            display_name = self._display_name(var_name)
+            lo, hi = self._get_range(var_name, input_dyn_min, input_dyn_max)
+            input_bars.append({
+                "name":        self._display_name(var_name),
+                "value":       value,
+                "norm_height": self._normalise(value, lo, hi),
+            })
 
-            lo, hi = self._get_range(var_name, dyn_min, dyn_max)
-            norm_height = self._normalise(value, lo, hi)
-
-            bars.append(
-                {
-                    "name": display_name,
-                    "value": value,
-                    "norm_height": norm_height,
-                    "is_target": (var_name == self.target_variable),
-                }
-            )
+        # 5. Build output_bars (Outputs panel) using visual-only fixed range.
+        #    _normalise() clamps values above output_bar_hi to 1.0 (100%),
+        #    so a full-height bar means value >= visual max, not true maximum.
+        output_bars: List[Dict[str, Any]] = []
+        for var_name, raw_value in output_state.items():
+            if not isinstance(raw_value, (int, float)):
+                continue
+            value = float(raw_value)
+            output_bars.append({
+                "name":        self._display_name(var_name),
+                "value":       value,
+                "norm_height": self._normalise(value, self._output_bar_lo, self._output_bar_hi),
+                "vis_lo":      self._output_bar_lo,
+                "vis_hi":      self._output_bar_hi,
+            })
 
         return {
-            "step_id": step_id,
+            "step_id":        step_id,
             "target_display": self._display_name(self.target_variable),
-            "bars": bars,
+            "input_bars":     input_bars,
+            "output_bars":    output_bars,
         }
 
     def _get_range(
@@ -286,7 +340,7 @@ class HtmlChartRenderer:
                         headless=self.headless,
                         slow_mo=self.slow_mo,
                     )
-                    page = browser.new_page(viewport={"width": 900, "height": 500})
+                    page = browser.new_page(viewport={"width": self._viewport_width, "height": self._viewport_height})
                     try:
                         page.goto(file_uri, wait_until="networkidle")
                         page.screenshot(path=str(image_path), full_page=False)

@@ -17,31 +17,23 @@ class BenchmarkVisualRenderer:
     """
     Render benchmark cases into visual inputs.
 
-    Modalities:
-    - text:
-        No images. The prompt contains the numeric table.
+    Modalities (original):
+    - text        No images.
+    - bar         HtmlChartRenderer (existing simulation chart).
+    - line        HtmlStepPlotRenderer — parallel-coordinates per-step.
+    - scatter     HtmlStepPlotRenderer — parallel-coordinates per-step.
+    - simulation  HtmlSimulationRenderer.
 
-    - bar:
-        Reuse existing HtmlChartRenderer.
-        One image per step.
+    Modalities (abstract visual encoding benchmark):
+    - bar_ocr / bar_nocr       Standalone bar chart (shared scale 1–10).
+    - slider_ocr / slider_nocr Horizontal slider visualization.
+    - dot_ocr / dot_nocr       Dot-position visualization.
+    - line_ocr / line_nocr     Time-series line chart (growing history).
+    - scatter_ocr / scatter_nocr Time-series scatter (growing history).
 
-    - line:
-        Use benchmark-specific HtmlStepPlotRenderer.
-        One image per step.
-        Each image shows the current state's variable values as connected points.
-
-    - scatter:
-        Use benchmark-specific HtmlStepPlotRenderer.
-        One image per step.
-        Each image shows the current state's variable values as independent points.
-
-    - simulation:
-        Reuse existing HtmlSimulationRenderer.
-        One screenshot per step.
-
-    Important:
-    All visual modalities are now step-wise image sequences.
-    This keeps bar, line, scatter, and simulation comparable.
+    All step-wise modalities produce one image per step in case.states.
+    History-aware modalities (line/scatter) produce growing-history images:
+    the image at step t shows data for steps 0..t.
     """
 
     def __init__(self, config: Dict[str, Any], output_dir: str) -> None:
@@ -51,7 +43,7 @@ class BenchmarkVisualRenderer:
         benchmark_cfg = config["benchmark"]
         variables_cfg = benchmark_cfg["variables"]
 
-        self.target_variable = variables_cfg["target_variable"]
+        self.target_variable = variables_cfg.get("target_variable")
         self.variable_specs = deepcopy(variables_cfg["specs"])
         self.variable_order = (
             list(variables_cfg["input_variables"]) + [self.target_variable]
@@ -70,6 +62,7 @@ class BenchmarkVisualRenderer:
         if case.modality == "text":
             return []
 
+        # ── Original modalities ───────────────────────────────────────
         if case.modality == "bar":
             return self._render_bar_sequence(case)
 
@@ -82,6 +75,25 @@ class BenchmarkVisualRenderer:
         if case.modality == "simulation":
             return self._render_simulation_sequence(case)
 
+        # ── Abstract visual encoding modalities ───────────────────────
+        if case.modality in {"bar_ocr", "bar_nocr"}:
+            return self._render_bar_standalone_sequence(case)
+
+        if case.modality in {"slider_ocr", "slider_nocr"}:
+            return self._render_slider_sequence(case)
+
+        if case.modality in {"dot_ocr", "dot_nocr"}:
+            return self._render_dot_sequence(case)
+
+        if case.modality in {"grid_ocr", "grid_nocr"}:
+            return self._render_grid_sequence(case)
+
+        if case.modality in {"line_ocr", "line_nocr"}:
+            return self._render_history_sequence(case, plot_type="line")
+
+        if case.modality in {"scatter_ocr", "scatter_nocr"}:
+            return self._render_history_sequence(case, plot_type="scatter")
+
         raise ValueError(f"Unsupported modality: {case.modality}")
 
     # ------------------------------------------------------------------
@@ -90,7 +102,11 @@ class BenchmarkVisualRenderer:
 
     def _render_bar_sequence(self, case: BenchmarkCase) -> List[str]:
         bar_cfg = self.visual_cfg.get("bar", {})
-        output_dir = self.output_dir / "images" / case.case_id / "bar"
+        output_dir = self.output_dir / "images" / case.base_id / "bar"
+
+        cached = self._cached_paths(output_dir, len(case.states))
+        if cached:
+            return cached
 
         renderer = HtmlChartRenderer(
             variables=self._renderer_variables(),
@@ -137,7 +153,11 @@ class BenchmarkVisualRenderer:
         This matches the information structure of bar and simulation modalities.
         """
         plot_cfg = self.visual_cfg.get(plot_type, {})
-        output_dir = self.output_dir / "images" / case.case_id / plot_type
+        output_dir = self.output_dir / "images" / case.base_id / plot_type
+
+        cached = self._cached_paths(output_dir, len(case.states))
+        if cached:
+            return cached
 
         renderer = HtmlStepPlotRenderer(
             output_dir=str(output_dir),
@@ -162,7 +182,6 @@ class BenchmarkVisualRenderer:
             image_paths.append(
                 renderer.render(
                     state=state,
-                    case_id=case.case_id,
                     step_id=step_id,
                 )
             )
@@ -175,7 +194,11 @@ class BenchmarkVisualRenderer:
 
     def _render_simulation_sequence(self, case: BenchmarkCase) -> List[str]:
         sim_cfg = self.visual_cfg.get("simulation", {})
-        output_dir = self.output_dir / "images" / case.case_id / "simulation"
+        output_dir = self.output_dir / "images" / case.base_id / "simulation"
+
+        cached = self._cached_paths(output_dir, len(case.states))
+        if cached:
+            return cached
 
         simulation_type = sim_cfg.get("simulation_type")
         if not simulation_type:
@@ -212,8 +235,22 @@ class BenchmarkVisualRenderer:
         return image_paths
 
     # ------------------------------------------------------------------
-    # Shared config adapter
+    # Shared helpers
     # ------------------------------------------------------------------
+
+    @staticmethod
+    def _cached_paths(output_dir: Path, n_steps: int) -> List[str]:
+        """
+        Return resolved PNG paths for step_0000 … step_{n-1} if every file
+        already exists, otherwise return an empty list.
+
+        Used to skip re-rendering when a (base_id, modality) directory was
+        already rendered by a previous case in the same run.
+        """
+        paths = [output_dir / f"step_{i:04d}.png" for i in range(n_steps)]
+        if all(p.exists() for p in paths):
+            return [str(p.resolve()) for p in paths]
+        return []
 
     def _renderer_variables(self) -> Dict[str, Dict[str, Any]]:
         """
@@ -233,6 +270,185 @@ class BenchmarkVisualRenderer:
             }
 
         return variables
+
+    # ------------------------------------------------------------------
+    # Abstract visual encoding: bar standalone
+    # ------------------------------------------------------------------
+
+    def _render_bar_standalone_sequence(self, case: BenchmarkCase) -> List[str]:
+        cfg = self.visual_cfg.get("bar_standalone", {})
+        show_values = case.modality.endswith("_ocr")
+        output_dir = self.output_dir / "images" / case.base_id / case.modality
+
+        cached = self._cached_paths(output_dir, len(case.states))
+        if cached:
+            return cached
+
+        input_variables = case.metadata.get("input_variables", list(self.variable_specs.keys()))
+        renderer = HtmlBarStandaloneRenderer(
+            output_dir=str(output_dir),
+            template_path=cfg.get(
+                "template_path", "templates/benchmarks/bar_standalone.html"
+            ),
+            input_variables=input_variables,
+            variable_specs=self.variable_specs,
+            width=cfg.get("width", 900),
+            height=cfg.get("height", 500),
+            headless=self.playwright_cfg.get("headless", True),
+            slow_mo=self.playwright_cfg.get("slow_mo", 0),
+        )
+
+        image_paths: List[str] = []
+        for step_id, state in enumerate(case.states):
+            image_paths.append(
+                renderer.render(state=state, step_id=step_id, show_values=show_values)
+            )
+        return image_paths
+
+    # ------------------------------------------------------------------
+    # Abstract visual encoding: slider
+    # ------------------------------------------------------------------
+
+    def _render_slider_sequence(self, case: BenchmarkCase) -> List[str]:
+        cfg = self.visual_cfg.get("slider", {})
+        show_values = case.modality.endswith("_ocr")
+        output_dir = self.output_dir / "images" / case.base_id / case.modality
+
+        cached = self._cached_paths(output_dir, len(case.states))
+        if cached:
+            return cached
+
+        input_variables = case.metadata.get("input_variables", list(self.variable_specs.keys()))
+        renderer = HtmlSliderRenderer(
+            output_dir=str(output_dir),
+            template_path=cfg.get(
+                "template_path", "templates/benchmarks/slider_view.html"
+            ),
+            input_variables=input_variables,
+            variable_specs=self.variable_specs,
+            width=cfg.get("width", 900),
+            height=cfg.get("height", 500),
+            headless=self.playwright_cfg.get("headless", True),
+            slow_mo=self.playwright_cfg.get("slow_mo", 0),
+        )
+
+        image_paths: List[str] = []
+        for step_id, state in enumerate(case.states):
+            image_paths.append(
+                renderer.render(state=state, step_id=step_id, show_values=show_values)
+            )
+        return image_paths
+
+    # ------------------------------------------------------------------
+    # Abstract visual encoding: dot plot (vertical dot chart)
+    # ------------------------------------------------------------------
+
+    def _render_dot_sequence(self, case: BenchmarkCase) -> List[str]:
+        cfg = self.visual_cfg.get("dot", {})
+        show_values = case.modality.endswith("_ocr")
+        output_dir = self.output_dir / "images" / case.base_id / case.modality
+
+        cached = self._cached_paths(output_dir, len(case.states))
+        if cached:
+            return cached
+
+        input_variables = case.metadata.get("input_variables", list(self.variable_specs.keys()))
+        renderer = HtmlDotPlotRenderer(
+            output_dir=str(output_dir),
+            template_path=cfg.get(
+                "template_path", "templates/benchmarks/dot_plot_view.html"
+            ),
+            input_variables=input_variables,
+            variable_specs=self.variable_specs,
+            width=cfg.get("width", 900),
+            height=cfg.get("height", 500),
+            headless=self.playwright_cfg.get("headless", True),
+            slow_mo=self.playwright_cfg.get("slow_mo", 0),
+        )
+
+        image_paths: List[str] = []
+        for step_id, state in enumerate(case.states):
+            image_paths.append(
+                renderer.render(state=state, step_id=step_id, show_values=show_values)
+            )
+        return image_paths
+
+    # ------------------------------------------------------------------
+    # Abstract visual encoding: filled grid
+    # ------------------------------------------------------------------
+
+    def _render_grid_sequence(self, case: BenchmarkCase) -> List[str]:
+        cfg = self.visual_cfg.get("grid", {})
+        show_values = case.modality.endswith("_ocr")
+        output_dir = self.output_dir / "images" / case.base_id / case.modality
+
+        cached = self._cached_paths(output_dir, len(case.states))
+        if cached:
+            return cached
+
+        input_variables = case.metadata.get("input_variables", list(self.variable_specs.keys()))
+        renderer = HtmlGridRenderer(
+            output_dir=str(output_dir),
+            template_path=cfg.get(
+                "template_path", "templates/benchmarks/grid_view.html"
+            ),
+            input_variables=input_variables,
+            variable_specs=self.variable_specs,
+            width=cfg.get("width", 900),
+            height=cfg.get("height", 500),
+            headless=self.playwright_cfg.get("headless", True),
+            slow_mo=self.playwright_cfg.get("slow_mo", 0),
+        )
+
+        image_paths: List[str] = []
+        for step_id, state in enumerate(case.states):
+            image_paths.append(
+                renderer.render(state=state, step_id=step_id, show_values=show_values)
+            )
+        return image_paths
+
+    # ------------------------------------------------------------------
+    # Abstract visual encoding: history chart (line / scatter)
+    # ------------------------------------------------------------------
+
+    def _render_history_sequence(
+        self, case: BenchmarkCase, plot_type: str
+    ) -> List[str]:
+        cfg = self.visual_cfg.get("history_chart", {})
+        show_values = case.modality.endswith("_ocr")
+        output_dir = self.output_dir / "images" / case.base_id / case.modality
+
+        cached = self._cached_paths(output_dir, len(case.states))
+        if cached:
+            return cached
+
+        input_variables = case.metadata.get("input_variables", list(self.variable_specs.keys()))
+        renderer = HtmlHistoryChartRenderer(
+            output_dir=str(output_dir),
+            template_path=cfg.get(
+                "template_path", "templates/benchmarks/history_chart.html"
+            ),
+            plot_type=plot_type,
+            input_variables=input_variables,
+            variable_specs=self.variable_specs,
+            width=cfg.get("width", 900),
+            height=cfg.get("height", 520),
+            headless=self.playwright_cfg.get("headless", True),
+            slow_mo=self.playwright_cfg.get("slow_mo", 0),
+        )
+
+        image_paths: List[str] = []
+        for step_id in range(len(case.states)):
+            # Pass growing history: states 0 .. step_id (inclusive).
+            history_states = case.states[: step_id + 1]
+            image_paths.append(
+                renderer.render(
+                    states=history_states,
+                    current_step_id=step_id,
+                    show_values=show_values,
+                )
+            )
+        return image_paths
 
 
 class HtmlStepPlotRenderer:
@@ -299,22 +515,18 @@ class HtmlStepPlotRenderer:
     def render(
         self,
         state: Dict[str, float],
-        case_id: str,
         step_id: int,
     ) -> str:
         render_data = self._build_render_data(
             state=state,
-            case_id=case_id,
             step_id=step_id,
         )
         html_path = self._render_html(
             render_data=render_data,
-            case_id=case_id,
             step_id=step_id,
         )
         image_path = self._take_screenshot(
             html_path=html_path,
-            case_id=case_id,
             step_id=step_id,
         )
         return image_path
@@ -322,7 +534,6 @@ class HtmlStepPlotRenderer:
     def _build_render_data(
         self,
         state: Dict[str, float],
-        case_id: str,
         step_id: int,
     ) -> Dict[str, Any]:
         margin_left = 80
@@ -444,22 +655,20 @@ class HtmlStepPlotRenderer:
     def _render_html(
         self,
         render_data: Dict[str, Any],
-        case_id: str,
         step_id: int,
     ) -> str:
         html_content = self.template.render(**render_data)
-        html_path = self.html_dir / f"{case_id}_step_{step_id:04d}.html"
+        html_path = self.html_dir / f"step_{step_id:04d}.html"
         html_path.write_text(html_content, encoding="utf-8")
         return str(html_path.resolve())
 
     def _take_screenshot(
         self,
         html_path: str,
-        case_id: str,
         step_id: int,
         _max_retries: int = 3,
     ) -> str:
-        image_path = self.output_dir / f"{case_id}_step_{step_id:04d}.png"
+        image_path = self.output_dir / f"step_{step_id:04d}.png"
         file_uri = Path(html_path).resolve().as_uri()
 
         last_exc: Exception | None = None
@@ -501,3 +710,644 @@ class HtmlStepPlotRenderer:
         if abs(value - round(value)) < 1e-9:
             return str(int(round(value)))
         return f"{value:.2f}".rstrip("0").rstrip(".")
+
+
+# ---------------------------------------------------------------------------
+# Shared screenshot mixin
+# ---------------------------------------------------------------------------
+
+class _ScreenshotMixin:
+    """Playwright screenshot helper shared by the new abstract renderers."""
+
+    _width: int
+    _height: int
+    _headless: bool
+    _slow_mo: int
+
+    def _take_screenshot(
+        self,
+        html_path: str,
+        image_path: "Path",
+        _max_retries: int = 3,
+    ) -> str:
+        file_uri = Path(html_path).resolve().as_uri()
+        last_exc: Exception | None = None
+
+        for attempt in range(_max_retries):
+            try:
+                with sync_playwright() as pw:
+                    browser = pw.chromium.launch(
+                        headless=self._headless,
+                        slow_mo=self._slow_mo,
+                    )
+                    page = browser.new_page(
+                        viewport={"width": self._width, "height": self._height}
+                    )
+                    try:
+                        page.goto(file_uri, wait_until="networkidle")
+                        page.screenshot(path=str(image_path), full_page=False)
+                    finally:
+                        page.close()
+                        browser.close()
+                return str(image_path.resolve())
+            except Exception as exc:
+                last_exc = exc
+                if attempt < _max_retries - 1:
+                    import time
+                    time.sleep(1)
+
+        raise RuntimeError(
+            f"Screenshot failed after {_max_retries} attempts: {last_exc}"
+        ) from last_exc
+
+    @staticmethod
+    def _fmt(value: float) -> str:
+        if abs(value - round(value)) < 1e-9:
+            return str(int(round(value)))
+        return f"{value:.2f}".rstrip("0").rstrip(".")
+
+    @staticmethod
+    def _make_ticks(lo: float, hi: float, step: float) -> List[Dict[str, Any]]:
+        """Return tick list with pct positions for a track from lo to hi."""
+        ticks: List[Dict[str, Any]] = []
+        span = hi - lo
+        if span <= 0:
+            return ticks
+        v = lo
+        while v <= hi + 1e-9:
+            pct = (v - lo) / span * 100.0
+            ticks.append({"pct": round(pct, 2)})
+            v += step
+        return ticks
+
+
+# ---------------------------------------------------------------------------
+# HtmlBarStandaloneRenderer
+# ---------------------------------------------------------------------------
+
+class HtmlBarStandaloneRenderer(_ScreenshotMixin):
+    """
+    Benchmark-specific single-panel bar chart.
+    Shared scale across all input variables.
+    Supports show_values flag for OCR/non-OCR conditions.
+    """
+
+    def __init__(
+        self,
+        output_dir: str,
+        template_path: str,
+        input_variables: List[str],
+        variable_specs: Dict[str, Dict[str, Any]],
+        width: int = 900,
+        height: int = 500,
+        headless: bool = True,
+        slow_mo: int = 0,
+    ) -> None:
+        if not os.path.isfile(template_path):
+            raise FileNotFoundError(f"Template not found: {template_path}")
+
+        self._output_dir = Path(output_dir).resolve()
+        self._html_dir = self._output_dir / "html"
+        self._output_dir.mkdir(parents=True, exist_ok=True)
+        self._html_dir.mkdir(parents=True, exist_ok=True)
+
+        self._input_variables = input_variables
+        self._specs = variable_specs
+        self._width = width
+        self._height = height
+        self._headless = headless
+        self._slow_mo = slow_mo
+
+        tp = Path(template_path).resolve()
+        env = Environment(
+            loader=FileSystemLoader(str(tp.parent)),
+            autoescape=select_autoescape(["html"]),
+        )
+        self._template = env.get_template(tp.name)
+
+    def render(
+        self,
+        state: Dict[str, float],
+        step_id: int,
+        show_values: bool,
+    ) -> str:
+        # Shared scale: use the union of all variable ranges.
+        all_lo = min(
+            float(self._specs[v].get("min_value", 1)) for v in self._input_variables
+        )
+        all_hi = max(
+            float(self._specs[v].get("max_value", 10)) for v in self._input_variables
+        )
+        span = all_hi - all_lo if all_hi > all_lo else 1.0
+
+        bars = []
+        for var in self._input_variables:
+            value = float(state.get(var, all_lo))
+            norm = max(0.0, min(1.0, (value - all_lo) / span))
+            bars.append({
+                "name": var,
+                "value": value,
+                "norm_height": norm,
+            })
+
+        html = self._template.render(
+            step_id=step_id,
+            bars=bars,
+            show_values=show_values,
+            width=self._width,
+            height=self._height,
+        )
+        html_path = self._html_dir / f"step_{step_id:04d}.html"
+        html_path.write_text(html, encoding="utf-8")
+
+        img_path = self._output_dir / f"step_{step_id:04d}.png"
+        return self._take_screenshot(str(html_path), img_path)
+
+
+# ---------------------------------------------------------------------------
+# HtmlSliderRenderer
+# ---------------------------------------------------------------------------
+
+class HtmlSliderRenderer(_ScreenshotMixin):
+    """
+    Horizontal slider visualization for abstract input variables.
+    Knob position encodes the variable value.
+    Supports show_values flag for OCR/non-OCR conditions.
+    """
+
+    def __init__(
+        self,
+        output_dir: str,
+        template_path: str,
+        input_variables: List[str],
+        variable_specs: Dict[str, Dict[str, Any]],
+        width: int = 900,
+        height: int = 500,
+        headless: bool = True,
+        slow_mo: int = 0,
+    ) -> None:
+        if not os.path.isfile(template_path):
+            raise FileNotFoundError(f"Template not found: {template_path}")
+
+        self._output_dir = Path(output_dir).resolve()
+        self._html_dir = self._output_dir / "html"
+        self._output_dir.mkdir(parents=True, exist_ok=True)
+        self._html_dir.mkdir(parents=True, exist_ok=True)
+
+        self._input_variables = input_variables
+        self._specs = variable_specs
+        self._width = width
+        self._height = height
+        self._headless = headless
+        self._slow_mo = slow_mo
+
+        tp = Path(template_path).resolve()
+        env = Environment(
+            loader=FileSystemLoader(str(tp.parent)),
+            autoescape=select_autoescape(["html"]),
+        )
+        self._template = env.get_template(tp.name)
+
+    def render(
+        self,
+        state: Dict[str, float],
+        step_id: int,
+        show_values: bool,
+    ) -> str:
+        sliders = []
+        for var in self._input_variables:
+            spec = self._specs[var]
+            lo = float(spec.get("min_value", 1))
+            hi = float(spec.get("max_value", 10))
+            step = float(spec.get("step", 1.0))
+            value = float(state.get(var, lo))
+
+            span = hi - lo if hi > lo else 1.0
+            knob_pct = max(0.0, min(100.0, (value - lo) / span * 100.0))
+            fill_pct = knob_pct
+
+            ticks = self._make_ticks(lo, hi, step)
+
+            sliders.append({
+                "name": var,
+                "value": value,
+                "value_label": self._fmt(value),
+                "knob_pct": round(knob_pct, 2),
+                "fill_pct": round(fill_pct, 2),
+                "ticks": ticks,
+            })
+
+        html = self._template.render(
+            step_id=step_id,
+            sliders=sliders,
+            show_values=show_values,
+            width=self._width,
+            height=self._height,
+        )
+        html_path = self._html_dir / f"step_{step_id:04d}.html"
+        html_path.write_text(html, encoding="utf-8")
+
+        img_path = self._output_dir / f"step_{step_id:04d}.png"
+        return self._take_screenshot(str(html_path), img_path)
+
+
+# ---------------------------------------------------------------------------
+# HtmlDotPlotRenderer  (vertical dot chart: x = variable, y = value)
+# ---------------------------------------------------------------------------
+
+class HtmlDotPlotRenderer(_ScreenshotMixin):
+    """
+    Vertical dot chart for abstract input variables.
+
+    x-axis: variable names (categorical)
+    y-axis: variable value (1–10)
+
+    Each variable is represented by one dot at its current value height.
+    This is a pure position encoding, comparable to bar (length) and
+    slider/grid (position or count).
+    """
+
+    HEADER_HEIGHT = 72   # page-header + panel-label combined
+
+    def __init__(
+        self,
+        output_dir: str,
+        template_path: str,
+        input_variables: List[str],
+        variable_specs: Dict[str, Dict[str, Any]],
+        width: int = 900,
+        height: int = 500,
+        headless: bool = True,
+        slow_mo: int = 0,
+    ) -> None:
+        if not os.path.isfile(template_path):
+            raise FileNotFoundError(f"Template not found: {template_path}")
+
+        self._output_dir = Path(output_dir).resolve()
+        self._html_dir = self._output_dir / "html"
+        self._output_dir.mkdir(parents=True, exist_ok=True)
+        self._html_dir.mkdir(parents=True, exist_ok=True)
+
+        self._input_variables = input_variables
+        self._specs = variable_specs
+        self._width = width
+        self._height = height
+        self._headless = headless
+        self._slow_mo = slow_mo
+
+        tp = Path(template_path).resolve()
+        env = Environment(
+            loader=FileSystemLoader(str(tp.parent)),
+            autoescape=select_autoescape(["html"]),
+        )
+        self._template = env.get_template(tp.name)
+
+    def render(
+        self,
+        state: Dict[str, float],
+        step_id: int,
+        show_values: bool,
+    ) -> str:
+        render_data = self._build_render_data(state, step_id, show_values)
+        html = self._template.render(**render_data)
+
+        html_path = self._html_dir / f"step_{step_id:04d}.html"
+        html_path.write_text(html, encoding="utf-8")
+
+        img_path = self._output_dir / f"step_{step_id:04d}.png"
+        return self._take_screenshot(str(html_path), img_path)
+
+    def _build_render_data(
+        self,
+        state: Dict[str, float],
+        step_id: int,
+        show_values: bool,
+    ) -> Dict[str, Any]:
+        # SVG dimensions (body minus header/panel-label area)
+        svg_w = self._width
+        svg_h = self._height - self.HEADER_HEIGHT
+
+        margin_l = 52
+        margin_r = 24
+        margin_t = 24
+        margin_b = 52
+        plot_x = margin_l
+        plot_y = margin_t
+        plot_w = svg_w - margin_l - margin_r
+        plot_h = svg_h - margin_t - margin_b
+
+        # Y scale: use the shared range of all input variables
+        all_lo = min(float(self._specs[v].get("min_value", 1)) for v in self._input_variables)
+        all_hi = max(float(self._specs[v].get("max_value", 10)) for v in self._input_variables)
+        y_span = all_hi - all_lo if all_hi > all_lo else 1.0
+
+        # Y-axis ticks at each integer
+        y_ticks = []
+        for v in range(int(all_lo), int(all_hi) + 1):
+            norm = (v - all_lo) / y_span
+            y = plot_y + (1.0 - norm) * plot_h
+            y_ticks.append({"y": round(y, 2), "label": str(v)})
+
+        # X positions: evenly spaced with padding
+        n_vars = len(self._input_variables)
+        x_pad = plot_w / (n_vars + 1)
+        x_positions = [plot_x + x_pad * (i + 1) for i in range(n_vars)]
+
+        points = []
+        for i, var in enumerate(self._input_variables):
+            value = float(state.get(var, all_lo))
+            norm = max(0.0, min(1.0, (value - all_lo) / y_span))
+            x = x_positions[i]
+            y = plot_y + (1.0 - norm) * plot_h
+            points.append({
+                "name": var,
+                "value": value,
+                "value_label": self._fmt(value),
+                "x": round(x, 2),
+                "y": round(y, 2),
+            })
+
+        return {
+            "step_id": step_id,
+            "width": self._width,
+            "height": self._height,
+            "svg_w": svg_w,
+            "svg_h": svg_h,
+            "plot_x": plot_x,
+            "plot_y": plot_y,
+            "plot_w": plot_w,
+            "plot_h": plot_h,
+            "y_ticks": y_ticks,
+            "points": points,
+            "show_values": show_values,
+        }
+
+
+# ---------------------------------------------------------------------------
+# HtmlHistoryChartRenderer
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# HtmlGridRenderer  (filled-unit grid: count encoding)
+# ---------------------------------------------------------------------------
+
+class HtmlGridRenderer(_ScreenshotMixin):
+    """
+    Filled grid visualization for abstract input variables.
+
+    Each variable is represented by a row of N cells.
+    The number of filled cells encodes the variable value.
+    Remaining cells are shown unfilled (empty boxes).
+
+    This provides a discrete unit-count encoding, distinct from:
+      Bar   → length
+      Slider/Dot → position
+      Line/Scatter → trajectory
+    """
+
+    def __init__(
+        self,
+        output_dir: str,
+        template_path: str,
+        input_variables: List[str],
+        variable_specs: Dict[str, Dict[str, Any]],
+        width: int = 900,
+        height: int = 500,
+        headless: bool = True,
+        slow_mo: int = 0,
+    ) -> None:
+        if not os.path.isfile(template_path):
+            raise FileNotFoundError(f"Template not found: {template_path}")
+
+        self._output_dir = Path(output_dir).resolve()
+        self._html_dir = self._output_dir / "html"
+        self._output_dir.mkdir(parents=True, exist_ok=True)
+        self._html_dir.mkdir(parents=True, exist_ok=True)
+
+        self._input_variables = input_variables
+        self._specs = variable_specs
+        self._width = width
+        self._height = height
+        self._headless = headless
+        self._slow_mo = slow_mo
+
+        tp = Path(template_path).resolve()
+        env = Environment(
+            loader=FileSystemLoader(str(tp.parent)),
+            autoescape=select_autoescape(["html"]),
+        )
+        self._template = env.get_template(tp.name)
+
+    def render(
+        self,
+        state: Dict[str, float],
+        step_id: int,
+        show_values: bool,
+    ) -> str:
+        # Determine the total number of cells = max_value of the shared range.
+        total_cells = int(
+            max(float(self._specs[v].get("max_value", 10)) for v in self._input_variables)
+        )
+
+        rows = []
+        for var in self._input_variables:
+            value = float(state.get(var, 1.0))
+            filled_count = max(0, min(total_cells, int(round(value))))
+            cells = [{"filled": i < filled_count} for i in range(total_cells)]
+            rows.append({
+                "name": var,
+                "value": value,
+                "value_label": self._fmt(value),
+                "filled_count": filled_count,
+                "cells": cells,
+            })
+
+        html = self._template.render(
+            step_id=step_id,
+            rows=rows,
+            total_cells=total_cells,
+            show_values=show_values,
+            width=self._width,
+            height=self._height,
+        )
+        html_path = self._html_dir / f"step_{step_id:04d}.html"
+        html_path.write_text(html, encoding="utf-8")
+
+        img_path = self._output_dir / f"step_{step_id:04d}.png"
+        return self._take_screenshot(str(html_path), img_path)
+
+
+SERIES_COLORS = [
+    "#2563eb",  # blue
+    "#dc2626",  # red
+    "#16a34a",  # green
+    "#d97706",  # amber
+    "#7c3aed",  # purple
+]
+
+
+class HtmlHistoryChartRenderer(_ScreenshotMixin):
+    """
+    Time-series history chart for abstract input variables.
+
+    Each render() call receives the history of states up to the current step
+    and draws all of them on a single chart (x = step index, y = value).
+
+    For line_ocr / scatter_ocr: value labels are shown on the CURRENT
+    (rightmost) step's points only.  Historical points stay unlabelled.
+    """
+
+    HEADER_HEIGHT = 46
+
+    def __init__(
+        self,
+        output_dir: str,
+        template_path: str,
+        plot_type: str,
+        input_variables: List[str],
+        variable_specs: Dict[str, Dict[str, Any]],
+        width: int = 900,
+        height: int = 520,
+        headless: bool = True,
+        slow_mo: int = 0,
+    ) -> None:
+        if plot_type not in {"line", "scatter"}:
+            raise ValueError("plot_type must be 'line' or 'scatter'")
+        if not os.path.isfile(template_path):
+            raise FileNotFoundError(f"Template not found: {template_path}")
+
+        self._output_dir = Path(output_dir).resolve()
+        self._html_dir = self._output_dir / "html"
+        self._output_dir.mkdir(parents=True, exist_ok=True)
+        self._html_dir.mkdir(parents=True, exist_ok=True)
+
+        self._plot_type = plot_type
+        self._input_variables = input_variables
+        self._specs = variable_specs
+        self._width = width
+        self._height = height
+        self._headless = headless
+        self._slow_mo = slow_mo
+
+        tp = Path(template_path).resolve()
+        env = Environment(
+            loader=FileSystemLoader(str(tp.parent)),
+            autoescape=select_autoescape(["html"]),
+        )
+        self._template = env.get_template(tp.name)
+
+    def render(
+        self,
+        states: List[Dict[str, float]],
+        current_step_id: int,
+        show_values: bool,
+    ) -> str:
+        render_data = self._build_render_data(states, current_step_id, show_values)
+
+        html = self._template.render(**render_data)
+        html_path = self._html_dir / f"step_{current_step_id:04d}.html"
+        html_path.write_text(html, encoding="utf-8")
+
+        img_path = self._output_dir / f"step_{current_step_id:04d}.png"
+        return self._take_screenshot(str(html_path), img_path)
+
+    def _build_render_data(
+        self,
+        states: List[Dict[str, float]],
+        current_step_id: int,
+        show_values: bool,
+    ) -> Dict[str, Any]:
+        # Layout constants
+        margin_l = 55
+        margin_r = 30
+        margin_t = 20
+        margin_b = 55
+        header_h = self.HEADER_HEIGHT
+
+        svg_h = self._height - header_h
+        plot_x = margin_l
+        plot_y = margin_t
+        plot_w = self._width - margin_l - margin_r
+        plot_h = svg_h - margin_t - margin_b
+
+        # Y axis: values are in [1, 10]; show ticks at 1, 3, 5, 7, 9, 10
+        all_lo = min(
+            float(self._specs[v].get("min_value", 1)) for v in self._input_variables
+        )
+        all_hi = max(
+            float(self._specs[v].get("max_value", 10)) for v in self._input_variables
+        )
+        y_span = all_hi - all_lo if all_hi > all_lo else 1.0
+
+        y_tick_values = []
+        cur = all_lo
+        while cur <= all_hi + 1e-9:
+            y_tick_values.append(cur)
+            cur += max(1.0, (all_hi - all_lo) / 5)
+        if all_hi not in y_tick_values:
+            y_tick_values.append(all_hi)
+
+        y_ticks = []
+        for v in y_tick_values:
+            norm = (v - all_lo) / y_span
+            y_coord = plot_y + (1.0 - norm) * plot_h
+            y_ticks.append({"y": round(y_coord, 2), "label": self._fmt(v)})
+
+        # X axis ticks: one per step in history
+        n_steps = len(states)
+        x_step = plot_w / max(n_steps - 1, 1)
+        x_ticks = []
+        for i in range(n_steps):
+            x = plot_x + i * x_step if n_steps > 1 else plot_x + plot_w / 2
+            x_ticks.append({"x": round(x, 2), "label": str(i)})
+
+        # Build series
+        series = []
+        for var_idx, var in enumerate(self._input_variables):
+            color = SERIES_COLORS[var_idx % len(SERIES_COLORS)]
+            points = []
+            for step_i, state in enumerate(states):
+                value = float(state.get(var, all_lo))
+                norm = max(0.0, min(1.0, (value - all_lo) / y_span))
+                x = plot_x + step_i * x_step if n_steps > 1 else plot_x + plot_w / 2
+                y = plot_y + (1.0 - norm) * plot_h
+                is_current = step_i == len(states) - 1
+                points.append({
+                    "x": round(x, 2),
+                    "y": round(y, 2),
+                    "value": value,
+                    "value_label": self._fmt(value),
+                    "is_current": is_current,
+                })
+
+            # SVG path for line chart
+            path = ""
+            if len(points) >= 2:
+                path_parts = [f"M {points[0]['x']} {points[0]['y']}"]
+                for p in points[1:]:
+                    path_parts.append(f"L {p['x']} {p['y']}")
+                path = " ".join(path_parts)
+
+            series.append({
+                "name": var,
+                "color": color,
+                "points": points,
+                "path": path,
+            })
+
+        return {
+            "plot_type": self._plot_type,
+            "current_step_id": current_step_id,
+            "n_vars": len(self._input_variables),
+            "width": self._width,
+            "height": self._height,
+            "header_height": header_h,
+            "plot_x": plot_x,
+            "plot_y": plot_y,
+            "plot_w": plot_w,
+            "plot_h": plot_h,
+            "y_ticks": y_ticks,
+            "x_ticks": x_ticks,
+            "series": series,
+            "show_values": show_values,
+        }
