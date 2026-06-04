@@ -224,6 +224,9 @@ class BenchmarkDataGenerator:
     def _compute_answer(self, task: Dict[str, Any], states: List[Dict[str, float]]) -> Any:
         task_type = str(task["type"])
 
+        if task_type.startswith("open_"):
+            return None
+
         if task_type == "value_at_step":
             var = self._resolve_variable(task.get("variable", "target"))
             step = self._resolve_step(task.get("step", "last"), states)

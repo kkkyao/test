@@ -9,7 +9,7 @@ from typing import Any, Callable, Dict, List, Optional
 from run_episode import build_model_callable, build_vlm_callable
 
 from src.benchmarks.data_generator import BenchmarkDataGenerator
-from src.benchmarks.parsers import parse_answer
+from src.benchmarks.parsers import parse_answer, tag_open_answer
 from src.benchmarks.prompts import build_benchmark_prompt
 from src.benchmarks.renderers import BenchmarkVisualRenderer
 from src.benchmarks.scorer import score_answer
@@ -113,13 +113,20 @@ class VisualBenchmarkRunner:
                     "gold_answer": case.gold_answer,
                     "answer_type": case.answer_type,
                     "parsed_answer": parsed_answer,
-                    "correct": bool(score["correct"]),
+                    "correct": None if case.answer_type == "open" else bool(score["correct"]),
                     "numeric_error": score.get("numeric_error"),
                     "raw_output": raw_output,
                     "image_paths": image_paths,
                     "states": case.states,
                     "pair_id": case.pair_id,
                 }
+
+                if case.task_type.startswith("open_"):
+                    tags = tag_open_answer(
+                        raw_output,
+                        input_variables=case.metadata.get("input_variables", []),
+                    )
+                    result.update(tags)
 
                 results.append(result)
                 self._append_jsonl(self.output_dir / "results.jsonl", result)
@@ -181,6 +188,13 @@ class VisualBenchmarkRunner:
         image_paths: List[str],
     ) -> str:
         if self.model_type == "oracle":
+            if case.task_type.startswith("open_"):
+                return (
+                    "Mock open answer: I can see variables a, b, c displayed as visual elements. "
+                    "Step labels are visible (steps 0 through 4). "
+                    "Values appear to range from 1 to 10. The y-axis shows a scale with tick marks. "
+                    "Labels are visible. No changes in domain were observed."
+                )
             return json.dumps({"answer": case.gold_answer}, ensure_ascii=False)
 
         if self.model_callable is None:
@@ -227,27 +241,32 @@ class VisualBenchmarkRunner:
         """
         Acc++: a pair is correct only if BOTH positive and negative cases are correct.
 
-        Groups cases by pair_id; skips cases without pair_id.
-        Reports Acc++ overall and by base_modality.
+        Groups cases by (pair_id, modality) so that each evaluation unit contains
+        exactly the positive + negative assertion for one modality.  Grouping by
+        pair_id alone would bundle all modalities together (e.g. 24 cases per pair
+        for 12 modalities), making it nearly impossible to score any pair correct.
+        Reports Acc++ overall and by modality.
         """
         from collections import defaultdict
 
-        pairs: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
+        # Key: (pair_id, modality) → both polarities for that modality
+        pairs: Dict[tuple, List[Dict[str, Any]]] = defaultdict(list)
         for row in results:
             pid = row.get("pair_id")
             if pid:
-                pairs[pid].append(row)
+                key = (pid, row.get("modality", ""))
+                pairs[key].append(row)
 
         if not pairs:
             return []
 
         pair_results: List[Dict[str, Any]] = []
-        for pid, rows in pairs.items():
+        for (pid, modality), rows in pairs.items():
             all_correct = all(bool(r["correct"]) for r in rows)
             pair_results.append({
                 "pair_id": pid,
                 "pair_correct": all_correct,
-                "modality": rows[0].get("modality", ""),
+                "modality": modality,
                 "task_type": rows[0].get("task_type", "").replace("_assertion", ""),
                 "n_cases": len(rows),
             })
@@ -666,10 +685,25 @@ class VisualBenchmarkRunner:
             "image_paths",
             "states",
             "pair_id",
+            # open-ended visual perception tags
+            "mentions_abc",
+            "mentioned_variables",
+            "missing_gold_variables",
+            "hallucinated_variables",
+            "obvious_domain_hallucination",
+            "mentions_step",
+            "mentioned_step_numbers",
+            "mentions_numbers",
+            "extracted_numbers",
+            "mentions_axis",
+            "mentions_ticks",
+            "mentions_labels",
+            "mentions_change",
+            "mentioned_changed_variables",
         ]
 
         with path.open("w", encoding="utf-8", newline="") as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
             writer.writeheader()
 
             for row in rows:

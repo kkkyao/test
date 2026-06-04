@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from src.benchmarks.schemas import BenchmarkCase
 
@@ -35,13 +35,36 @@ def _build_text_prompt(case: BenchmarkCase) -> str:
     lines.append("Question:")
     lines.append(case.question)
     lines.append("")
-    lines.extend(_answer_instructions(case.answer_type))
+    lines.extend(_answer_instructions(
+        case.answer_type,
+        task_type=case.task_type,
+        input_variables=case.metadata.get("input_variables", []),
+    ))
 
     return "\n".join(lines)
 
 
 def _build_visual_prompt(case: BenchmarkCase, image_paths: List[str]) -> str:
     lines: List[str] = []
+
+    # ── Open visual perception tasks: no modality hints ───────────────
+    # For open-ended sanity checks we intentionally omit all context
+    # about what is in the image so the model's answer reflects only
+    # what it actually sees, not what it was told to expect.
+    if case.answer_type == "open":
+        lines.append("You are shown one or more images of a visualization.")
+        lines.append("")
+        lines.append(f"Number of images provided: {len(image_paths)}")
+        lines.append("")
+        lines.append("Question:")
+        lines.append(case.question)
+        lines.append("")
+        lines.extend(_answer_instructions(
+            case.answer_type,
+            task_type=case.task_type,
+            input_variables=case.metadata.get("input_variables", []),
+        ))
+        return "\n".join(lines)
 
     # ── Original modalities ───────────────────────────────────────────
     if case.modality == "bar":
@@ -71,7 +94,7 @@ def _build_visual_prompt(case: BenchmarkCase, image_paths: List[str]) -> str:
     # ── Abstract visual encoding: bar standalone ──────────────────────
     elif case.modality in {"bar_ocr", "bar_nocr"}:
         lines.append("You are given a sequence of bar-chart images.")
-        lines.append("The images are ordered from oldest step (step 0) to newest step.")
+        lines.append("The images are ordered from oldest step (Step 1) to newest step.")
         lines.append("Each image shows one step of the experiment.")
         lines.append("The Controls panel contains vertical bars for each input variable.")
         lines.append("All bars share the same scale (range 1 to 10).")
@@ -86,7 +109,7 @@ def _build_visual_prompt(case: BenchmarkCase, image_paths: List[str]) -> str:
     # ── Abstract visual encoding: slider ─────────────────────────────
     elif case.modality in {"slider_ocr", "slider_nocr"}:
         lines.append("You are given a sequence of slider observation images.")
-        lines.append("The images are ordered from oldest step (step 0) to newest step.")
+        lines.append("The images are ordered from oldest step (Step 1) to newest step.")
         lines.append("Each image shows one step of the experiment.")
         lines.append(
             "Each variable is represented by a horizontal slider "
@@ -107,7 +130,7 @@ def _build_visual_prompt(case: BenchmarkCase, image_paths: List[str]) -> str:
     # ── Abstract visual encoding: dot plot (vertical) ────────────────
     elif case.modality in {"dot_ocr", "dot_nocr"}:
         lines.append("You are given a sequence of dot-chart images.")
-        lines.append("The images are ordered from oldest step (step 0) to newest step.")
+        lines.append("The images are ordered from oldest step (Step 1) to newest step.")
         lines.append("Each image shows one step of the experiment.")
         lines.append(
             "Each image contains a vertical dot chart where the x-axis shows variable "
@@ -127,7 +150,7 @@ def _build_visual_prompt(case: BenchmarkCase, image_paths: List[str]) -> str:
     # ── Abstract visual encoding: grid ────────────────────────────────
     elif case.modality in {"grid_ocr", "grid_nocr"}:
         lines.append("You are given a sequence of unit-grid images.")
-        lines.append("The images are ordered from oldest step (step 0) to newest step.")
+        lines.append("The images are ordered from oldest step (Step 1) to newest step.")
         lines.append("Each image shows one step of the experiment.")
         lines.append(
             "Each variable is represented by a row of 10 cells. "
@@ -207,7 +230,11 @@ def _build_visual_prompt(case: BenchmarkCase, image_paths: List[str]) -> str:
     lines.append("Question:")
     lines.append(case.question)
     lines.append("")
-    lines.extend(_answer_instructions(case.answer_type))
+    lines.extend(_answer_instructions(
+        case.answer_type,
+        task_type=case.task_type,
+        input_variables=case.metadata.get("input_variables", []),
+    ))
 
     return "\n".join(lines)
 
@@ -234,7 +261,14 @@ def _format_state_table(
     return "\n".join(lines)
 
 
-def _answer_instructions(answer_type: str) -> List[str]:
+def _answer_instructions(
+    answer_type: str,
+    task_type: str = "",
+    input_variables: Optional[List[str]] = None,
+) -> List[str]:
+    if answer_type == "open":
+        return ["Answer in your own words. Be as detailed and specific as possible."]
+
     lines: List[str] = []
 
     lines.append("Return exactly one JSON object and no other text:")
@@ -245,9 +279,26 @@ def _answer_instructions(answer_type: str) -> List[str]:
         lines.append("The answer must be a number. Do not include units.")
 
     elif answer_type == "category":
-        lines.append("The answer must be a short lowercase string category.")
-        lines.append('For direction questions, use one of: "increase", "decrease", "same".')
-        lines.append("For variable-name questions, return exactly the variable name.")
+        lines.append("The answer must be a short lowercase string.")
+
+        if task_type.endswith("_assertion"):
+            lines.append('Answer with exactly one of: "yes" or "no".')
+
+        elif task_type == "change_direction":
+            lines.append('Answer with exactly one of: "increase", "decrease", or "same".')
+
+        elif task_type in {"changed_variable", "argmax_at_step"}:
+            if input_variables:
+                options = ", ".join(f'"{v}"' for v in input_variables)
+                lines.append(f"Answer with exactly one of: {options}.")
+            else:
+                lines.append("Answer with exactly the variable name.")
+
+        elif task_type == "comparison_at_step":
+            lines.append('Answer with exactly one of: "yes" or "no".')
+
+        else:
+            lines.append("Answer with a short lowercase string.")
 
     elif answer_type == "step":
         lines.append("The answer must be an integer step index.")

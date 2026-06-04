@@ -9,6 +9,9 @@ def score_answer(
     answer_type: str,
     tolerance: float = 1e-6,
 ) -> Dict[str, Any]:
+    if answer_type == "open":
+        return {"correct": None, "numeric_error": None}
+
     if answer_type == "number":
         return _score_number(predicted, gold, tolerance)
 

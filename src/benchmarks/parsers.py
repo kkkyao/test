@@ -2,10 +2,77 @@ from __future__ import annotations
 
 import json
 import re
-from typing import Any, Optional
+from typing import Any, Dict, List, Optional
+
+# Words that, if appearing as standalone tokens in a model's answer to an
+# open visual-perception question, likely indicate domain hallucination
+# (the model is describing a different scene, not the abstract a/b/c chart).
+_HALLUCINATION_WORDS = frozenset({
+    "price", "cost", "revenue", "sales", "profit",
+    "customer", "customers", "user", "users",
+    "employee", "employees", "stock",
+    "temperature", "weight", "height", "population",
+    "income", "wavelength", "concentration", "absorbance",
+    "voltage", "current", "resistance",
+    "speed", "distance", "frequency", "amplitude",
+    "mass", "force", "pressure",
+})
+
+_AXIS_WORDS   = frozenset({"axis", "axes", "xaxis", "yaxis"})
+_TICK_WORDS   = frozenset({"tick", "ticks"})
+_LABEL_WORDS  = frozenset({"label", "labels", "labeled"})
+_CHANGE_WORDS = frozenset({
+    "change", "changed", "changes",
+    "increase", "increases", "increased",
+    "decrease", "decreases", "decreased",
+})
+
+
+def tag_open_answer(
+    raw: str,
+    input_variables: Optional[List[str]] = None,
+) -> Dict[str, Any]:
+    """
+    Lightweight rule-based tagging of an open-ended model answer.
+    No NLP — keyword presence checks and simple regex only.
+    """
+    if not isinstance(raw, str):
+        raw = str(raw) if raw is not None else ""
+
+    text_lower = raw.lower()
+    word_set   = set(re.findall(r"[a-z]+", text_lower))
+
+    gold_vars = [v.lower() for v in (input_variables or [])]
+
+    mentioned    = [v for v in gold_vars if v in text_lower]
+    missing      = [v for v in gold_vars if v not in text_lower]
+    hallucinated = sorted(_HALLUCINATION_WORDS & word_set)
+
+    step_numbers = [int(n) for n in re.findall(r"step\s*(\d+)", text_lower)]
+    numbers      = re.findall(r"\b\d+(?:\.\d+)?\b", text_lower)
+
+    return {
+        "mentions_abc":                bool(mentioned),
+        "mentioned_variables":         mentioned,
+        "missing_gold_variables":      missing,
+        "hallucinated_variables":      hallucinated,
+        "obvious_domain_hallucination": bool(hallucinated),
+        "mentions_step":               bool({"step", "steps"} & word_set),
+        "mentioned_step_numbers":      step_numbers,
+        "mentions_numbers":            bool(numbers),
+        "extracted_numbers":           [float(n) for n in numbers[:10]],
+        "mentions_axis":               bool(_AXIS_WORDS & word_set),
+        "mentions_ticks":              bool(_TICK_WORDS & word_set),
+        "mentions_labels":             bool(_LABEL_WORDS & word_set),
+        "mentions_change":             bool(_CHANGE_WORDS & word_set),
+        "mentioned_changed_variables": [],
+    }
 
 
 def parse_answer(raw_output: str, answer_type: str) -> Any:
+    if answer_type == "open":
+        return raw_output.strip() if isinstance(raw_output, str) else str(raw_output)
+
     obj = extract_json_object(raw_output)
 
     if isinstance(obj, dict) and "answer" in obj:

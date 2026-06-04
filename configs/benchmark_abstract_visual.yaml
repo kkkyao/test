@@ -130,7 +130,7 @@ benchmark:
       from_step: 3
       to_step: 4
       answer_type: category
-      question: "Which variable changed from step {from_step} to step {to_step}?"
+      question: "Which variable changed from step {from_step} to step {to_step}? Answer with exactly one of: a, b, or c."
       generate_paired: true
 
     # Direction of change for a between step 3 and step 4.
@@ -223,10 +223,11 @@ agent:
   # dtype: bfloat16
   # device_map: auto
   # trust_remote_code: true
-  # generation:
-  #   max_new_tokens: 64
-  #   temperature: 0.0
-  #   do_sample: false
+
+  generation:
+    max_new_tokens: 64
+    temperature: 0.0
+    do_sample: false
 
 # ── Output ───────────────────────────────────────────────────────────
 
