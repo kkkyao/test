@@ -47,12 +47,22 @@ def _build_text_prompt(case: BenchmarkCase) -> str:
 def _build_visual_prompt(case: BenchmarkCase, image_paths: List[str]) -> str:
     lines: List[str] = []
 
-    # ── Open visual perception tasks: no modality hints ───────────────
-    # For open-ended sanity checks we intentionally omit all context
-    # about what is in the image so the model's answer reflects only
-    # what it actually sees, not what it was told to expect.
+    # ── Open visual perception tasks ─────────────────────────────────
+    # Provide minimal structural grammar so the model understands what
+    # kind of display it is looking at, without revealing variable names,
+    # values, or chart-type details that the model should discover itself.
     if case.answer_type == "open":
-        lines.append("You are shown one or more images of a visualization.")
+        lines.append("You are shown a sequence of images from an experiment.")
+        lines.append(
+            "Each image is a snapshot of one time step: "
+            "it shows the current values of several variables simultaneously. "
+            "The step number is shown in the top-left corner of each image "
+            "(for example, \"Step 3\" means this is the third time step)."
+        )
+        lines.append(
+            "Each image is independent — it captures a single moment, "
+            "not a time series."
+        )
         lines.append("")
         lines.append(f"Number of images provided: {len(image_paths)}")
         lines.append("")
