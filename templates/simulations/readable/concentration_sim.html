@@ -20,7 +20,6 @@
       flex-direction: column;
     }
 
-    /* ── Top bar ─────────────────────────────────────────────────── */
     .topbar {
       flex: 0 0 46px;
       background: #1e2d40;
@@ -38,7 +37,6 @@
       border-radius: 999px;
     }
 
-    /* ── Content ─────────────────────────────────────────────────── */
     .content {
       flex: 1;
       display: flex;
@@ -66,13 +64,12 @@
       justify-content: space-evenly;
     }
 
-    /* ── Variable block ──────────────────────────────────────────── */
-    .var-block { display: flex; flex-direction: column; gap: 7px; }
+    .var-block { display: flex; flex-direction: column; gap: 10px; }
 
     .var-top-row {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 20px;
     }
 
     .var-name {
@@ -82,27 +79,18 @@
       min-width: 180px;
     }
 
-    /* Current value — largest, most prominent element */
     .var-value {
-      font-size: 44px;
+      font-size: 52px;
       font-weight: 900;
       font-family: "Courier New", monospace;
       color: #111;
       background: #fef08a;
-      border: 2px solid #ca8a04;
+      border: 3px solid #ca8a04;
       border-radius: 8px;
-      padding: 2px 20px;
-      line-height: 1.15;
+      padding: 2px 24px;
+      line-height: 1.1;
     }
 
-    .var-meta {
-      font-size: 15px;
-      color: #6b7280;
-      align-self: flex-end;
-      padding-bottom: 5px;
-    }
-
-    /* ── Slider ──────────────────────────────────────────────────── */
     .slider-row {
       display: flex;
       align-items: center;
@@ -111,8 +99,8 @@
 
     .endpoint {
       font-size: 14px;
-      font-weight: 700;
-      color: #6b7280;
+      font-weight: 600;
+      color: #9ca3af;
       width: 38px;
       flex-shrink: 0;
     }
@@ -122,53 +110,34 @@
     .track-wrap {
       flex: 1;
       position: relative;
-      height: 52px;
+      height: 30px;
     }
 
     .track-line {
       position: absolute;
       left: 0; right: 0;
-      top: 34px; height: 7px;
+      top: 11px; height: 8px;
       background: #d1d5db;
-      border-radius: 3px;
+      border-radius: 4px;
     }
 
     .track-fill {
       position: absolute;
       left: 0;
-      top: 34px; height: 7px;
+      top: 11px; height: 8px;
       background: #2563eb;
-      border-radius: 3px 0 0 3px;
-    }
-
-    .tick {
-      position: absolute;
-      top: 30px;
-      width: 2px; height: 15px;
-      background: #9ca3af;
-      transform: translateX(-50%);
+      border-radius: 4px 0 0 4px;
     }
 
     .knob {
       position: absolute;
-      top: 22px;
-      width: 26px; height: 26px;
+      top: 5px;
+      width: 20px; height: 20px;
       background: #1d4ed8;
       border: 3px solid #fff;
       border-radius: 50%;
       transform: translateX(-50%);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    }
-
-    .knob-label {
-      position: absolute;
-      top: 0;
-      font-size: 21px;
-      font-weight: 900;
-      font-family: "Courier New", monospace;
-      color: #1d4ed8;
-      transform: translateX(-50%);
-      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.35);
     }
   </style>
 </head>
@@ -180,7 +149,7 @@
 </div>
 
 <div class="content">
-  <div class="section-header">INDEPENDENT VARIABLES</div>
+  <div class="section-header">CURRENT STATE OF INDEPENDENT VARIABLES</div>
 
   <div class="variables-list">
 
@@ -189,23 +158,13 @@
       <div class="var-top-row">
         <div class="var-name">{{ variables.solute_amount.display }}</div>
         <div class="var-value">{{ variables.solute_amount.value }}</div>
-        <div class="var-meta">
-          Range: {{ variables.solute_amount.min | round(0) | int }}–{{ variables.solute_amount.max | round(0) | int }}
-          &nbsp;·&nbsp;
-          step {{ variables.solute_amount.step | round(0) | int }}
-        </div>
       </div>
       <div class="slider-row">
         <span class="endpoint left">{{ variables.solute_amount.min | round(0) | int }}</span>
         <div class="track-wrap">
           <div class="track-line"></div>
           <div class="track-fill" style="width: {{ amount_pct }}%;"></div>
-          {% for i in range(10) %}
-            {% set t_pct = (8 + (i / 9) * 84) | round(2) %}
-            <div class="tick" style="left: {{ t_pct }}%;"></div>
-          {% endfor %}
           <div class="knob" style="left: {{ amount_pct }}%;"></div>
-          <div class="knob-label" style="left: {{ amount_pct }}%;">{{ variables.solute_amount.value }}</div>
         </div>
         <span class="endpoint right">{{ variables.solute_amount.max | round(0) | int }}</span>
       </div>
@@ -216,30 +175,20 @@
       <div class="var-top-row">
         <div class="var-name">{{ variables.solution_volume.display }}</div>
         <div class="var-value">{{ variables.solution_volume.value }}</div>
-        <div class="var-meta">
-          Range: {{ variables.solution_volume.min | round(0) | int }}–{{ variables.solution_volume.max | round(0) | int }}
-          &nbsp;·&nbsp;
-          step {{ variables.solution_volume.step | round(0) | int }}
-        </div>
       </div>
       <div class="slider-row">
         <span class="endpoint left">{{ variables.solution_volume.min | round(0) | int }}</span>
         <div class="track-wrap">
           <div class="track-line"></div>
           <div class="track-fill" style="width: {{ volume_pct }}%;"></div>
-          {% for i in range(10) %}
-            {% set t_pct = (8 + (i / 9) * 84) | round(2) %}
-            <div class="tick" style="left: {{ t_pct }}%;"></div>
-          {% endfor %}
           <div class="knob" style="left: {{ volume_pct }}%;"></div>
-          <div class="knob-label" style="left: {{ volume_pct }}%;">{{ variables.solution_volume.value }}</div>
         </div>
         <span class="endpoint right">{{ variables.solution_volume.max | round(0) | int }}</span>
       </div>
     </div>
 
-  </div><!-- variables-list -->
-</div><!-- content -->
+  </div>
+</div>
 
 </body>
 </html>
