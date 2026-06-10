@@ -1,0 +1,274 @@
+{% set wl_pct   = (8 + variables.wavelength.norm    * 84) | round(2) %}
+{% set conc_pct = (8 + variables.concentration.norm * 84) | round(2) %}
+{% set path_pct = (8 + variables.path_length.norm   * 84) | round(2) %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Experiment — Step {{ step_id }}</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 900px;
+      height: 500px;
+      background: #ffffff;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #1a1a1a;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Top bar ─────────────────────────────────────────────────── */
+    .topbar {
+      flex: 0 0 46px;
+      background: #1e2d40;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+    }
+    .topbar-title { font-size: 18px; font-weight: 700; }
+    .step-badge {
+      font-size: 18px; font-weight: 900;
+      background: #4a90d9;
+      padding: 5px 16px;
+      border-radius: 999px;
+    }
+
+    /* ── Content ─────────────────────────────────────────────────── */
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 10px 44px 10px;
+    }
+
+    .section-header {
+      flex: 0 0 auto;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #1d4ed8;
+      background: #eff6ff;
+      border-left: 4px solid #1d4ed8;
+      padding: 5px 12px;
+      margin-bottom: 8px;
+    }
+
+    .variables-list {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+    }
+
+    /* ── Variable block ──────────────────────────────────────────── */
+    .var-block { display: flex; flex-direction: column; gap: 5px; }
+
+    .var-top-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .var-name {
+      font-size: 22px;
+      font-weight: 900;
+      color: #111;
+      min-width: 160px;
+    }
+
+    /* Current value — largest, most prominent element */
+    .var-value {
+      font-size: 38px;
+      font-weight: 900;
+      font-family: "Courier New", monospace;
+      color: #111;
+      background: #fef08a;
+      border: 2px solid #ca8a04;
+      border-radius: 8px;
+      padding: 2px 16px;
+      line-height: 1.15;
+    }
+
+    .var-meta {
+      font-size: 14px;
+      color: #6b7280;
+      align-self: flex-end;
+      padding-bottom: 4px;
+    }
+
+    /* ── Slider ──────────────────────────────────────────────────── */
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .endpoint {
+      font-size: 13px;
+      font-weight: 700;
+      color: #6b7280;
+      width: 38px;
+      flex-shrink: 0;
+    }
+    .endpoint.left  { text-align: right; }
+    .endpoint.right { text-align: left; }
+
+    .track-wrap {
+      flex: 1;
+      position: relative;
+      height: 46px;
+    }
+
+    .track-line {
+      position: absolute;
+      left: 0; right: 0;
+      top: 30px; height: 6px;
+      background: #d1d5db;
+      border-radius: 3px;
+    }
+
+    .track-fill {
+      position: absolute;
+      left: 0;
+      top: 30px; height: 6px;
+      background: #2563eb;
+      border-radius: 3px 0 0 3px;
+    }
+
+    .tick {
+      position: absolute;
+      top: 26px;
+      width: 2px; height: 14px;
+      background: #9ca3af;
+      transform: translateX(-50%);
+    }
+
+    .knob {
+      position: absolute;
+      top: 20px;
+      width: 22px; height: 22px;
+      background: #1d4ed8;
+      border: 3px solid #fff;
+      border-radius: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    /* Value label above knob — confirms position visually */
+    .knob-label {
+      position: absolute;
+      top: 0;
+      font-size: 19px;
+      font-weight: 900;
+      font-family: "Courier New", monospace;
+      color: #1d4ed8;
+      transform: translateX(-50%);
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-title">Experiment</div>
+  <div class="step-badge">Step {{ step_id if step_id is not none else "?" }}</div>
+</div>
+
+<div class="content">
+  <div class="section-header">INDEPENDENT VARIABLES</div>
+
+  <div class="variables-list">
+
+    <!-- ── wavelength ─────────────────────────────────────── -->
+    <div class="var-block">
+      <div class="var-top-row">
+        <div class="var-name">{{ variables.wavelength.display }}</div>
+        <div class="var-value">{{ variables.wavelength.value }} nm</div>
+        <div class="var-meta">
+          Range: {{ variables.wavelength.min | round(0) | int }}–{{ variables.wavelength.max | round(0) | int }} nm
+          &nbsp;·&nbsp;
+          step {{ variables.wavelength.step | round(0) | int }}
+        </div>
+      </div>
+      <div class="slider-row">
+        <span class="endpoint left">{{ variables.wavelength.min | round(0) | int }}</span>
+        <div class="track-wrap">
+          <div class="track-line"></div>
+          <div class="track-fill" style="width: {{ wl_pct }}%;"></div>
+          {% for i in range(7) %}
+            {% set t_pct = (8 + (i / 6) * 84) | round(2) %}
+            <div class="tick" style="left: {{ t_pct }}%;"></div>
+          {% endfor %}
+          <div class="knob" style="left: {{ wl_pct }}%;"></div>
+          <div class="knob-label" style="left: {{ wl_pct }}%;">{{ variables.wavelength.value }}</div>
+        </div>
+        <span class="endpoint right">{{ variables.wavelength.max | round(0) | int }}</span>
+      </div>
+    </div>
+
+    <!-- ── concentration ──────────────────────────────────── -->
+    <div class="var-block">
+      <div class="var-top-row">
+        <div class="var-name">{{ variables.concentration.display }}</div>
+        <div class="var-value">{{ variables.concentration.value }}</div>
+        <div class="var-meta">
+          Range: {{ variables.concentration.min | round(0) | int }}–{{ variables.concentration.max | round(0) | int }}
+          &nbsp;·&nbsp;
+          step {{ variables.concentration.step | round(0) | int }}
+        </div>
+      </div>
+      <div class="slider-row">
+        <span class="endpoint left">{{ variables.concentration.min | round(0) | int }}</span>
+        <div class="track-wrap">
+          <div class="track-line"></div>
+          <div class="track-fill" style="width: {{ conc_pct }}%;"></div>
+          {% for i in range(5) %}
+            {% set t_pct = (8 + (i / 4) * 84) | round(2) %}
+            <div class="tick" style="left: {{ t_pct }}%;"></div>
+          {% endfor %}
+          <div class="knob" style="left: {{ conc_pct }}%;"></div>
+          <div class="knob-label" style="left: {{ conc_pct }}%;">{{ variables.concentration.value }}</div>
+        </div>
+        <span class="endpoint right">{{ variables.concentration.max | round(0) | int }}</span>
+      </div>
+    </div>
+
+    <!-- ── path_length ────────────────────────────────────── -->
+    <div class="var-block">
+      <div class="var-top-row">
+        <div class="var-name">{{ variables.path_length.display }}</div>
+        <div class="var-value">{{ variables.path_length.value }}</div>
+        <div class="var-meta">
+          Range: {{ variables.path_length.min | round(0) | int }}–{{ variables.path_length.max | round(0) | int }}
+          &nbsp;·&nbsp;
+          step {{ variables.path_length.step | round(0) | int }}
+        </div>
+      </div>
+      <div class="slider-row">
+        <span class="endpoint left">{{ variables.path_length.min | round(0) | int }}</span>
+        <div class="track-wrap">
+          <div class="track-line"></div>
+          <div class="track-fill" style="width: {{ path_pct }}%;"></div>
+          {% for i in range(5) %}
+            {% set t_pct = (8 + (i / 4) * 84) | round(2) %}
+            <div class="tick" style="left: {{ t_pct }}%;"></div>
+          {% endfor %}
+          <div class="knob" style="left: {{ path_pct }}%;"></div>
+          <div class="knob-label" style="left: {{ path_pct }}%;">{{ variables.path_length.value }}</div>
+        </div>
+        <span class="endpoint right">{{ variables.path_length.max | round(0) | int }}</span>
+      </div>
+    </div>
+
+  </div><!-- variables-list -->
+</div><!-- content -->
+
+</body>
+</html>

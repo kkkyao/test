@@ -571,6 +571,7 @@ class HtmlSimulationRenderer:
             "min": lo,
             "max": hi,
             "norm": self._normalise(value, lo, hi),
+            "step": float(self.variables.get(var_name, {}).get("step", 1)),
             "is_target": is_target,
         }
 
