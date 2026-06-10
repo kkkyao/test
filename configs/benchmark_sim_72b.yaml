@@ -1,0 +1,167 @@
+benchmark:
+  name: sim_sanity_beers_72b
+  seed: 42
+  n_sequences: 5
+  sequence_length: 3
+  round_digits: 4
+
+  variables:
+    input_variables:
+      - wavelength
+      - concentration
+      - path_length
+    target_variable: absorbance
+    specs:
+      wavelength:
+        min_value: 400
+        max_value: 700
+        initial_value: 500
+        step: 50
+        decimals: 0
+      concentration:
+        min_value: 1
+        max_value: 5
+        initial_value: 2
+        step: 1
+        decimals: 0
+      path_length:
+        min_value: 1
+        max_value: 5
+        initial_value: 2
+        step: 1
+        decimals: 0
+      absorbance:
+        min_value: 0
+        max_value: 350
+        initial_value: 40
+        decimals: 2
+
+  formula: "absorbance = wavelength * concentration * path_length / 50.0"
+
+  modalities:
+    - simulation
+
+  tasks:
+
+    # ── State reading ────────────────────────────────────────────────
+    - id: read_wavelength_last
+      type: value_at_step
+      variable: wavelength
+      step: last
+      answer_type: number
+      question: "At the current step (step {step}), what is the value of wavelength?"
+
+    - id: read_concentration_last
+      type: value_at_step
+      variable: concentration
+      step: last
+      answer_type: number
+      question: "At the current step (step {step}), what is the value of concentration?"
+
+    - id: read_path_length_last
+      type: value_at_step
+      variable: path_length
+      step: last
+      answer_type: number
+      question: "At the current step (step {step}), what is the value of path_length?"
+
+    # ── Changed variable detection (step 1 → 2) ─────────────────────
+    - id: changed_step1_2
+      type: changed_variable
+      from_step: 1
+      to_step: 2
+      answer_type: category
+      question: "Which input variable changed from step {from_step} to step {to_step}? Answer with exactly one of: wavelength, concentration, or path_length."
+
+    # ── Direction detection per variable (step 1 → 2) ────────────────
+    - id: direction_wavelength_1_2
+      type: change_direction
+      variable: wavelength
+      from_step: 1
+      to_step: 2
+      answer_type: category
+      question: "From step {from_step} to step {to_step}, did wavelength increase, decrease, or stay the same?"
+
+    - id: direction_concentration_1_2
+      type: change_direction
+      variable: concentration
+      from_step: 1
+      to_step: 2
+      answer_type: category
+      question: "From step {from_step} to step {to_step}, did concentration increase, decrease, or stay the same?"
+
+    - id: direction_path_length_1_2
+      type: change_direction
+      variable: path_length
+      from_step: 1
+      to_step: 2
+      answer_type: category
+      question: "From step {from_step} to step {to_step}, did path_length increase, decrease, or stay the same?"
+
+    # ── Delta estimation per variable (step 1 → 2) ───────────────────
+    - id: amount_wavelength_1_2
+      type: change_amount
+      variable: wavelength
+      from_step: 1
+      to_step: 2
+      answer_type: number
+      question: "By how much did wavelength change from step {from_step} to step {to_step}?"
+
+    - id: amount_concentration_1_2
+      type: change_amount
+      variable: concentration
+      from_step: 1
+      to_step: 2
+      answer_type: number
+      question: "By how much did concentration change from step {from_step} to step {to_step}?"
+
+    - id: amount_path_length_1_2
+      type: change_amount
+      variable: path_length
+      from_step: 1
+      to_step: 2
+      answer_type: number
+      question: "By how much did path_length change from step {from_step} to step {to_step}?"
+
+# ── Visual rendering ───────────────────────────────────────────────────
+
+visual:
+  playwright:
+    headless: true
+    slow_mo: 0
+
+  simulation:
+    simulation_type: beers_wavelength
+    template_dir: templates/simulations
+    exclude_variables: []
+    viewport:
+      width: 900
+      height: 500
+
+  bar:
+    template_path: templates/chart_state_view.html
+    normalize_bars: true
+    exclude_variables: []
+
+# ── Scoring ────────────────────────────────────────────────────────────
+
+scoring:
+  tolerance: 0.01
+
+# ── Agent ──────────────────────────────────────────────────────────────
+
+agent:
+  backend: hf_qwen_vl
+  model_name: Qwen/Qwen2.5-VL-72B-Instruct
+  dtype: bfloat16
+  device_map: auto
+  trust_remote_code: true
+  generation:
+    max_new_tokens: 64
+    temperature: 0.0
+    do_sample: false
+
+# ── Output ─────────────────────────────────────────────────────────────
+
+logging:
+  output_dir: outputs/sim_sanity_beers_72b
