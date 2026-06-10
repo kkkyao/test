@@ -57,8 +57,15 @@ def _build_hint_lines(hint_level: str, case: BenchmarkCase) -> List[str]:
     """
     Return hint lines to insert into the prompt based on hint_level.
 
-    "attention": tells the model what is readable without revealing content.
-    "full":      directly provides variable names, value range, and step size.
+    "attention":  tells the model what is readable without revealing content.
+    "full":       directly provides variable names, value range, and step size.
+                  Designed for abstract chart modalities.
+    "simulation": mirrors the structural context provided to the model in the
+                  student simulation setup — variable names, ranges, step sizes,
+                  available actions, and which variable is the computed output.
+                  Use this to test whether simulation-only student simulation is
+                  viable when the model has the same env context it would get in
+                  a real episode.
     """
     if hint_level == "attention":
         return [
@@ -96,6 +103,50 @@ def _build_hint_lines(hint_level: str, case: BenchmarkCase) -> List[str]:
                 lines.append("- Value range: %d to %d" % (int(lo), int(hi)))
             if step != "":
                 lines.append("- Variable increment per action: %d" % int(step))
+        lines.append("")
+        return lines
+
+    if hint_level == "simulation":
+        vars_ = case.metadata.get("input_variables", [])
+        specs = case.metadata.get("variable_specs", {})
+        target = case.target_variable or ""
+
+        lines = [
+            "Experiment context (same information available in the student simulation setup):",
+            "- Input (controllable) variables shown in the Controls panel:",
+        ]
+        for var in vars_:
+            spec = specs.get(var, {})
+            lo   = spec.get("min_value", "")
+            hi   = spec.get("max_value", "")
+            step = spec.get("step", "")
+            parts = []
+            if lo != "" and hi != "":
+                parts.append("range %s to %s" % (int(float(lo)), int(float(hi))))
+            if step != "":
+                s = float(step)
+                parts.append("step %s" % (int(s) if s == int(s) else s))
+            desc = (": " + ", ".join(parts)) if parts else ""
+            lines.append("    %s%s" % (var, desc))
+
+        if vars_:
+            action_list = []
+            for var in vars_:
+                action_list.append("increase %s / decrease %s" % (var, var))
+            lines.append("- Available actions: " + "; ".join(action_list))
+
+        if target:
+            lines.append("- Target (output) variable: %s" % target)
+            lines.append(
+                "  %s is a computed result shown on the output display — "
+                "do NOT read %s when answering questions about input variable values."
+                % (target, target)
+            )
+
+        lines.append(
+            "When reading input variable values, look at the Controls panel "
+            "(sliders or input fields), not at the output display."
+        )
         lines.append("")
         return lines
 
