@@ -104,6 +104,7 @@ class BenchmarkDataGenerator:
                                 "variable_order": list(self.variable_order),
                                 "input_variables": list(self.input_variables),
                                 "task": dict(task),
+                                "variable_specs": {k: dict(v) for k, v in self.variable_specs.items()},
                             },
                             pair_id=None,
                         )
@@ -385,6 +386,7 @@ class BenchmarkDataGenerator:
                             "variable_order": list(self.variable_order),
                             "input_variables": list(self.input_variables),
                             "task": dict(task),
+                            "variable_specs": {k: dict(v) for k, v in self.variable_specs.items()},
                             "polarity": polarity,
                             "open_ended_answer": gold_answer,
                         },

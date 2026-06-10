@@ -5,7 +5,11 @@ from typing import Any, Dict, List, Optional
 from src.benchmarks.schemas import BenchmarkCase
 
 
-def build_benchmark_prompt(case: BenchmarkCase, image_paths: List[str]) -> str:
+def build_benchmark_prompt(
+    case: BenchmarkCase,
+    image_paths: List[str],
+    hint_level: Optional[str] = None,
+) -> str:
     """
     Build the prompt for one benchmark case.
 
@@ -15,11 +19,16 @@ def build_benchmark_prompt(case: BenchmarkCase, image_paths: List[str]) -> str:
     Visual modalities:
         The prompt describes the ordered image sequence.
         Numeric values are not included in text.
+
+    hint_level controls how much information is given about chart contents:
+        None        — no hint (default, original behaviour)
+        "attention" — tells model that labels/step/range are readable in the chart
+        "full"      — directly states variable names, range, and step size
     """
     if case.modality == "text":
         return _build_text_prompt(case)
 
-    return _build_visual_prompt(case, image_paths)
+    return _build_visual_prompt(case, image_paths, hint_level=hint_level)
 
 
 def _build_text_prompt(case: BenchmarkCase) -> str:
@@ -44,7 +53,60 @@ def _build_text_prompt(case: BenchmarkCase) -> str:
     return "\n".join(lines)
 
 
-def _build_visual_prompt(case: BenchmarkCase, image_paths: List[str]) -> str:
+def _build_hint_lines(hint_level: str, case: BenchmarkCase) -> List[str]:
+    """
+    Return hint lines to insert into the prompt based on hint_level.
+
+    "attention": tells the model what is readable without revealing content.
+    "full":      directly provides variable names, value range, and step size.
+    """
+    if hint_level == "attention":
+        return [
+            "Note: The chart contains readable text. "
+            "You can read the variable names, the current step number, "
+            "and the value range directly from the image.",
+            "",
+        ]
+
+    if hint_level == "full":
+        vars_ = case.metadata.get("input_variables", [])
+        specs = case.metadata.get("variable_specs", {})
+
+        # Determine spatial layout label
+        lr_modalities = {"bar_ocr", "bar_nocr", "dot_ocr", "dot_nocr"}
+        series_modalities = {"line_ocr", "line_nocr", "scatter_ocr", "scatter_nocr"}
+        if case.modality in lr_modalities:
+            direction = "left to right"
+        elif case.modality in series_modalities:
+            direction = "series order in legend"
+        else:
+            direction = "top to bottom"
+
+        lines = ["Chart reference information:"]
+        if vars_:
+            lines.append(
+                "- Variables (%s): %s" % (direction, ", ".join(vars_))
+            )
+        if specs and vars_:
+            first = specs.get(vars_[0], {})
+            lo   = first.get("min_value", "")
+            hi   = first.get("max_value", "")
+            step = first.get("step", "")
+            if lo != "" and hi != "":
+                lines.append("- Value range: %d to %d" % (int(lo), int(hi)))
+            if step != "":
+                lines.append("- Step size: %d" % int(step))
+        lines.append("")
+        return lines
+
+    return []
+
+
+def _build_visual_prompt(
+    case: BenchmarkCase,
+    image_paths: List[str],
+    hint_level: Optional[str] = None,
+) -> str:
     lines: List[str] = []
 
     # ── Open visual perception tasks ─────────────────────────────────
@@ -66,6 +128,8 @@ def _build_visual_prompt(case: BenchmarkCase, image_paths: List[str]) -> str:
         lines.append("")
         lines.append(f"Number of images provided: {len(image_paths)}")
         lines.append("")
+        if hint_level:
+            lines.extend(_build_hint_lines(hint_level, case))
         lines.append("Question:")
         lines.append(case.question)
         lines.append("")
@@ -237,6 +301,8 @@ def _build_visual_prompt(case: BenchmarkCase, image_paths: List[str]) -> str:
     lines.append("")
     lines.append(f"Number of images provided: {len(image_paths)}")
     lines.append("")
+    if hint_level:
+        lines.extend(_build_hint_lines(hint_level, case))
     lines.append("Question:")
     lines.append(case.question)
     lines.append("")

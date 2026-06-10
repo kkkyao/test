@@ -54,6 +54,7 @@ class VisualBenchmarkRunner:
 
         self.agent_cfg = config.get("agent", {})
         self.backend = self.agent_cfg.get("backend", "mock_benchmark")
+        self.hint_level: Optional[str] = config.get("benchmark", {}).get("prompt_hint", None)
 
         self.model_type: str
         self.model_callable: Optional[Callable] = None
@@ -90,7 +91,7 @@ class VisualBenchmarkRunner:
                 print(f"[{idx + 1}/{len(cases)}] {case.case_id}")
 
                 image_paths = self.renderer.render_case(case)
-                prompt = build_benchmark_prompt(case, image_paths)
+                prompt = build_benchmark_prompt(case, image_paths, hint_level=self.hint_level)
 
                 raw_output = self._call_model(case, prompt, image_paths)
                 parsed_answer = parse_answer(raw_output, case.answer_type)

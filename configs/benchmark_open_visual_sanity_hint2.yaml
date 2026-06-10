@@ -1,0 +1,139 @@
+benchmark:
+  name: open_visual_sanity_hint2
+  prompt_hint: full
+  seed: 42
+  n_sequences: 3
+  sequence_length: 5
+  round_digits: 0
+
+  variables:
+    input_variables:
+      - a
+      - b
+      - c
+    specs:
+      a:
+        min_value: 1
+        max_value: 10
+        step: 1
+        decimals: 0
+      b:
+        min_value: 1
+        max_value: 10
+        step: 1
+        decimals: 0
+      c:
+        min_value: 1
+        max_value: 10
+        step: 1
+        decimals: 0
+
+  modalities:
+    - bar_ocr
+    - bar_nocr
+    - grid_ocr
+    - grid_nocr
+    - slider_ocr
+    - slider_nocr
+
+  tasks:
+
+    # ── Core: free visual description ────────────────────────────────
+    - id: open_describe_all
+      type: open_describe_all_visible_elements
+      answer_type: open
+      question: "Describe everything you can see in this image. Mention all visible text, labels, variables, numbers, axes, steps, and any changes you notice."
+      generate_paired: false
+
+    # ── Labels and variable names ─────────────────────────────────────
+    - id: open_labels
+      type: open_variable_and_label_description
+      answer_type: open
+      question: "What text, variable names, or labels can you read in this figure?"
+      generate_paired: false
+
+    # ── Step structure understanding ──────────────────────────────────
+    - id: open_steps
+      type: open_step_description
+      answer_type: open
+      question: "Does this figure show one step or multiple steps? Describe what each visible step appears to show."
+      generate_paired: false
+
+    # ── Values and changes ────────────────────────────────────────────
+    - id: open_values
+      type: open_values_and_changes_description
+      answer_type: open
+      question: "What numbers, values, or changes can you identify in this figure? Describe them in your own words."
+      generate_paired: false
+
+    # ── Readability self-report ───────────────────────────────────────
+    - id: open_readability
+      type: open_readability_or_confusion_check
+      answer_type: open
+      question: "Is anything in this figure unclear, ambiguous, or hard to read? If yes, describe what is unclear."
+      generate_paired: false
+
+# ── Visual rendering ──────────────────────────────────────────────────
+
+visual:
+  playwright:
+    headless: true
+    slow_mo: 0
+
+  bar_standalone:
+    template_path: templates/benchmarks/bar_standalone.html
+    width: 900
+    height: 500
+
+  slider:
+    template_path: templates/benchmarks/slider_view.html
+    width: 900
+    height: 500
+
+  grid:
+    template_path: templates/benchmarks/grid_view.html
+    width: 900
+    height: 500
+
+  # Kept for schema compatibility
+  bar:
+    template_path: templates/chart_state_view.html
+    normalize_bars: true
+    exclude_variables: []
+
+  line:
+    template_path: templates/benchmarks/step_plot.html
+    width: 900
+    height: 520
+    normalize_y: true
+
+  scatter:
+    template_path: templates/benchmarks/step_plot.html
+    width: 900
+    height: 520
+    normalize_y: true
+
+# ── Scoring ───────────────────────────────────────────────────────────
+
+scoring:
+  tolerance: 0.0
+
+# ── Agent ─────────────────────────────────────────────────────────────
+
+agent:
+  backend: mock_benchmark
+
+  # For real VLM evaluation, override with:
+  # backend: hf_qwen_vl
+  # model_name: Qwen/Qwen2.5-VL-7B-Instruct
+  # dtype: bfloat16
+  # device_map: auto
+  generation:
+    max_new_tokens: 512
+    temperature: 0.0
+    do_sample: false
+
+# ── Output ────────────────────────────────────────────────────────────
+
+logging:
+  output_dir: outputs/open_visual_sanity_hint2
