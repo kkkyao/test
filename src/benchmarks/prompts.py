@@ -78,7 +78,7 @@ def _build_hint_lines(hint_level: str, case: BenchmarkCase) -> List[str]:
         if case.modality in lr_modalities:
             direction = "left to right"
         elif case.modality in series_modalities:
-            direction = "series order in legend"
+            direction = "top to bottom in the legend"
         else:
             direction = "top to bottom"
 
@@ -95,7 +95,7 @@ def _build_hint_lines(hint_level: str, case: BenchmarkCase) -> List[str]:
             if lo != "" and hi != "":
                 lines.append("- Value range: %d to %d" % (int(lo), int(hi)))
             if step != "":
-                lines.append("- Step size: %d" % int(step))
+                lines.append("- Variable increment per action: %d" % int(step))
         lines.append("")
         return lines
 

@@ -1,0 +1,138 @@
+benchmark:
+  name: sim_sanity_concentration
+  seed: 42
+  n_sequences: 10
+  sequence_length: 3
+  round_digits: 4
+
+  variables:
+    input_variables:
+      - solute_amount
+      - solution_volume
+    target_variable: concentration
+    specs:
+      solute_amount:
+        min_value: 1
+        max_value: 10
+        initial_value: 2
+        step: 1
+        decimals: 0
+      solution_volume:
+        min_value: 1
+        max_value: 10
+        initial_value: 4
+        step: 1
+        decimals: 0
+      concentration:
+        min_value: 0
+        max_value: 10
+        initial_value: 0.5
+        decimals: 4
+
+  formula: "concentration = solute_amount / solution_volume"
+
+  modalities:
+    - text
+    - simulation
+
+  tasks:
+
+    # ── State reading: value at last step (step 2) ───────────────────
+    - id: read_solute_last
+      type: value_at_step
+      variable: solute_amount
+      step: last
+      answer_type: number
+      question: "At the current step (step {step}), what is the value of solute_amount?"
+
+    - id: read_volume_last
+      type: value_at_step
+      variable: solution_volume
+      step: last
+      answer_type: number
+      question: "At the current step (step {step}), what is the value of solution_volume?"
+
+    # ── Changed variable detection (step 1 → 2) ─────────────────────
+    - id: changed_step1_2
+      type: changed_variable
+      from_step: 1
+      to_step: 2
+      answer_type: category
+      question: "Which input variable changed from step {from_step} to step {to_step}? Answer with exactly one of: solute_amount or solution_volume."
+
+    # ── Direction detection per variable (step 1 → 2) ────────────────
+    - id: direction_solute_1_2
+      type: change_direction
+      variable: solute_amount
+      from_step: 1
+      to_step: 2
+      answer_type: category
+      question: "From step {from_step} to step {to_step}, did solute_amount increase, decrease, or stay the same?"
+
+    - id: direction_volume_1_2
+      type: change_direction
+      variable: solution_volume
+      from_step: 1
+      to_step: 2
+      answer_type: category
+      question: "From step {from_step} to step {to_step}, did solution_volume increase, decrease, or stay the same?"
+
+    # ── Delta estimation per variable (step 1 → 2) ───────────────────
+    - id: amount_solute_1_2
+      type: change_amount
+      variable: solute_amount
+      from_step: 1
+      to_step: 2
+      answer_type: number
+      question: "By how much did solute_amount change from step {from_step} to step {to_step}?"
+
+    - id: amount_volume_1_2
+      type: change_amount
+      variable: solution_volume
+      from_step: 1
+      to_step: 2
+      answer_type: number
+      question: "By how much did solution_volume change from step {from_step} to step {to_step}?"
+
+# ── Visual rendering ───────────────────────────────────────────────────
+
+visual:
+  playwright:
+    headless: true
+    slow_mo: 0
+
+  simulation:
+    simulation_type: concentration
+    template_dir: templates/simulations
+    exclude_variables: []
+    viewport:
+      width: 900
+      height: 500
+
+  bar:
+    template_path: templates/chart_state_view.html
+    normalize_bars: true
+    exclude_variables: []
+
+# ── Scoring ────────────────────────────────────────────────────────────
+
+scoring:
+  tolerance: 0.01
+
+# ── Agent ──────────────────────────────────────────────────────────────
+
+agent:
+  backend: hf_qwen_vl
+  model_name: Qwen/Qwen2.5-VL-7B-Instruct
+  dtype: bfloat16
+  device_map: auto
+  trust_remote_code: true
+  generation:
+    max_new_tokens: 64
+    temperature: 0.0
+    do_sample: false
+
+# ── Output ─────────────────────────────────────────────────────────────
+
+logging:
+  output_dir: outputs/sim_sanity_concentration
