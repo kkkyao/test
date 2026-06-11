@@ -144,8 +144,9 @@ def _build_hint_lines(hint_level: str, case: BenchmarkCase) -> List[str]:
             )
 
         lines.append(
-            "When reading input variable values, look at the Controls panel "
-            "(sliders or input fields), not at the output display."
+            "When reading input variable values, look at the yellow highlighted box "
+            "next to each variable name — that box shows the exact current value. "
+            "Do not read the slider position, the endpoint labels, or any output display."
         )
         lines.append("")
         return lines
@@ -214,6 +215,16 @@ def _build_visual_prompt(
         lines.append("You are given a sequence of simulation screenshots.")
         lines.append("The screenshots are ordered from oldest step to newest step.")
         lines.append("Each screenshot shows the experimental state at one step.")
+        lines.append(
+            "Reading guide: each variable is displayed as a row containing "
+            "(1) the variable name in bold, "
+            "(2) a yellow highlighted box showing the current value — this is the number to read, "
+            "(3) a horizontal slider between the minimum (left) and maximum (right) values."
+        )
+        lines.append(
+            "Always read the value from the yellow box. "
+            "Do not estimate from slider position or endpoint labels."
+        )
         lines.append("Use the ordered screenshots to answer the question.")
 
     # ── Abstract visual encoding: bar standalone ──────────────────────

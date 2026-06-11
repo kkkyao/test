@@ -1,6 +1,7 @@
 benchmark:
-  name: sim_readable_v2_beers_72b
+  name: sim_readable_v3_beers_72b
   seed: 42
+  prompt_hint: simulation
   n_sequences: 5
   sequence_length: 3
   round_digits: 4
@@ -160,4 +161,4 @@ agent:
 # ── Output ─────────────────────────────────────────────────────────────
 
 logging:
-  output_dir: outputs/sim_readable_v2_beers_72b
+  output_dir: outputs/sim_readable_v3_beers_72b
